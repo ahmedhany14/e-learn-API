@@ -2,14 +2,22 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+// App Modules
+import { AuthModule } from './auth/auth.module';
+
 // Configurations for the application
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import appConfig from './common/config/app.conf';
 import databaseConf from './common/config/database.conf';
+import jwtCong from './common/config/jwt.cong';
 import envValidation from './common/config/validations.conf';
 
 // ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccountModule } from './account/account.module';
+
+// JWT
+import {JwtModule} from '@nestjs/jwt';
 
 const env = process.env.NODE_ENV;
 
@@ -23,6 +31,11 @@ const env = process.env.NODE_ENV;
       validationSchema: envValidation,
     }),
 
+    // JWT
+    ConfigModule.forFeature(jwtCong),
+    JwtModule.registerAsync(jwtCong.asProvider()),
+
+    // ORM and Database
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -39,6 +52,10 @@ const env = process.env.NODE_ENV;
         ),
       }),
     }),
+
+    AuthModule,
+
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],
