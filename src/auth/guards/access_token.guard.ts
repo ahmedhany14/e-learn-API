@@ -13,7 +13,7 @@ import { TokenProvider } from '../providers/token.provider';
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
 
 @Injectable()
-export class AccessTokenGuardGuard implements CanActivate {
+export class AccessTokenGuard implements CanActivate {
   constructor(@Inject() private readonly tokenProvider: TokenProvider) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

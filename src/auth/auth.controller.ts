@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Inject, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Inject, Body } from '@nestjs/common';
 
 // services
 import { AuthService } from './service/auth.service';
@@ -10,10 +10,6 @@ import { RefreshTokenDto } from './dto/refresh_token.dto';
 // decorators and enums
 import { AUTH } from './decorators/auth.decorator';
 import { AuthEnum } from './enums/auth.enum';
-
-import { AccessTokenGuardGuard } from './guards/access_token.guard.guard';
-
-
 
 @Controller('auth')
 export class AuthController {
@@ -32,9 +28,8 @@ export class AuthController {
   }
 
   @Get('test-token')
-  @UseGuards(AccessTokenGuardGuard)
+  @AUTH(AuthEnum.BEARER)
   async testToken() {
     return 'valid token';
   }
-
 }
