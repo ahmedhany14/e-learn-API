@@ -1,0 +1,2 @@
+SELECT *
+from account;

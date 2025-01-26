@@ -1,0 +1,34 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+// Data base and ORM
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Account } from '../entity/account.entity';
+
+// DTO
+import { CreateAccountDto } from '../dtos/create-account.dto';
+
+@Injectable()
+export class AccountRepository {
+  constructor(
+    @InjectRepository(Account)
+    private accountRepository: Repository<Account>,
+  ) {}
+
+  async create(createAccountDto: CreateAccountDto): Promise<Account> {
+    const account = this.accountRepository.create({
+      email: createAccountDto.email,
+      password: createAccountDto.password,
+    });
+    return await this.accountRepository.save(account);
+  }
+
+  async findByEmail(email: string): Promise<Account> {
+    const account = await this.accountRepository.findOne({
+      where: { email },
+    });
+    console.log('account', account);
+    if (!account) throw new NotFoundException('Account not found');
+    return account;
+  }
+}
