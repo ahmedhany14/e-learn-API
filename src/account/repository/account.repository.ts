@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 
 // Data base and ORM
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,5 +34,17 @@ export class AccountRepository {
     console.log('account', account);
     if (!account) throw new NotFoundException('Account not found');
     return account;
+  }
+
+  async findById(id: number): Promise<Account> {
+    try {
+      const account = await this.accountRepository.findOne({
+        where: { id },
+      });
+      if (!account) throw new NotFoundException('Account not found');
+      return account;
+    } catch (error) {
+      throw new BadRequestException('Something went wrong');
+    }
   }
 }
