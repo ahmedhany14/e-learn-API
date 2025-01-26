@@ -8,6 +8,7 @@ import {
 // Providers
 import { TokenProvider } from '../providers/token.provider';
 import { AccountService } from '../../account/service/account.service';
+import { Hashing } from '../interfaces/Hashing';
 
 // Dto and Interfaces
 import { RefreshTokenDto } from '../dto/refresh_token.dto';
@@ -19,6 +20,7 @@ export class AuthService {
   constructor(
     @Inject() private readonly tokenProvider: TokenProvider,
     @Inject() private readonly accountService: AccountService,
+    @Inject() private readonly hashing: Hashing,
   ) {}
 
   async login(accountLoginDto: AccountLoginDto) {
@@ -27,7 +29,7 @@ export class AuthService {
     );
     if (!account) throw new NotFoundException('Account not found');
 
-    if (account.password !== accountLoginDto.password)
+    if (!(await this.hashing.compare(accountLoginDto.password, account.password)))
       throw new NotFoundException('Invalid password');
 
     const { accessToken, refreshToken } =

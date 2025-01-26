@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 
 // Data base and ORM
@@ -12,18 +14,28 @@ import { Account } from '../entity/account.entity';
 // DTO
 import { CreateAccountDto } from '../dtos/create-account.dto';
 
+// Auth provider
+import { Hashing } from '../../auth/interfaces/Hashing';
+
 @Injectable()
 export class AccountRepository {
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
+    @Inject(forwardRef(() => Hashing))
+    private readonly hashing: Hashing,
   ) {}
 
   async create(createAccountDto: CreateAccountDto): Promise<Account> {
+    createAccountDto.password = await this.hashing.hash(
+      createAccountDto.password,
+    );
     const account = this.accountRepository.create({
       ...createAccountDto,
     });
-    return await this.accountRepository.save(account);
+    const res = await this.accountRepository.save(account);
+    res.password = undefined;
+    return res;
   }
 
   async findByEmail(email: string): Promise<Account> {
