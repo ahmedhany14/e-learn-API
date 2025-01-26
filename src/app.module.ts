@@ -2,8 +2,61 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+// App Modules
+import { AuthModule } from './auth/auth.module';
+
+// Configurations for the application
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import appConfig from './common/config/app.conf';
+import databaseConf from './common/config/database.conf';
+import jwtCong from './common/config/jwt.cong';
+import envValidation from './common/config/validations.conf';
+
+// ORM
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccountModule } from './account/account.module';
+
+// JWT
+import {JwtModule} from '@nestjs/jwt';
+
+const env = process.env.NODE_ENV;
+
 @Module({
-  imports: [],
+  imports: [
+    // Configurations Parameters and Validation
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.${env}.env`,
+      load: [appConfig, databaseConf],
+      validationSchema: envValidation,
+    }),
+
+    // JWT
+    ConfigModule.forFeature(jwtCong),
+    JwtModule.registerAsync(jwtCong.asProvider()),
+
+    // ORM and Database
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('database.host'),
+        port: configService.get<number>('database.port'),
+        username: configService.get<string>('database.username'),
+        password: configService.get<string>('database.password'),
+        database: configService.get<string>('database.database'),
+        synchronize: configService.get<boolean>('database.synchronize'),
+        autoLoadEntities: configService.get<boolean>(
+          'database.autoLoadEntities',
+        ),
+      }),
+    }),
+
+    AuthModule,
+
+    AccountModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

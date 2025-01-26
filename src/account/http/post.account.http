@@ -1,0 +1,9 @@
+### CREATE NEW ACCOUNT
+
+POST http://localhost:3000/account
+content-type: application/json
+
+{
+  "email": "ahmed@gamil.com",
+  "password": "123456"
+}
