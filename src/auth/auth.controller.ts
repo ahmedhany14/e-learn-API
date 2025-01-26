@@ -5,6 +5,7 @@ import { AuthService } from './service/auth.service';
 
 // dto
 import { AccountLoginDto } from './dto/account.login.dto';
+import { RefreshTokenDto } from './dto/refresh_token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,5 +19,10 @@ export class AuthController {
   @Get('testToken')
   async testToken() {
     return 'Not implemented yet';
+  }
+
+  @Post('refreshToken')
+  async refreshToken(@Body() refreshToken: RefreshTokenDto) {
+    return await this.authService.refreshToken(refreshToken);
   }
 }
