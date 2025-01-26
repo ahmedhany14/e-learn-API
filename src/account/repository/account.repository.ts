@@ -21,8 +21,7 @@ export class AccountRepository {
 
   async create(createAccountDto: CreateAccountDto): Promise<Account> {
     const account = this.accountRepository.create({
-      email: createAccountDto.email,
-      password: createAccountDto.password,
+      ...createAccountDto,
     });
     return await this.accountRepository.save(account);
   }
@@ -30,8 +29,8 @@ export class AccountRepository {
   async findByEmail(email: string): Promise<Account> {
     const account = await this.accountRepository.findOne({
       where: { email },
+      select: ['id', 'email', 'password', 'role'],
     });
-    console.log('account', account);
     if (!account) throw new NotFoundException('Account not found');
     return account;
   }

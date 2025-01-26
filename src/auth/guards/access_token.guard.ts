@@ -28,10 +28,11 @@ export class AccessTokenGuard implements CanActivate {
     console.log('token', token);
 
     try {
-      await this.tokenProvider.verifyToken<AccountPayloadInterface>(
-        token,
-        'access',
-      );
+      request.account =
+        await this.tokenProvider.verifyToken<AccountPayloadInterface>(
+          token,
+          'access',
+        );
     } catch (e) {
       throw new UnauthorizedException(
         'You are not authorized to access this resource',

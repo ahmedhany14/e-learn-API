@@ -52,6 +52,7 @@ export class TokenProvider {
         this.jwtConfigurations.expiresIn,
         {
           email: account.email,
+          role: account.role,
         },
       ),
       this.signToken(

@@ -24,6 +24,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access_token.guard';
 import { TokenProvider } from './auth/providers/token.provider';
+import { PermissionGuard } from './auth/guards/permission.guard';
 
 const env = process.env.NODE_ENV;
 
@@ -69,6 +70,10 @@ const env = process.env.NODE_ENV;
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
     AccessTokenGuard,
     TokenProvider,
