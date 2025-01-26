@@ -17,7 +17,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from './account/account.module';
 
 // JWT
-import {JwtModule} from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
+
+// Guards
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationGuard } from './auth/guards/authentication.guard';
+import { AccessTokenGuard } from './auth/guards/access_token.guard';
+import { TokenProvider } from './auth/providers/token.provider';
 
 const env = process.env.NODE_ENV;
 
@@ -58,6 +64,14 @@ const env = process.env.NODE_ENV;
     AccountModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+    AccessTokenGuard,
+    TokenProvider,
+  ],
 })
 export class AppModule {}
