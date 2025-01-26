@@ -17,7 +17,7 @@ export class TokenProvider {
   ) {}
 
   private async signToken(
-    userId: string,
+    userId: number,
     secret: string,
     expiresIn: number,
     payload: any,
@@ -38,7 +38,7 @@ export class TokenProvider {
     );
   }
 
-  public async generateToken(id: string) {
+  public async generateToken(id: number) {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(
         id,
