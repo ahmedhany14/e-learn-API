@@ -1,9 +1,8 @@
 import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Inject,
   forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common';
 
 // Data base and ORM
@@ -16,6 +15,7 @@ import { CreateAccountDto } from '../dtos/create-account.dto';
 
 // Auth provider
 import { Hashing } from '../../auth/interfaces/Hashing';
+import { AccountSignupDto } from '../../auth/dto/account.signup.dto';
 
 @Injectable()
 export class AccountRepository {
@@ -38,24 +38,52 @@ export class AccountRepository {
     return res;
   }
 
+  async signup(accountSignupDto: AccountSignupDto): Promise<Account> {
+    accountSignupDto.password = await this.hashing.hash(
+      accountSignupDto.password,
+    );
+    accountSignupDto.confirmPassword = undefined;
+    try {
+      const account = this.accountRepository.create({
+        ...accountSignupDto,
+        isActive: true,
+      });
+      const res = await this.accountRepository.save(account);
+      res.password = undefined;
+      return res;
+    } catch (error) {
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
+  }
+
   async findByEmail(email: string): Promise<Account> {
-    const account = await this.accountRepository.findOne({
-      where: { email },
-      select: ['id', 'email', 'password', 'role'],
-    });
-    if (!account) throw new NotFoundException('Account not found');
-    return account;
+    try {
+      return await this.accountRepository.findOne({
+        where: { email },
+        select: ['id', 'email', 'password', 'role', 'isActive'],
+      });
+    } catch (err) {
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
   }
 
   async findById(id: number): Promise<Account> {
     try {
-      const account = await this.accountRepository.findOne({
+      return await this.accountRepository.findOne({
         where: { id },
+        select: ['id', 'email', 'password', 'role', 'isActive'],
       });
-      if (!account) throw new NotFoundException('Account not found');
-      return account;
     } catch (error) {
-      throw new BadRequestException('Something went wrong');
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
+  }
+
+  async save(account: Account): Promise<Account> {
+    try {
+      return await this.accountRepository.save(account);
+    }
+    catch (error) {
+      throw new InternalServerErrorException('An unexpected error occurred');
     }
   }
 }

@@ -14,7 +14,6 @@ import { ROLE_TYPE_KEY } from '../../common/constants/role.constants';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
-
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(
@@ -23,16 +22,18 @@ export class PermissionGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     // get the role type from the metadata
-    const roleType = this.reflector.get<RoleEnum>(
+    const roleTypes = this.reflector.get<RoleEnum[]>(
       ROLE_TYPE_KEY,
       context.getHandler(),
     );
 
-    if (!roleType) return true;
-    if (roleType !== request.account.role)
-      throw new ForbiddenException(
-        'You are not authorized to access this resource',
-      );
-    return true;
+    if (!roleTypes) return true;
+
+    for (const roleType of roleTypes)
+      if (roleType === request.account.role) return true;
+
+    throw new ForbiddenException(
+      'You are not authorized to access this resource',
+    );
   }
 }

@@ -1,5 +1,5 @@
 SELECT *
-from account;
+from public.account;
 
 
 --delete all data from account table

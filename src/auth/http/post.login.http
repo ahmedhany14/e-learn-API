@@ -1,9 +1,9 @@
 ### LOGIN
 
-POST http://localhost:3000/auth/login
+POST http://localhost:3000/auth/sign-in
 content-type: application/json
 
 {
-  "email": "ahmed@gamil.com",
-  "password": "1234565"
+  "email": "ahmed1@gmial.com",
+  "password": "12345678"
 }
