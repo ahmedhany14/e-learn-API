@@ -60,7 +60,7 @@ export class AccountRepository {
     try {
       return await this.accountRepository.findOne({
         where: { email },
-        select: ['id', 'email', 'password', 'role'],
+        select: ['id', 'email', 'password', 'role', 'isActive'],
       });
     } catch (err) {
       throw new InternalServerErrorException('An unexpected error occurred');
@@ -71,8 +71,18 @@ export class AccountRepository {
     try {
       return await this.accountRepository.findOne({
         where: { id },
+        select: ['id', 'email', 'password', 'role', 'isActive'],
       });
     } catch (error) {
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
+  }
+
+  async save(account: Account): Promise<Account> {
+    try {
+      return await this.accountRepository.save(account);
+    }
+    catch (error) {
       throw new InternalServerErrorException('An unexpected error occurred');
     }
   }
