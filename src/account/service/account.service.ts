@@ -35,4 +35,9 @@ export class AccountService {
     account.password = password;
     return await this.accountRepository.save(account);
   }
+
+  async flipActiveState(account: Account) {
+    account.isActive = !account.isActive;
+    return await this.accountRepository.save(account);
+  }
 }

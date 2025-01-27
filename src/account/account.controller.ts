@@ -1,10 +1,26 @@
-import { Controller, Post, Body, Inject, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  GoneException,
+  Inject,
+  NotFoundException,
+  Post,
+} from '@nestjs/common';
 
 // dto
 import { CreateAccountDto } from './dtos/create-account.dto';
 
 // service
 import { AccountService } from './service/account.service';
+
+// decorators
+import { AUTH } from '../auth/decorators/auth.decorator';
+import { AuthEnum } from '../auth/enums/auth.enum';
+import { ROLE } from '../auth/decorators/role.decorator';
+import { RoleEnum } from '../auth/enums/role.enum';
+import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 
 @Controller('account')
 export class AccountController {
@@ -19,5 +35,19 @@ export class AccountController {
   @Get()
   async findByEmail(@Body('email') email: string) {
     return await this.accountService.findByEmail(email);
+  }
+
+  @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
+  @Delete('deactive-account')
+  async deActive(@ExtractAccountData('id') id: number) {
+    try {
+      const account = await this.accountService.findById(id);
+      await this.accountService.flipActiveState(account);
+      return 'Account de-activated successfully';
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }

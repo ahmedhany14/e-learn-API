@@ -1,20 +1,25 @@
 import {
   CanActivate,
   ExecutionContext,
+  GoneException,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
 // services
 import { TokenProvider } from '../providers/token.provider';
-
+import { AccountService } from '../../account/service/account.service';
 // dto and interfaces
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
-  constructor(@Inject() private readonly tokenProvider: TokenProvider) {}
+  constructor(
+    @Inject() private readonly tokenProvider: TokenProvider,
+    @Inject() private readonly accountService: AccountService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -27,17 +32,20 @@ export class AccessTokenGuard implements CanActivate {
 
     console.log('token', token);
 
+    let payload : AccountPayloadInterface;
     try {
-      request.account =
-        await this.tokenProvider.verifyToken<AccountPayloadInterface>(
-          token,
-          'access',
-        );
+      payload = await this.tokenProvider.verifyToken<AccountPayloadInterface>(
+        token,
+        'access',
+      ) as AccountPayloadInterface;
     } catch (e) {
-      throw new UnauthorizedException(
-        'You are not authorized to access this resource',
-      );
+      throw new UnauthorizedException('Invalid token');
     }
+    const account = await this.accountService.findById(payload.id);
+    if (!account)  throw new NotFoundException('Account not found');
+    if (!account.isActive) throw new GoneException('Account is not active');
+    account.password = undefined;
+    request.account = account;
     return true;
   }
 

@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  ConflictException,
+  ConflictException, GoneException,
   Inject,
   Injectable,
   NotFoundException,
@@ -33,7 +33,7 @@ export class AuthService {
       accountLoginDto.email,
     );
     if (!account) throw new NotFoundException('Account not found');
-
+    if(!account.isActive) throw new GoneException('Account is not active');
     if (
       !(await this.hashing.compare(accountLoginDto.password, account.password))
     )
