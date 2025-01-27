@@ -25,6 +25,7 @@ import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access_token.guard';
 import { TokenProvider } from './auth/providers/token.provider';
 import { PermissionGuard } from './auth/guards/permission.guard';
+import { ProfileModule } from './profile/profile.module';
 
 const env = process.env.NODE_ENV;
 
@@ -63,6 +64,8 @@ const env = process.env.NODE_ENV;
     AuthModule,
 
     AccountModule,
+
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [

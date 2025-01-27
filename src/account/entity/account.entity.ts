@@ -1,7 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn, Check } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  Check,
+  OneToOne,
+  JoinColumn,
+  Unique,
+} from 'typeorm';
+
+import { Profile } from '../../profile/entity/profile.entity';
 
 @Entity()
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
+@Unique(['profile']) // add unique constraint to the profile column
 export class Account {
   @PrimaryGeneratedColumn()
   id: number;
@@ -58,4 +69,13 @@ export class Account {
     comment: 'Account last update date',
   })
   updatedAt: Date;
+
+  @OneToOne(() => Profile, (profile) => profile.account, {
+    eager: true, // to load the profile data when the account is loaded
+    onDelete: 'CASCADE', // to delete the profile when the account is deleted
+    onUpdate: 'CASCADE', // to update the profile when the account is updated
+    nullable: true, // to make the profile required
+  })
+  @JoinColumn()
+  profile: Profile;
 }
