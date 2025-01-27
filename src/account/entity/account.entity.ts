@@ -70,7 +70,7 @@ export class Account {
   })
   updatedAt: Date;
 
-  @OneToOne(() => Profile, (profile) => profile.id, {
+  @OneToOne(() => Profile, (profile) => profile.account, {
     eager: true, // to load the profile data when the account is loaded
     onDelete: 'CASCADE', // to delete the profile when the account is deleted
     onUpdate: 'CASCADE', // to update the profile when the account is updated

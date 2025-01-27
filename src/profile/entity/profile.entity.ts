@@ -49,7 +49,6 @@ export class Profile {
   })
   updated_at: Date;
 
-  @OneToOne(() => Account)
+  @OneToOne(() => Account, (account) => account.profile)
   account: Account;
-
 }
