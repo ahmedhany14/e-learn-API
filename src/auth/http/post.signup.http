@@ -1,0 +1,10 @@
+### SIGN UP
+
+POST localhost:3000/auth/sign-up
+content-type: application/json
+
+{
+  "email": "ahmed1@gmial.com",
+  "password": "12345678",
+  "confirmPassword": "12345678"
+}
