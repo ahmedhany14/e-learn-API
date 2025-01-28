@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import appConfig from './common/config/app.conf';
 import databaseConf from './common/config/database.conf';
 import jwtCong from './common/config/jwt.cong';
+import emialConf from './common/config/emial.conf';
 import envValidation from './common/config/validations.conf';
 
 // ORM
@@ -23,9 +24,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access_token.guard';
-import { TokenProvider } from './auth/providers/token.provider';
 import { PermissionGuard } from './auth/guards/permission.guard';
+
+// providers and services
+import { TokenProvider } from './auth/providers/token.provider';
+import { Email } from './common/email/email';
+
+// Modules
 import { ProfileModule } from './profile/profile.module';
+import { EmailModule } from './common/email/email.module';
 
 const env = process.env.NODE_ENV;
 
@@ -35,7 +42,7 @@ const env = process.env.NODE_ENV;
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.${env}.env`,
-      load: [appConfig, databaseConf],
+      load: [appConfig, databaseConf, emialConf],
       validationSchema: envValidation,
     }),
 
@@ -66,6 +73,8 @@ const env = process.env.NODE_ENV;
     AccountModule,
 
     ProfileModule,
+
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [
@@ -80,6 +89,7 @@ const env = process.env.NODE_ENV;
     },
     AccessTokenGuard,
     TokenProvider,
+    Email,
   ],
 })
 export class AppModule {}
