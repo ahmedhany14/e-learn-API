@@ -15,7 +15,6 @@ import { CreateAccountDto } from '../dtos/create-account.dto';
 
 // Auth provider
 import { Hashing } from '../../auth/interfaces/Hashing';
-import { AccountSignupDto } from '../../auth/dto/account.signup.dto';
 
 @Injectable()
 export class AccountRepository {
@@ -36,24 +35,6 @@ export class AccountRepository {
     const res = await this.accountRepository.save(account);
     res.password = undefined;
     return res;
-  }
-
-  async signup(accountSignupDto: AccountSignupDto): Promise<Account> {
-    accountSignupDto.password = await this.hashing.hash(
-      accountSignupDto.password,
-    );
-    accountSignupDto.confirmPassword = undefined;
-    try {
-      const account = this.accountRepository.create({
-        ...accountSignupDto,
-        isActive: true,
-      });
-      const res = await this.accountRepository.save(account);
-      res.password = undefined;
-      return res;
-    } catch (error) {
-      throw new InternalServerErrorException('An unexpected error occurred');
-    }
   }
 
   async findByEmail(email: string): Promise<Account> {
@@ -81,8 +62,7 @@ export class AccountRepository {
   async save(account: Account): Promise<Account> {
     try {
       return await this.accountRepository.save(account);
-    }
-    catch (error) {
+    } catch (error) {
       throw new InternalServerErrorException('An unexpected error occurred');
     }
   }

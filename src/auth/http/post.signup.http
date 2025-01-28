@@ -6,5 +6,7 @@ content-type: application/json
 {
   "email": "ahmed1@gmial.com",
   "password": "12345678",
-  "confirmPassword": "12345678"
+  "confirmPassword": "12345678",
+  "firstName": "ahmed",
+  "lastName": "hany"
 }

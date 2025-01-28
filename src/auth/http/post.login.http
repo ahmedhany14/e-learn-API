@@ -5,5 +5,5 @@ content-type: application/json
 
 {
   "email": "ahmed1@gmial.com",
-  "password": "123456789"
+  "password": "12345678"
 }

@@ -10,17 +10,20 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-// services
+// services and providers
 import { AuthService } from './service/auth.service';
 import { TokenProvider } from './providers/token.provider';
 import { AccountService } from '../account/service/account.service';
 import { Hashing } from './interfaces/Hashing';
+import { SignupProvider } from './providers/transactions/signup.provider';
 
-// dto
+// dto and interfaces
 import { AccountLoginDto } from './dto/account.login.dto';
 import { AccountSignupDto } from './dto/account.signup.dto';
 import { RefreshTokenDto } from './dto/refresh_token.dto';
 import { AccountResetPasswordDto } from './dto/account.reset-password.dto';
+import { CreateAccountInterface } from '../account/interfaces/create.account.interface';
+import { CreateProfileInterface } from '../profile/interfaces/create.profile.interface';
 
 // decorators and enums
 import { AUTH } from './decorators/auth.decorator';
@@ -36,6 +39,7 @@ export class AuthController {
     @Inject() private readonly tokenProvider: TokenProvider,
     @Inject() private readonly accountService: AccountService,
     @Inject() private readonly hashing: Hashing,
+    @Inject() private readonly signupProvider: SignupProvider,
   ) {}
 
   @Post('sign-in')
@@ -49,7 +53,25 @@ export class AuthController {
   @AUTH(AuthEnum.NONE)
   async signUp(@Body() accountSignupDto: AccountSignupDto) {
     try {
-      const account = await this.authService.signup(accountSignupDto);
+      if (accountSignupDto.password !== accountSignupDto.confirmPassword)
+        throw new BadRequestException('password does not match');
+      const accountDate: CreateAccountInterface = {
+        email: accountSignupDto.email,
+        password: accountSignupDto.password,
+      };
+
+      const profileDate: CreateProfileInterface = {
+        firstName: accountSignupDto.firstName,
+        lastName: accountSignupDto.lastName,
+        bio: accountSignupDto.bio,
+        phone_number: accountSignupDto.phone_number,
+      };
+
+      const { account, profile } = await this.signupProvider.signup(
+        accountDate,
+        profileDate,
+      );
+
       const { accessToken, refreshToken } =
         await this.tokenProvider.generateToken(account);
       return { accessToken, refreshToken };
