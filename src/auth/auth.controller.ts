@@ -113,16 +113,6 @@ export class AuthController {
       )
         throw new BadRequestException('Invalid password');
 
-      /*
-      1. check if an account is active and registered DONE
-      2. I need an old password and check if it is correctly DONE
-      3. I need new password and confirm new password
-      4. hash the new password
-      5. update the account data with the new password
-      6. create a new access token and refresh token
-      7. force old access token and refresh token to expire [Not Implemented yet]
-       */
-
       const newAccount = await this.accountService.updatePassword(
         account,
         await this.hashing.hash(resetPasswordDto.newPassword),
