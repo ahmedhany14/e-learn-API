@@ -5,6 +5,7 @@ import { AuthController } from './auth.controller';
 import { ConfigModule } from '@nestjs/config';
 import { AccountModule } from '../account/account.module';
 import { ProfileModule } from '../profile/profile.module';
+import { EmailModule } from '../common/email/email.module';
 
 // Services and Providers
 import { TokenProvider } from './providers/token.provider';
@@ -21,7 +22,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from '../profile/entity/profile.entity';
 import { Account } from '../account/entity/account.entity';
-
 @Module({
   imports: [
     // JWT
@@ -32,6 +32,7 @@ import { Account } from '../account/entity/account.entity';
       Account, Profile
     ]),
     ProfileModule,
+    EmailModule
   ],
 
   controllers: [AuthController],

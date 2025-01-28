@@ -16,6 +16,7 @@ import { TokenProvider } from './providers/token.provider';
 import { AccountService } from '../account/service/account.service';
 import { Hashing } from './interfaces/Hashing';
 import { SignupProvider } from './providers/transactions/signup.provider';
+import { Email } from '../common/email/email';
 
 // dto and interfaces
 import { AccountLoginDto } from './dto/account.login.dto';
@@ -40,7 +41,9 @@ export class AuthController {
     @Inject() private readonly accountService: AccountService,
     @Inject() private readonly hashing: Hashing,
     @Inject() private readonly signupProvider: SignupProvider,
-  ) {}
+    @Inject() private readonly email: Email,
+  ) {
+  }
 
   @Post('sign-in')
   @AUTH(AuthEnum.NONE)
@@ -71,9 +74,11 @@ export class AuthController {
         accountDate,
         profileDate,
       );
-
       const { accessToken, refreshToken } =
         await this.tokenProvider.generateToken(account);
+
+      await this.email.sendWelcomeEmail(account.email, profile, accessToken);
+
       return { accessToken, refreshToken };
     } catch (err) {
       console.log(err);

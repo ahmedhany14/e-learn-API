@@ -27,12 +27,13 @@ export class SignupProvider {
     let savedAccount: Account, savedProfile: Profile;
     try {
       const newProfile = queryRunner.manager.create(Profile, profile);
+      savedProfile = await queryRunner.manager.save(newProfile);
+
       const newAccount = queryRunner.manager.create(Account, {
         ...account,
         profile: newProfile,
       });
 
-      savedProfile = await queryRunner.manager.save(newProfile);
       savedAccount = await queryRunner.manager.save(newAccount);
 
       await queryRunner.commitTransaction();
