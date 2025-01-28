@@ -12,5 +12,6 @@ import { Profile } from './entity/profile.entity';
   imports: [
     TypeOrmModule.forFeature([Profile]),
   ],
+  exports: [ProfileService],
 })
 export class ProfileModule {}

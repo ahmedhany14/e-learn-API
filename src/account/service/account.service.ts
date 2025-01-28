@@ -5,7 +5,6 @@ import { AccountRepository } from '../repository/account.repository';
 
 // DTO
 import { CreateAccountDto } from '../dtos/create-account.dto';
-import { AccountSignupDto } from '../../auth/dto/account.signup.dto';
 import { Account } from '../entity/account.entity';
 
 @Injectable()
@@ -25,10 +24,6 @@ export class AccountService {
 
   async findById(id: number) {
     return await this.accountRepository.findById(id);
-  }
-
-  async signup(accountSignupDto: AccountSignupDto) {
-    return await this.accountRepository.signup(accountSignupDto);
   }
 
   async updatePassword(account: Account, password: string) {

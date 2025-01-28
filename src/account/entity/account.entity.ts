@@ -74,7 +74,7 @@ export class Account {
     eager: true, // to load the profile data when the account is loaded
     onDelete: 'CASCADE', // to delete the profile when the account is deleted
     onUpdate: 'CASCADE', // to update the profile when the account is updated
-    nullable: true, // to make the profile required
+    nullable: false, // to make the profile required
   })
   @JoinColumn()
   profile: Profile;
