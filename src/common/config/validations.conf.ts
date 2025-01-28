@@ -23,5 +23,11 @@ export default Joi.object({
   JWT_EXPIRES_IN: Joi.number().required(),
   JWT_REFRESH_EXPIRES_IN: Joi.number().required(),
   JWT_TOKEN_AUDIENCE: Joi.string().required(),
-  JWT_TOKEN_ISSUER: Joi.string().required()
+  JWT_TOKEN_ISSUER: Joi.string().required(),
+
+  // email configurations validation
+  MAILER_HOST: Joi.string().required(),
+  MAILER_PORT: Joi.number().port().required(),
+  MAILER_USER: Joi.string().required(),
+  MAILER_PASSWORD: Joi.string().required(),
 });
