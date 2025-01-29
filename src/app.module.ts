@@ -34,7 +34,6 @@ import { MigrationService } from './db/migrations.service';
 // Modules
 import { ProfileModule } from './profile/profile.module';
 import { EmailModule } from './common/email/email.module';
-import { DbModule } from './db/db.module';
 
 const env = process.env.NODE_ENV;
 
@@ -69,7 +68,7 @@ const env = process.env.NODE_ENV;
         ),
         logger: 'advanced-console',  // Use the advanced console logger
         // For even more detailed logging:
-        logging: ["query", "error", "schema", "warn", "info", "log", "migration"],
+        logging: ["query"],
       }),
     }),
 
@@ -81,7 +80,6 @@ const env = process.env.NODE_ENV;
 
     EmailModule,
 
-    DbModule,
   ],
   controllers: [AppController],
   providers: [
@@ -97,7 +95,6 @@ const env = process.env.NODE_ENV;
     AccessTokenGuard,
     TokenProvider,
     Email,
-    MigrationService
   ],
 })
 export class AppModule {}

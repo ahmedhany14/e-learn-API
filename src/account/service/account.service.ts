@@ -35,4 +35,9 @@ export class AccountService {
     account.isActive = !account.isActive;
     return await this.accountRepository.save(account);
   }
+
+  async delete(account: Account) {
+    return await this.accountRepository.delete(account);
+  }
+
 }

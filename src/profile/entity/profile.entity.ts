@@ -59,6 +59,8 @@ export class Profile {
   })
   updated_at: Date;
 
-  @OneToOne(() => Account, (account) => account.profile)
+  @OneToOne(() => Account, (account) => account.profile, {
+    onDelete: 'CASCADE',
+  })
   account: Account;
 }

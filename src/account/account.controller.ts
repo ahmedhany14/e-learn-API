@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   GoneException,
-  Inject,
+  Inject, Logger,
   NotFoundException,
   Post,
 } from '@nestjs/common';
@@ -24,11 +24,13 @@ import { ExtractAccountData } from '../common/decorators/request.extractData.dec
 
 @Controller('account')
 export class AccountController {
+  private readonly logger = new Logger(AccountController.name);
+
   constructor(@Inject() private readonly accountService: AccountService) {}
 
   @Post()
   async create(@Body() createAccountDto: CreateAccountDto) {
-    console.log('createAccountDto', createAccountDto);
+    this.logger.log('createAccountDto', createAccountDto);
     return await this.accountService.create(createAccountDto);
   }
 
@@ -46,7 +48,20 @@ export class AccountController {
       await this.accountService.flipActiveState(account);
       return 'Account de-activated successfully';
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
+      throw err;
+    }
+  }
+
+  @AUTH(AuthEnum.BEARER)
+  @Delete()
+  async delete(@ExtractAccountData('id') id: number) {
+    try {
+      const account = await this.accountService.findById(id);
+      await this.accountService.delete(account);
+      return 'Account deleted successfully';
+    } catch (err) {
+      this.logger.error(err);
       throw err;
     }
   }

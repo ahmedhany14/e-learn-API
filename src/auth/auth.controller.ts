@@ -7,7 +7,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   GoneException,
-  BadRequestException,
+  BadRequestException, Logger,
 } from '@nestjs/common';
 
 // services and providers
@@ -35,6 +35,8 @@ import { AuthEnum } from './enums/auth.enum';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     @Inject() private readonly authService: AuthService,
     @Inject() private readonly tokenProvider: TokenProvider,
@@ -48,7 +50,7 @@ export class AuthController {
   @Post('sign-in')
   @AUTH(AuthEnum.NONE)
   async login(@Body() accountLoginDto: AccountLoginDto) {
-    console.log('accountLoginDto', accountLoginDto);
+    this.logger.log('Login attempt with email: ' + accountLoginDto.email);
     return await this.authService.login(accountLoginDto);
   }
 
@@ -60,7 +62,7 @@ export class AuthController {
         throw new BadRequestException('password does not match');
       const accountDate: CreateAccountInterface = {
         email: accountSignupDto.email,
-        password: accountSignupDto.password,
+        password: await this.hashing.hash(accountSignupDto.password),
       };
 
       const profileDate: CreateProfileInterface = {
@@ -77,11 +79,11 @@ export class AuthController {
       const { accessToken, refreshToken } =
         await this.tokenProvider.generateToken(account);
 
-      await this.email.sendWelcomeEmail(account.email, profile, accessToken);
+      //await this.email.sendWelcomeEmail(account.email, profile, accessToken);
 
       return { accessToken, refreshToken };
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
       throw new InternalServerErrorException('An unexpected error occurred');
     }
   }
@@ -106,7 +108,7 @@ export class AuthController {
   ) {
     try {
       const account = await this.accountService.findById(id);
-      console.log(account);
+      this.logger.log('Forget password attempt with email: ' + account.email);
       if (!account) throw new NotFoundException('Account not found');
       if (!account.isActive) throw new GoneException('Account is not active');
       if (
@@ -131,7 +133,7 @@ export class AuthController {
         refreshToken,
       };
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
       throw err;
     }
   }
@@ -139,6 +141,7 @@ export class AuthController {
   @AUTH(AuthEnum.NONE)
   @Post('refreshToken')
   async refreshToken(@Body() refreshToken: RefreshTokenDto) {
+    this.logger.log('Refresh token attempt');
     return await this.authService.refreshToken(refreshToken);
   }
 

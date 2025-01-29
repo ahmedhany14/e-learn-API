@@ -1,0 +1,39 @@
+### LOGIN
+POST http://localhost:3000/auth/sign-in
+content-type: application/json
+
+{
+  "email": "ah7608867@gmail.com",
+  "password": "12345678"
+}
+
+### FORGET PASSWORD
+POST http://localhost:3000/auth/forget-password
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJhaG1lZDFAZ21pYWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Mzc5NzY0ODcsImV4cCI6MTczNzk4MDA4NywiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.YYgq6DkYvYPEKiEtBDJlgF5DKFXw_OsoJv4UnhYcPTU
+
+{
+    "oldPassword": "12345678",
+    "newPassword": "123456789",
+    "confirmPassword": "123456789"
+}
+
+### REFRESH TOKEN
+POST http://localhost:3000/auth/refreshToken
+content-type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM3ODk3NTAxLCJleHAiOjE3Mzc5ODM1MDEsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.miGgGK2ioj9pCpuWtrfvT2G9DNB53YsHeKaBkD8FghQ"
+}
+
+### SIGN UP
+POST localhost:3000/auth/sign-up
+content-type: application/json
+
+{
+  "email": "ah7608867@gmail.com",
+  "password": "12345678",
+  "confirmPassword": "12345678",
+  "firstName": "ahmed",
+  "lastName": "hany"
+}

@@ -1,6 +1,6 @@
 import {
   Injectable,
-  InternalServerErrorException,
+  InternalServerErrorException, Logger,
 } from '@nestjs/common';
 
 // ORM
@@ -14,6 +14,8 @@ import { CreateProfileInterface } from '../../../profile/interfaces/create.profi
 
 @Injectable()
 export class SignupProvider {
+  private readonly logger = new Logger(SignupProvider.name);
+
   constructor(private readonly dataSource: DataSource) {}
 
   async signup(
@@ -40,7 +42,7 @@ export class SignupProvider {
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      console.log('error', error);
+      this.logger.error('Error creating account and profile', error);
 
       throw new InternalServerErrorException('An unexpected error occurred');
     } finally {

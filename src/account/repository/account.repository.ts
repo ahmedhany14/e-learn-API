@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 
 // Data base and ORM
@@ -18,6 +19,8 @@ import { Hashing } from '../../auth/interfaces/Hashing';
 
 @Injectable()
 export class AccountRepository {
+  private readonly logger = new Logger(AccountRepository.name);
+
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
@@ -64,6 +67,16 @@ export class AccountRepository {
       return await this.accountRepository.save(account);
     } catch (error) {
       throw new InternalServerErrorException('An unexpected error occurred');
+    }
+  }
+
+  async delete(account: Account): Promise<void> {
+    try {
+      await this.accountRepository.remove(account);
+    } catch (error) {
+      throw new InternalServerErrorException('An unexpected error occurred');
+    } finally {
+      this.logger.log(`Account with id ${account.id} has been deleted`);
     }
   }
 }

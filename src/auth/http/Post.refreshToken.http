@@ -1,8 +1,0 @@
-### REFRESH TOKEN
-
-POST http://localhost:3000/auth/refreshToken
-content-type: application/json
-
-{
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM3ODk3NTAxLCJleHAiOjE3Mzc5ODM1MDEsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.miGgGK2ioj9pCpuWtrfvT2G9DNB53YsHeKaBkD8FghQ"
-}

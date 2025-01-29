@@ -3,7 +3,7 @@ import {
   ConflictException,
   GoneException,
   Inject,
-  Injectable,
+  Injectable, Logger,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -18,12 +18,10 @@ import { AccountLoginDto } from '../dto/account.login.dto';
 import { AccountSignupDto } from '../dto/account.signup.dto';
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
 
-// Entities
-import { Account } from '../../account/entity/account.entity';
-import { CreateAccountInterface } from '../../account/interfaces/create.account.interface';
-
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @Inject() private readonly tokenProvider: TokenProvider,
     @Inject() private readonly accountService: AccountService,
@@ -53,21 +51,16 @@ export class AuthService {
         Pick<AccountPayloadInterface, 'id'>
       >(refresh_Token.refreshToken, 'refresh');
 
-      console.log(payload);
+      this.logger.log(`Payload: ${JSON.stringify(payload)}`);
 
       // get an account by id
       const account = await this.accountService.findById(payload.id);
 
       // generate new access token
-
       const { accessToken } = await this.tokenProvider.generateToken(account);
       return { accessToken };
     } catch (error) {
       throw new BadRequestException('something went wrong');
     }
-  }
-
-  async verfiyToken(token: string, type: string) {
-    return await this.tokenProvider.verifyToken(token, type);
   }
 }
