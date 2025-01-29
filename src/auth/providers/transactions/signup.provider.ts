@@ -1,6 +1,7 @@
 import {
   Injectable,
-  InternalServerErrorException, Logger,
+  InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 
 // ORM
@@ -28,15 +29,15 @@ export class SignupProvider {
 
     let savedAccount: Account, savedProfile: Profile;
     try {
-      const newProfile = queryRunner.manager.create(Profile, profile);
-      savedProfile = await queryRunner.manager.save(newProfile);
-
-      const newAccount = queryRunner.manager.create(Account, {
-        ...account,
-        profile: newProfile,
-      });
+      const newAccount = queryRunner.manager.create(Account, account);
 
       savedAccount = await queryRunner.manager.save(newAccount);
+
+      const newProfile = queryRunner.manager.create(Profile, {
+        ...profile,
+        account: savedAccount,
+      });
+      savedProfile = await queryRunner.manager.save(newProfile);
 
       await queryRunner.commitTransaction();
     } catch (error) {
