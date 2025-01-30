@@ -13,6 +13,9 @@ DELETE
 FROM profile
 where id != 0;
 
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = 'profile';
 
 
 DROP TABLE IF EXISTS account;

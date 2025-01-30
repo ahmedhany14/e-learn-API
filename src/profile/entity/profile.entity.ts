@@ -68,6 +68,9 @@ export class Profile {
   onUpdate: 'CASCADE',
   nullable: false,
  })
-  @JoinColumn()
+  @JoinColumn({
+    name: 'accountId',
+    referencedColumnName: 'id',
+  })
   account: Account;
 }

@@ -23,6 +23,7 @@ export class SignupProvider {
     account: CreateAccountInterface,
     profile: CreateProfileInterface,
   ) {
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -30,7 +31,6 @@ export class SignupProvider {
     let savedAccount: Account, savedProfile: Profile;
     try {
       const newAccount = queryRunner.manager.create(Account, account);
-
       savedAccount = await queryRunner.manager.save(newAccount);
 
       const newProfile = queryRunner.manager.create(Profile, {

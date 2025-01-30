@@ -1,8 +1,8 @@
-import { Logger } from '@nestjs/common';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { Logger } from '@nestjs/common';
 
-export class CreateAccount1738114661139 implements MigrationInterface {
-  private readonly logger = new Logger(CreateAccount1738114661139.name);
+export class AccountCreation1738193395273 implements MigrationInterface {
+  private readonly logger = new Logger(AccountCreation1738193395273.name);
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     this.logger.log('Creating account table');
