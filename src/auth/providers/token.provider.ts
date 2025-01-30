@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 // JWT
 import { JwtService } from '@nestjs/jwt';
@@ -65,16 +65,33 @@ export class TokenProvider {
     return { accessToken, refreshToken };
   }
 
-  public async verifyToken<T>(token: string, type: string) {
-    const secret =
-      type === 'access'
-        ? this.jwtConfigurations.secret
-        : this.jwtConfigurations.refreshSecret;
+  public async generateResetToken(account: Account) {
+    return await this.signToken<Partial<AccountPayloadInterface>>(
+      account.id,
+      this.jwtConfigurations.reset_token_secret,
+      this.jwtConfigurations.reset_token_expires_in,
+      {
+        email: account.email,
+      },
+    );
+  }
 
-    return (await this.jwtService.verifyAsync(token, {
-      secret,
-      audience: this.jwtConfigurations.tokenAudience,
-      issuer: this.jwtConfigurations.tokenIssuer,
-    })) as T;
+  public async verifyToken<T>(token: string, type: string) {
+    let secret: string;
+    if (type === 'reset') secret = this.jwtConfigurations.reset_token_secret;
+    else if (type === 'access') secret = this.jwtConfigurations.secret;
+    else secret = this.jwtConfigurations.refreshSecret;
+    try {
+      return (await this.jwtService.verifyAsync(token, {
+        secret,
+        audience: this.jwtConfigurations.tokenAudience,
+        issuer: this.jwtConfigurations.tokenIssuer,
+      })) as T;
+    } catch (e) {
+      throw new UnauthorizedException({
+        message: 'Invalid token',
+        details: e.message,
+      })
+    }
   }
 }

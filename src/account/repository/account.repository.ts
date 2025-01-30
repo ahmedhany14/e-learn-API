@@ -47,7 +47,10 @@ export class AccountRepository {
         select: ['id', 'email', 'password', 'role', 'isActive'],
       });
     } catch (err) {
-      throw new InternalServerErrorException('An unexpected error occurred');
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: err.message,
+      });
     }
   }
 
@@ -58,7 +61,10 @@ export class AccountRepository {
         select: ['id', 'email', 'password', 'role', 'isActive'],
       });
     } catch (error) {
-      throw new InternalServerErrorException('An unexpected error occurred');
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
     }
   }
 
@@ -66,7 +72,10 @@ export class AccountRepository {
     try {
       return await this.accountRepository.save(account);
     } catch (error) {
-      throw new InternalServerErrorException('An unexpected error occurred');
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
     }
   }
 
@@ -74,7 +83,10 @@ export class AccountRepository {
     try {
       await this.accountRepository.remove(account);
     } catch (error) {
-      throw new InternalServerErrorException('An unexpected error occurred');
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
     } finally {
       this.logger.log(`Account with id ${account.id} has been deleted`);
     }

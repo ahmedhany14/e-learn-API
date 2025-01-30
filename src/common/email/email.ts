@@ -73,4 +73,61 @@ export class Email {
         this.logger.error(`Error sending email to ${email}: ${error}`);
       });
   }
+
+  async sendResetPasswordEmail(email: string, token: string) {
+    this.logger.log(`Sending reset password email to ${email}`);
+
+    await this.mailerService
+      .sendMail({
+        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        to: email,
+        subject: 'Reset your password',
+        template: './reset-password',
+        context: {
+          email: email,
+          resetUrl: `http://localhost:3000/auth/reset-password?token=${token}`,
+        },
+        text: `
+            Hello,
+            
+            You've requested to reset your password. Click the link below to reset it:
+            http://localhost:3000/auth/reset-password?token=${token}
+            
+            Best regards,
+            The Team
+      `,
+        html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h1 style="color: #4CAF50;">Hello!</h1>
+                <p>You've requested to reset your password. Click the button below to reset it:</p>
+                
+                <div style="margin: 20px 0; text-align: center;">
+                  <a 
+                    href="http://localhost:3000/auth/reset-password/${token}"
+                    style="
+                      background-color: #4CAF50;
+                      color: white;
+                      text-decoration: none;
+                      padding: 10px 20px;
+                      font-size: 16px;
+                      border-radius: 5px;
+                      display: inline-block;
+                      font-weight: bold;
+                    ">
+                    Reset My Password
+                  </a>
+                </div>
+                
+                <p style="font-size: 12px; color: #777;">If you didn't request this, you can safely ignore this email.</p>
+                <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
+              </div>
+        `,
+      })
+      .then(() => {
+        this.logger.log(`Email sent to ${email}`);
+      })
+      .catch((error) => {
+        this.logger.error(`Error sending email to ${email}: ${error}`);
+      });
+  }
 }

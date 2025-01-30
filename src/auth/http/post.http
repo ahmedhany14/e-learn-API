@@ -4,7 +4,7 @@ content-type: application/json
 
 {
   "email": "ah7608867@gmail.com",
-  "password": "12345678"
+  "password": "1234567890"
 }
 
 ### FORGET PASSWORD
@@ -36,4 +36,21 @@ content-type: application/json
   "confirmPassword": "12345678",
   "firstName": "ahmed",
   "lastName": "hany"
+}
+
+### FORGET PASSWORD
+POST http://localhost:3000/auth/forgot-password
+content-type: application/json
+
+{
+  "email": "ah7608867@gmail.com"
+}
+
+### RESET PASSWORD WITH TOKEN
+POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaDc2MDg4NjdAZ21haWwuY29tIiwiaWF0IjoxNzM4MjU2MDcwLCJleHAiOjE3MzgyNTYzNzAsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.ggfPKuHXgVV9rHnQHv0b78YYN6VzSfqmBS4T4Lgx4Rg
+content-type: application/json
+
+{
+  "password": "1234567890",
+  "confirmPassword": "1234567890"
 }

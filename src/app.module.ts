@@ -44,6 +44,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 
+// Redis
+import Redis from 'ioredis';
 
 const env = process.env.NODE_ENV;
 
@@ -115,19 +117,31 @@ const env = process.env.NODE_ENV;
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
-    
+
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
 
+    // redis
+    {
+      provide: 'REDIS_CLIENT',
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return new Redis({
+          host: configService.get('redis.host'),
+          port: configService.get('redis.port'),
+          password: configService.get('redis.password'),
+        });
+      },
+    },
   ],
+
+  exports: ['REDIS_CLIENT'],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware, RateLimiterMiddleware)
-      .forRoutes('*');
+    consumer.apply(LoggerMiddleware, RateLimiterMiddleware).forRoutes('*');
     //consumer.apply(LoggerMiddleware).forRoutes('auth'); // for specific route
   }
 }
