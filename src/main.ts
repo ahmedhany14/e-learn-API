@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { StartTimeMiddleware } from './common/middleware/start.time.middleware';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +17,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.use(new StartTimeMiddleware().use);
 
   app.enableCors({
     // origin: '*',

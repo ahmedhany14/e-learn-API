@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -21,7 +21,7 @@ import { AccountModule } from './account/account.module';
 import { JwtModule } from '@nestjs/jwt';
 
 // Guards
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { AccessTokenGuard } from './auth/guards/access_token.guard';
 import { PermissionGuard } from './auth/guards/permission.guard';
@@ -35,6 +35,14 @@ import { MigrationService } from './db/migrations.service';
 import { ProfileModule } from './profile/profile.module';
 import { EmailModule } from './common/email/email.module';
 import { DbModule } from './db/db.module';
+
+// Interceptors
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+
+// Middleware
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+
 
 const env = process.env.NODE_ENV;
 
@@ -86,6 +94,12 @@ const env = process.env.NODE_ENV;
   controllers: [AppController],
   providers: [
     AppService,
+    AccessTokenGuard,
+    TokenProvider,
+    Email,
+    // MigrationService,
+
+    // Guards
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
@@ -94,10 +108,24 @@ const env = process.env.NODE_ENV;
       provide: APP_GUARD,
       useClass: PermissionGuard,
     },
-    AccessTokenGuard,
-    TokenProvider,
-    Email,
-    // MigrationService,
+
+    // Interceptors
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('*');
+  }
+}
