@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -12,18 +13,42 @@ import { DataSource } from 'typeorm';
 // interfaces and dto
 import { CreateAccountInterface } from '../../../account/interfaces/create.account.interface';
 import { CreateProfileInterface } from '../../../profile/interfaces/create.profile.interface';
+import { AccountSignupDto } from '../../dto/account.signup.dto';
+// providers
+import { Hashing } from '../../interfaces/Hashing';
 
 @Injectable()
 export class SignupProvider {
   private readonly logger = new Logger(SignupProvider.name);
 
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    @Inject() private readonly hashing: Hashing,
+
+  ) { }
+
+
+  private async fixDate(accountSignupDto: AccountSignupDto) {
+    const accountDate: CreateAccountInterface = {
+      email: accountSignupDto.email,
+      password: await this.hashing.hash(accountSignupDto.password),
+    };
+
+    const profileDate: CreateProfileInterface = {
+      firstName: accountSignupDto.firstName,
+      lastName: accountSignupDto.lastName,
+      bio: accountSignupDto.bio,
+      phone_number: accountSignupDto.phone_number,
+    };
+
+    return { account: accountDate, profile: profileDate };
+  }
 
   async signup(
-    account: CreateAccountInterface,
-    profile: CreateProfileInterface,
+    accountSignupDto: AccountSignupDto,
   ) {
 
+    const { account, profile } = await this.fixDate(accountSignupDto);
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
