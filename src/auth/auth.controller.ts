@@ -59,22 +59,13 @@ export class AuthController {
   async signUp(@Body() accountSignupDto: AccountSignupDto) {
     try {
       if (accountSignupDto.password !== accountSignupDto.confirmPassword)
-        throw new BadRequestException('password does not match');
-      const accountDate: CreateAccountInterface = {
-        email: accountSignupDto.email,
-        password: await this.hashing.hash(accountSignupDto.password),
-      };
-
-      const profileDate: CreateProfileInterface = {
-        firstName: accountSignupDto.firstName,
-        lastName: accountSignupDto.lastName,
-        bio: accountSignupDto.bio,
-        phone_number: accountSignupDto.phone_number,
-      };
+        throw new BadRequestException({
+          message: 'Passwords do not match',
+          details: 'Password and confirm password must be the same',
+        });
 
       const { account, profile } = await this.signupProvider.signup(
-        accountDate,
-        profileDate,
+        accountSignupDto
       );
       const { accessToken, refreshToken } =
         await this.tokenProvider.generateToken(account);
@@ -101,7 +92,7 @@ export class AuthController {
 
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
-  @Post('forget-password')
+  @Post('reset-password')
   async forgotPassword(
     @Body() resetPasswordDto: AccountResetPasswordDto,
     @ExtractAccountData('id') id: number,
@@ -109,8 +100,21 @@ export class AuthController {
     try {
       const account = await this.accountService.findById(id);
       this.logger.log('Forget password attempt with email: ' + account.email);
-      if (!account) throw new NotFoundException('Account not found');
-      if (!account.isActive) throw new GoneException('Account is not active');
+
+      if (!account) {
+        throw new NotFoundException({
+          message: 'reset password failed',
+          details: 'Account with provided id not found',
+        });
+      }
+
+      if (!account.isActive) {
+        throw new GoneException({
+          message: 'reset password failed',
+          details: 'Account is not active',
+        });
+      }
+
       if (
         !(await this.hashing.compare(
           resetPasswordDto.oldPassword,
@@ -118,15 +122,21 @@ export class AuthController {
         )) ||
         resetPasswordDto.confirmPassword !== resetPasswordDto.newPassword
       )
-        throw new BadRequestException('Invalid password');
+        throw new BadRequestException({
+          message: 'reset password failed',
+          details: 'Old password is incorrect or new passwords do not match',
+        });
 
       const newAccount = await this.accountService.updatePassword(
         account,
         await this.hashing.hash(resetPasswordDto.newPassword),
       );
+
       const { accessToken, refreshToken } =
         await this.tokenProvider.generateToken(newAccount);
+
       newAccount.password = undefined;
+
       return {
         newAccount,
         accessToken,
