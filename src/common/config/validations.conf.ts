@@ -30,4 +30,13 @@ export default Joi.object({
   MAILER_PORT: Joi.number().port().required(),
   MAILER_USER: Joi.string().required(),
   MAILER_PASSWORD: Joi.string().required(),
+
+  // reset token configurations validation
+  RESET_TOKEN_EXPIRES_IN: Joi.number().required().default(300),
+  RESET_TOKEN_SECRET: Joi.string().required(),
+
+  // redis configurations validation
+  REDIS_HOST: Joi.string().required(),
+  REDIS_PORT: Joi.number().required(),
+  REDIS_PW: Joi.string().required(),
 });
