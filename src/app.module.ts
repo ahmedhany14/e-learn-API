@@ -42,6 +42,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 
 
 const env = process.env.NODE_ENV;
@@ -125,7 +126,8 @@ const env = process.env.NODE_ENV;
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(LoggerMiddleware)
+      .apply(LoggerMiddleware, RateLimiterMiddleware)
       .forRoutes('*');
+    //consumer.apply(LoggerMiddleware).forRoutes('auth'); // for specific route
   }
 }
