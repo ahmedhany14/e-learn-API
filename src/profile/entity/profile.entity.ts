@@ -9,7 +9,7 @@ import {
 import { Account } from '../../account/entity/account.entity';
 
 @Entity()
-@Check(`"phone_number" SIMILAR TO '^[0-9]{10,16}$'`) // will validate phone number, it should be between 10 and 16 digits
+//@Check(`"phone_number" SIMILAR TO '^[0-9]{10,16}$'`) // will validate phone number, it should be between 10 and 16 digits
 @Unique(['account']) // add unique constraint to the phone_number column
 export class Profile {
   @PrimaryGeneratedColumn()

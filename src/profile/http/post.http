@@ -1,0 +1,12 @@
+### UPDATE PROFILE
+
+POST http://localhost:3000/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhaDc2MDg4NjdAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MzgyODc5NjgsImV4cCI6MTczODI5MTU2OCwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.EGHhjDoUad15sdaur39V0evr_6pQp7ZMGFzhac8Dm6c
+content-type: application/json
+
+{
+  "firstName": "Not",
+  "lastName": "hany",
+  "bio": "I not am a software engineer",
+  "phone_number": "1234567890"
+}
