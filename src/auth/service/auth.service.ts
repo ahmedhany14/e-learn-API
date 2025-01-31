@@ -39,18 +39,11 @@ export class AuthService {
     @Inject() private readonly redisService: AuthRedisService,
     @Inject() private readonly configService: ConfigService,
     @Inject() private readonly signupProvider: SignupProvider,
-  ) {}
+  ) { }
 
   async signUp(accountSignupDto: AccountSignupDto) {
     this.logger.log('sign up attempt');
-
     try {
-      if (accountSignupDto.password !== accountSignupDto.confirmPassword)
-        throw new BadRequestException({
-          message: 'Passwords do not match',
-          details: 'Password and confirm password must be the same',
-        });
-
       const { account, profile } =
         await this.signupProvider.signup(accountSignupDto);
       const { accessToken, refreshToken } =
@@ -125,8 +118,7 @@ export class AuthService {
         !(await this.hashing.compare(
           resetPasswordDto.oldPassword,
           account.password,
-        )) ||
-        resetPasswordDto.confirmPassword !== resetPasswordDto.newPassword
+        ))
       )
         throw new BadRequestException({
           message: 'reset password failed',

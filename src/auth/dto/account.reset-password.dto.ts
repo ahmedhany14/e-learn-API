@@ -3,7 +3,9 @@ import {
   IsString,
   MaxLength,
   MinLength,
+  Validate
 } from 'class-validator';
+import { IsPasswordMatching } from 'src/common/decorators/password.validation.decotator';
 
 export class AccountResetPasswordDto {
   @IsNotEmpty()
@@ -22,5 +24,6 @@ export class AccountResetPasswordDto {
   @IsString()
   @MinLength(8)
   @MaxLength(124)
+  @Validate(IsPasswordMatching)
   confirmPassword: string;
 }

@@ -5,7 +5,10 @@ import {
   MaxLength,
   IsEmail,
   IsOptional, Matches,
+  Validate,
 } from 'class-validator';
+
+import { IsPasswordMatching } from '../../common/decorators/password.validation.decotator';
 
 export class AccountSignupDto {
   @IsNotEmpty()
@@ -24,6 +27,7 @@ export class AccountSignupDto {
   @IsString()
   @MinLength(8)
   @MaxLength(124)
+  @Validate(IsPasswordMatching)
   confirmPassword: string;
 
   @IsNotEmpty()

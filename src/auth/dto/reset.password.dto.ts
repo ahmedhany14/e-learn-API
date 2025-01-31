@@ -10,17 +10,8 @@ import {
   Validate,
 } from 'class-validator';
 
-@ValidatorConstraint({ name: 'isPasswordMatching', async: false })
-export class IsPasswordMatching implements ValidatorConstraintInterface {
-  validate(confirmPassword: string, args: ValidationArguments) {
-    const object = args.object as any;
-    return confirmPassword === object.password; // Compare confirmPassword with password
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return 'Passwords do not match'; // Custom error message
-  }
-}
+// decorator
+import { IsPasswordMatching } from '../../common/decorators/password.validation.decotator';
 
 export class ResetPasswordDto {
   @IsString()
