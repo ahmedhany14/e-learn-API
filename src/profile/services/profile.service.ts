@@ -1,32 +1,34 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from '../entity/profile.entity';
+import { ProfileRepository } from '../repository/profile.repo';
+import { UpdateProfileDto } from '../dtos/update.profile.dto';
 
 @Injectable()
 export class ProfileService {
+  private readonly logger = new Logger(ProfileService.name);
+
   constructor(
-    @InjectRepository(Profile)
-    private profileRepository: Repository<Profile>,
+    @Inject()
+    private profileRepository: ProfileRepository,
   ) {}
 
   async findById(id: number): Promise<Profile> {
-    try {
-      return await this.profileRepository.findOne({
-        where: { id },
-        select: [
-          'id',
-          'firstName',
-          'lastName',
-          'bio',
-          'phone_number',
-          'created_at'
-        ],
-        relations: ['account'],
+    return await this.profileRepository.findById(id);
+  }
+
+  async updateProfile(
+    accountId: number,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
+    let profile = await this.profileRepository.findByAccountId(accountId);
+    if (!profile) {
+      throw new NotFoundException({
+        message: 'Profile not found',
+        details: 'Profile not found for the provided account',
       });
-    } catch (error) {
-      throw new InternalServerErrorException('An unexpected error occurred');
     }
+    Object.assign(profile, updateProfileDto);
+    return await this.profileRepository.updateProfile(profile);
   }
 }
