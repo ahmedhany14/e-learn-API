@@ -8,6 +8,7 @@ import {
 
 import { Profile } from '../../profile/entity/profile.entity';
 import { Order } from '../../admin/entity/order.entity';
+import { Instructor } from '../../instructor/entity/instructor.entity';
 
 @Entity()
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
@@ -76,4 +77,7 @@ export class Account {
 
   @OneToOne(() => Order, (order) => order.account, { lazy: true })
   backlog: Order;
+
+  @OneToOne(() => Instructor, (instructor) => instructor.account, { lazy: true })
+  instructor: Instructor;
 }
