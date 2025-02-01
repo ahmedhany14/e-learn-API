@@ -7,12 +7,14 @@ import { AdminService } from './sevices/admin.service';
 // entity and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entity/order.entity';
+import { OrderBacklog } from './entity/order.backlog.entity';
+import { ApproveTransaction } from './providers/approve.transaction';
 
 @Module({
   controllers: [AdminController],
-  providers: [AdminService],
+  providers: [AdminService, ApproveTransaction],
   imports: [
-    TypeOrmModule.forFeature([Order]),
+    TypeOrmModule.forFeature([Order, OrderBacklog]),
   ],
   exports: [AdminService],
 })

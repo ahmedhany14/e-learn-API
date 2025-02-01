@@ -34,9 +34,14 @@ import { AuthEnum } from './enums/auth.enum';
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(
-    @Inject() private readonly authService: AuthService,
-  ) {}
+  constructor(@Inject() private readonly authService: AuthService) {}
+
+  @Post('create-admin')
+  async createAdmin(@Body() createAdminDto: any) {
+    this.logger.log('create admin attempt');
+
+    return await this.authService.createAdmin(createAdminDto);
+  }
 
   @Post('sign-in')
   @AUTH(AuthEnum.NONE)

@@ -3,9 +3,20 @@ POST http://localhost:3000/auth/sign-in
 content-type: application/json
 
 {
-  "email": "ah7608867@gmail.com",
-  "password": "1234567890"
+  "email": "ahmed.admin@gmail.com",
+  "password": "00000000"
 }
+
+### CREATE ADMIN
+POST http://localhost:3000/auth/create-admin
+content-type: application/json
+
+{
+  "email": "ahmed.admin@gmail.com",
+  "password": "00000000",
+  "role": "admin"
+}
+
 
 ### FORGET PASSWORD
 POST http://localhost:3000/auth/reset-password

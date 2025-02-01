@@ -1,4 +1,13 @@
-import { Controller, Delete, Get, Inject, Logger, Param } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Logger,
+  Param,
+  Patch,
+  Query,
+} from '@nestjs/common';
 
 //decorators and enums
 import { AUTH } from '../auth/decorators/auth.decorator';
@@ -21,11 +30,17 @@ export class AdminController {
     private readonly adminService: AdminService,
   ) {}
 
-  @Get('')
+  @Get('orders')
   async getRequests() {
     this.logger.log(`Get all requests`);
 
     return await this.adminService.findAll();
+  }
+
+  @Get('backlog')
+  async getBacklog(@Query('state') state: string) {
+
+    return await this.adminService.findAllBacklog(state);
   }
 
   @Get(':orderId')
@@ -35,14 +50,19 @@ export class AdminController {
     return await this.adminService.findOne(orderId);
   }
 
-  @Get('approve/:orderId')
-  async approve(@Param('orderId') orderId: number) {
+  @Patch('approve/:orderId')
+  async approve(
+    @Param('orderId') orderId: number,
+    @ExtractAccountData('id') id: number,
+  ) {
     this.logger.log(`Approve order with id: ${orderId}`);
 
-    return await this.adminService.approveOrder(orderId);
+    await this.adminService.approveOrder(orderId, id);
+
+    return { message: `Order with id: ${orderId} has been approved` };
   }
 
-  @Delete('reject/:orderId')
+  @Patch('reject/:orderId')
   async reject(@Param('orderId') orderId: number) {
     this.logger.log(`Reject order with id: ${orderId}`);
 

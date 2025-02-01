@@ -39,7 +39,12 @@ export class AuthService {
     @Inject() private readonly redisService: AuthRedisService,
     @Inject() private readonly configService: ConfigService,
     @Inject() private readonly signupProvider: SignupProvider,
-  ) { }
+  ) {}
+
+  async createAdmin(admin: any) {
+    admin.password = await this.hashing.hash(admin.password);
+    return await this.accountService.createAdmin(admin);
+  }
 
   async signUp(accountSignupDto: AccountSignupDto) {
     this.logger.log('sign up attempt');

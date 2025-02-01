@@ -7,6 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
+import { OrderBacklog } from './order.backlog.entity';
 
 @Entity()
 @Unique(['nationalId', 'PaymentInfo', 'account'])
@@ -55,6 +56,7 @@ export class Order {
   isApproved: boolean;
 
   @OneToOne(() => Account, (account) => account.order, {
+    eager: true,
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -62,4 +64,7 @@ export class Order {
   })
   @JoinColumn()
   account: Account;
+
+  @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.order, {})
+  backlog: OrderBacklog;
 }

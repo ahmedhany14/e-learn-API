@@ -1,23 +1,71 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException, Logger,
+} from '@nestjs/common';
 
 // repo , entity and orm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../entity/order.entity';
-import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
 import { Account } from '../../account/entity/account.entity';
+
+// dto
+import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
+
+// providers
+import { ApproveTransaction } from '../providers/approve.transaction';
+import { OrderBacklog } from '../entity/order.backlog.entity';
 
 @Injectable()
 export class AdminService {
+  private readonly logger = new Logger(AdminService.name);
+
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    @InjectRepository(OrderBacklog)
+    private readonly orderBacklogRepository: Repository<OrderBacklog>,
+    @Inject()
+    private readonly approveTransaction: ApproveTransaction,
   ) {}
 
   async findAll(): Promise<Order[]> {
     try {
-      return this.orderRepository.find();
+      return await this.orderRepository.find();
     } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while fetching orders',
+      });
+    }
+  }
+
+  async findAllBacklog(state: string): Promise<OrderBacklog[]> {
+    try {
+      return await this.orderBacklogRepository.find({
+        where: { state: state },
+        relations: {
+          order: true,
+          account: true,
+        },
+        select: {
+          order: {
+            PaymentInfo: true,
+            stripeInfo: true,
+            isApproved: true,
+            account: {
+              email: true,
+              role: true,
+            },
+          },
+          account: {
+            email: true,
+            role: true,
+          },
+        },
+      });
+    } catch (error) {
+      this.logger.log(error)
       throw new InternalServerErrorException({
         message: 'Error while fetching orders',
       });
@@ -26,8 +74,9 @@ export class AdminService {
 
   async findOne(id: number): Promise<Order> {
     try {
-      return this.orderRepository.findOne({
+      return await this.orderRepository.findOne({
         where: { id },
+        relations: ['account'],
       });
     } catch (error) {
       throw new InternalServerErrorException({
@@ -36,10 +85,7 @@ export class AdminService {
     }
   }
 
-  async createOrder(
-    order: UpgradeToInstructorDto,
-    account: Account,
-  ) {
+  async createOrder(order: UpgradeToInstructorDto, account: Account) {
     try {
       const newOrder = this.orderRepository.create({
         ...order,
@@ -55,11 +101,9 @@ export class AdminService {
     }
   }
 
-  async approveOrder(id: number): Promise<Order> {
+  async approveOrder(orderId: number, adminId: number) {
     try {
-      const order = await this.findOne(id);
-      order.isApproved = true;
-      return this.orderRepository.save(order);
+      await this.approveTransaction.approveOrder(orderId, adminId);
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while approving order',

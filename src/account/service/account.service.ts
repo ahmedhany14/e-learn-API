@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 
 // Service
 import { AdminService } from '../../admin/sevices/admin.service';
@@ -19,6 +19,14 @@ export class AccountService {
     private readonly adminService: AdminService,
   ) {}
 
+
+  async createAdmin(admin: any) {
+    try {
+      return await this.accountRepository.createAdmin(admin);
+    } catch (err) {
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
+  }
   async create(createAccountDto: CreateAccountDto) {
     return await this.accountRepository.create(createAccountDto);
   }
