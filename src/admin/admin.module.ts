@@ -14,5 +14,6 @@ import { Order } from './entity/order.entity';
   imports: [
     TypeOrmModule.forFeature([Order]),
   ],
+  exports: [AdminService],
 })
 export class AdminModule {}

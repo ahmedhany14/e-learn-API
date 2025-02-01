@@ -1,7 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { AccountController } from './account.controller';
 
+// Module
+import { AdminModule } from '../admin/admin.module';
+import { EmailModule } from '../common/email/email.module';
 // Repository and Service
+
 import { AccountService } from './service/account.service';
 import { AccountRepository } from './repository/account.repository';
 import { AuthModule } from '../auth/auth.module';
@@ -17,6 +21,8 @@ import { Account } from './entity/account.entity';
   imports: [
     TypeOrmModule.forFeature([Account]),
     forwardRef(() => AuthModule),
+    AdminModule,
+    EmailModule
   ],
 })
 export class AccountModule {}

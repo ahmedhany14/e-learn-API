@@ -1,17 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+// Service
+import { AdminService } from '../../admin/sevices/admin.service';
+
 // Repository
 import { AccountRepository } from '../repository/account.repository';
+import { Account } from '../entity/account.entity';
 
 // DTO
 import { CreateAccountDto } from '../dtos/create-account.dto';
-import { Account } from '../entity/account.entity';
+import { UpgradeToInstructorDto } from '../dtos/upgrade.to.instructor.dto';
 
 @Injectable()
 export class AccountService {
   constructor(
     @Inject()
     private readonly accountRepository: AccountRepository,
+    private readonly adminService: AdminService,
   ) {}
 
   async create(createAccountDto: CreateAccountDto) {
@@ -40,4 +45,17 @@ export class AccountService {
     return await this.accountRepository.delete(account);
   }
 
+  async upgradeToInstructor(
+    accountId: number,
+    upgradeToInstructorDto: UpgradeToInstructorDto,
+  ) {
+    const account = await this.accountRepository.findById(accountId);
+
+    const order = this.adminService.createOrder(
+      upgradeToInstructorDto,
+      account,
+    );
+
+    return order;
+  }
 }

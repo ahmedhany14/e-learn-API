@@ -72,5 +72,5 @@ export class Account {
   profile: Profile;
 
   @OneToOne(() => Order, (order) => order.account, { lazy: true })
-  order: Promise<Order>;
+  order: Order;
 }

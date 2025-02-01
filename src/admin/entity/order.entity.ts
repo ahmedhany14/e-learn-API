@@ -31,6 +31,14 @@ export class Order {
   nationalId: string;
 
   @Column({
+    type: 'varchar',
+    length: 64,
+    nullable: false,
+    comment: 'Stripe Payment Information',
+  })
+  stripeInfo: string;
+
+  @Column({
     type: 'timestamp with time zone',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
@@ -53,5 +61,5 @@ export class Order {
     nullable: false,
   })
   @JoinColumn()
-  account: Promise<Account>;
+  account: Account;
 }

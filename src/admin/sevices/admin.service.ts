@@ -4,6 +4,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../entity/order.entity';
+import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
+import { Account } from '../../account/entity/account.entity';
 
 @Injectable()
 export class AdminService {
@@ -34,10 +36,19 @@ export class AdminService {
     }
   }
 
-  async create(order: Order): Promise<Order> {
+  async createOrder(
+    order: UpgradeToInstructorDto,
+    account: Account,
+  ) {
     try {
-      return this.orderRepository.save(order);
-    }catch (error) {
+      const newOrder = this.orderRepository.create({
+        ...order,
+        isApproved: false,
+        account: account,
+      });
+
+      return await this.orderRepository.save(newOrder);
+    } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while creating order',
       });
