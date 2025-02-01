@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { Profile } from '../../profile/entity/profile.entity';
+import { Order } from '../../admin/entity/order.entity';
 
 @Entity()
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
@@ -69,4 +70,7 @@ export class Account {
 
   @OneToOne(() => Profile, (profile) => profile.account)
   profile: Profile;
+
+  @OneToOne(() => Order, (order) => order.account, { lazy: true })
+  order: Order;
 }

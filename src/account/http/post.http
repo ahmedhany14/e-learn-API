@@ -11,3 +11,16 @@ content-type: application/json
   "createdAt": "2021-09-01T00:00:00.000Z",
   "updatedAt": "2021-09-01T00:00:00.000Z"
 }
+
+### SEN UPGRAGE TO INSTRUCTOR REQUEST
+POST  http://localhost:3000/account/upgrade-to-instructor
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaDc2MDg4NjdAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Mzg0Mjg0OTcsImV4cCI6MTczODQzMjA5NywiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.MvMZKue1i8lgl_yevUZ5u1lPykIrdzOtZOUP2QX1TBo
+content-type: application/json
+
+{
+  "PaymentInfo": "5500000000000004",
+  "nationalId":"12345678901234",
+  "stripeInfo": "acct_1JQ3A4GvL5T6YZ78"
+}
+
+
