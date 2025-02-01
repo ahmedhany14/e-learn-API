@@ -1,7 +1,8 @@
 import {
   Inject,
   Injectable,
-  InternalServerErrorException, Logger,
+  InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 
 // repo , entity and orm
@@ -16,6 +17,7 @@ import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor
 // providers
 import { ApproveTransaction } from '../providers/approve.transaction';
 import { OrderBacklog } from '../entity/order.backlog.entity';
+import { RejectTransaction } from '../providers/reject.transaction';
 
 @Injectable()
 export class AdminService {
@@ -28,11 +30,15 @@ export class AdminService {
     private readonly orderBacklogRepository: Repository<OrderBacklog>,
     @Inject()
     private readonly approveTransaction: ApproveTransaction,
+    @Inject()
+    private readonly rejectTransaction: RejectTransaction,
   ) {}
 
-  async findAll(): Promise<Order[]> {
+  async findAll(statues:string): Promise<Order[]> {
     try {
-      return await this.orderRepository.find();
+      return await this.orderRepository.find({
+        where: { statues: statues },
+      });
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while fetching orders',
@@ -65,7 +71,7 @@ export class AdminService {
         },
       });
     } catch (error) {
-      this.logger.log(error)
+      this.logger.log(error);
       throw new InternalServerErrorException({
         message: 'Error while fetching orders',
       });
@@ -108,10 +114,31 @@ export class AdminService {
         relations: ['account'],
       });
 
-      await this.approveTransaction.approveOrder(orderId, adminId, order.account.id);
+      await this.approveTransaction.approveOrder(
+        orderId,
+        adminId,
+        order.account.id,
+      );
+      return order.account.email;
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while approving order',
+      });
+    }
+  }
+
+  async rejectOrder(orderId: number, adminId: number) {
+    try {
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+        relations: ['account'],
+      });
+
+      await this.rejectTransaction.rejectOrder(orderId, adminId);
+      return order.account.email;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while rejecting order',
       });
     }
   }

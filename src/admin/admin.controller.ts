@@ -18,6 +18,7 @@ import { ExtractAccountData } from '../common/decorators/request.extractData.dec
 
 //services
 import { AdminService } from './sevices/admin.service';
+import { Email } from '../common/email/email';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
@@ -28,18 +29,19 @@ export class AdminController {
   constructor(
     @Inject()
     private readonly adminService: AdminService,
+    @Inject()
+    private readonly email: Email,
   ) {}
 
   @Get('orders')
-  async getRequests() {
+  async getRequests(@Query('statues') statues: string) {
     this.logger.log(`Get all requests`);
 
-    return await this.adminService.findAll();
+    return await this.adminService.findAll(statues);
   }
 
   @Get('backlog')
   async getBacklog(@Query('state') state: string) {
-
     return await this.adminService.findAllBacklog(state);
   }
 
@@ -57,14 +59,22 @@ export class AdminController {
   ) {
     this.logger.log(`Approve order with id: ${orderId}`);
 
-    await this.adminService.approveOrder(orderId, id);
+    const email = await this.adminService.approveOrder(orderId, id);
 
+    await this.email.sendApprovedEmail(orderId, email);
     return { message: `Order with id: ${orderId} has been approved` };
   }
 
   @Patch('reject/:orderId')
-  async reject(@Param('orderId') orderId: number) {
+  async reject(
+    @Param('orderId') orderId: number,
+    @ExtractAccountData('id') id: number,
+  ) {
     this.logger.log(`Reject order with id: ${orderId}`);
+
+    const email = await this.adminService.rejectOrder(orderId, id);
+
+    await this.email.sendRejectedEmail(orderId, email);
 
     return await this.adminService.delete(orderId);
   }

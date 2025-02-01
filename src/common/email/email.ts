@@ -170,4 +170,82 @@ export class Email {
       });
   }
 
+
+  async sendApprovedEmail(orderId: number, email: string) {
+    this.logger.log(`Sending approved email for order ${orderId}`);
+
+    await this.mailerService
+      .sendMail({
+        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        to: email,
+        subject: 'Order Approved',
+        template: './order-approved',
+        context: {
+          email: email,
+          orderId: orderId,
+        },
+        text: `
+            Hello,
+            
+            Your order has been approved. Your order ID is: ${orderId}.
+            
+            Best regards,
+            The Team
+      `,
+        html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h1 style="color: #4CAF50;">Hello!</h1>
+                <p>Your order has been approved. Your order ID is: ${orderId}.</p>
+                
+                <p style="font-size: 12px; color: #777;">If you face any issues, feel free to contact our support team.</p>
+                <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
+              </div>
+        `,
+      })
+      .then(() => {
+        this.logger.log(`Email sent to ${email}`);
+      })
+      .catch((error) => {
+        this.logger.error(`Error sending email to ${email}: ${error}`);
+      });
+  }
+
+  async sendRejectedEmail(orderId: number, email: string) {
+    this.logger.log(`Sending rejected email for order ${orderId}`);
+
+    await this.mailerService
+      .sendMail({
+        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        to: email,
+        subject: 'Order Rejected',
+        template: './order-rejected',
+        context: {
+          email: email,
+          orderId: orderId,
+        },
+        text: `
+            Hello,
+            
+            Your order has been rejected. Your order ID is: ${orderId}.
+            
+            Best regards,
+            The Team
+      `,
+        html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h1 style="color: #4CAF50;">Hello!</h1>
+                <p>Your order has been rejected. Your order ID is: ${orderId}.</p>
+                
+                <p style="font-size: 12px; color: #777;">If you face any issues, feel free to contact our support team.</p>
+                <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
+              </div>
+        `,
+      })
+      .then(() => {
+        this.logger.log(`Email sent to ${email}`);
+      })
+      .catch((error) => {
+        this.logger.error(`Error sending email to ${email}: ${error}`);
+      });
+  }
 }

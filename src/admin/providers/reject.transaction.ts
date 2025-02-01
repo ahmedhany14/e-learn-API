@@ -2,31 +2,24 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class ApproveTransaction {
+export class RejectTransaction {
   constructor(private readonly dataSource: DataSource) {}
 
-  async approveOrder(orderId: number, adminId: number, userAccountId: number) {
+  async rejectOrder(orderId: number, adminId: number) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      // edit order as approved
       await queryRunner.manager.update('order', orderId, {
-        isApproved: true,
-        state: 'approved',
+        isApproved: false,
+        state: 'rejected',
       });
 
-      // push to order backlog as approved with order id and account id (admin)
       await queryRunner.manager.insert('order_backlog', {
-        state: 'approved',
+        state: 'rejected',
         order: orderId,
         account: adminId,
       });
-
-      await queryRunner.manager.update('account', userAccountId, {
-        role: 'instructor',
-      });
-
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

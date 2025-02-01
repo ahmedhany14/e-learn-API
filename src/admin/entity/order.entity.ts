@@ -55,6 +55,15 @@ export class Order {
   })
   isApproved: boolean;
 
+  @Column({
+    type: 'varchar',
+    length: 64,
+    enum: ['pending', 'approved', 'rejected'],
+    nullable: false,
+    comment: 'Order statues',
+  })
+  statues: string;
+
   @OneToOne(() => Account, (account) => account.order, {
     eager: true,
     cascade: true,
