@@ -1,0 +1,4 @@
+### GET ALL ORDERS
+GET http://localhost:3000/admin
+
+
