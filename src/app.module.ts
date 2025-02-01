@@ -15,7 +15,6 @@ import envValidation from './common/config/validations.conf';
 
 // ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountModule } from './account/account.module';
 
 // JWT
 import { JwtModule } from '@nestjs/jwt';
@@ -35,6 +34,8 @@ import { MigrationService } from './db/migrations.service';
 import { ProfileModule } from './profile/profile.module';
 import { EmailModule } from './common/email/email.module';
 import { DbModule } from './db/db.module';
+import { AdminModule } from './admin/admin.module';
+import { AccountModule } from './account/account.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -91,6 +92,8 @@ const env = process.env.NODE_ENV;
     ProfileModule,
 
     EmailModule,
+
+    AdminModule,
 
     // DbModule,
   ],
