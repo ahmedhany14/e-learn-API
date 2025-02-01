@@ -73,4 +73,7 @@ export class Account {
 
   @OneToOne(() => Order, (order) => order.account, { lazy: true })
   order: Order;
+
+  @OneToOne(() => Order, (order) => order.account, { lazy: true })
+  backlog: Order;
 }

@@ -28,6 +28,23 @@ export class AccountRepository {
     private readonly hashing: Hashing,
   ) {}
 
+  async createAdmin(admin: any): Promise<Account> {
+    try {
+      const account = this.accountRepository.create({
+        email: admin.email,
+        password: admin.password,
+        role: 'admin',
+      });
+
+      return await this.accountRepository.save(account);
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
+    }
+  }
+
   async create(createAccountDto: CreateAccountDto): Promise<Account> {
     createAccountDto.password = await this.hashing.hash(
       createAccountDto.password,
