@@ -103,7 +103,12 @@ export class AdminService {
 
   async approveOrder(orderId: number, adminId: number) {
     try {
-      await this.approveTransaction.approveOrder(orderId, adminId);
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+        relations: ['account'],
+      });
+
+      await this.approveTransaction.approveOrder(orderId, adminId, order.account.id);
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while approving order',

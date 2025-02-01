@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 export class ApproveTransaction {
   constructor(private readonly dataSource: DataSource) {}
 
-  async approveOrder(orderId: number, adminId: number) {
+  async approveOrder(orderId: number, adminId: number, userAccountId: number) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -20,8 +20,11 @@ export class ApproveTransaction {
         account: adminId,
       });
 
-      await queryRunner.commitTransaction();
+      await queryRunner.manager.update('account', userAccountId, {
+        role: 'instructor',
+      });
 
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException('An unexpected error occurred');
