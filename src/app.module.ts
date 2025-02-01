@@ -44,6 +44,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
+import { InstructorModule } from './instructor/instructor.module';
 
 // Redis
 import Redis from 'ioredis';
@@ -94,6 +95,8 @@ const env = process.env.NODE_ENV;
     EmailModule,
 
     AdminModule,
+
+    InstructorModule,
 
     // DbModule,
   ],
