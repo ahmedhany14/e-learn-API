@@ -26,6 +26,7 @@ import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface'
 import { ResetPasswordDto } from '../dto/reset.password.dto';
 import { AccountResetPasswordDto } from '../dto/account.reset-password.dto';
 import { ForgetDto } from '../dto/forget.dto';
+import { AccountEnum } from '../../account/entity/account.enum';
 
 @Injectable()
 export class AuthService {
@@ -41,33 +42,30 @@ export class AuthService {
     @Inject() private readonly signupProvider: SignupProvider,
   ) {}
 
-  async createAdmin(admin: any) {
-    admin.password = await this.hashing.hash(admin.password);
-    return await this.accountService.createAdmin(admin);
-  }
-
   async signUp(accountSignupDto: AccountSignupDto) {
     this.logger.log('sign up attempt');
-    try {
-      const { account, profile } =
-        await this.signupProvider.signup(accountSignupDto);
-      const { accessToken, refreshToken } =
-        await this.tokenProvider.generateToken(account);
+    const { account } = await this.signupProvider.signup(accountSignupDto);
+    const { accessToken, refreshToken } =
+      await this.tokenProvider.generateToken(account);
 
-      //await this.email.sendWelcomeEmail(account.email, profile, accessToken);
+    await this.email.sendWelcomeEmail(account.email, accessToken);
 
-      return { accessToken, refreshToken };
-    } catch (err) {
-      this.logger.error(err);
-      throw new InternalServerErrorException('An unexpected error occurred');
-    }
+    return { accessToken, refreshToken };
   }
 
   async login(accountLoginDto: AccountLoginDto) {
     this.logger.log('login attempt');
 
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.EMAIL,
+      AccountEnum.PASSWORD,
+      AccountEnum.IS_ACTIVE,
+    ];
+
     const account = await this.accountService.findByEmail(
       accountLoginDto.email,
+      select,
     );
     if (!account) throw new NotFoundException('Account not found');
     if (!account.isActive) throw new GoneException('Account is not active');
@@ -82,81 +80,89 @@ export class AuthService {
   }
 
   async refreshToken(refresh_Token: RefreshTokenDto) {
-    this.logger.log('refresh token attempt');
-    try {
-      const payload = await this.tokenProvider.verifyToken<
-        Pick<AccountPayloadInterface, 'id'>
-      >(refresh_Token.refreshToken, 'refresh');
+    const payload = await this.tokenProvider.verifyToken<
+      Pick<AccountPayloadInterface, 'id'>
+    >(refresh_Token.refreshToken, 'refresh');
 
-      this.logger.log(`Payload: ${JSON.stringify(payload)}`);
+    this.logger.log(`Payload: ${JSON.stringify(payload)}`);
 
-      const account = await this.accountService.findById(payload.id);
+    const select = [AccountEnum.ID, AccountEnum.EMAIL, AccountEnum.ROLE];
 
-      const { accessToken } = await this.tokenProvider.generateToken(account);
-      return { accessToken };
-    } catch (error) {
-      throw new BadRequestException('something went wrong');
+    const account = await this.accountService.findById(payload.id, select);
+
+    if (!account || account.isActive === false) {
+      throw new NotFoundException({
+        message: 'Account not found or account is not active',
+      });
     }
+    const { accessToken } = await this.tokenProvider.generateToken(account);
+    return { accessToken };
   }
 
   async resetPassword(resetPasswordDto: AccountResetPasswordDto, id: number) {
     this.logger.log('Reset password attempt');
 
-    try {
-      const account = await this.accountService.findById(id);
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.PASSWORD,
+      AccountEnum.IS_ACTIVE,
+    ];
 
-      if (!account) {
-        throw new NotFoundException({
-          message: 'reset password failed',
-          details: 'Account with provided id not found',
-        });
-      }
+    const account = await this.accountService.findById(id, select);
 
-      if (!account.isActive) {
-        throw new GoneException({
-          message: 'reset password failed',
-          details: 'Account is not active',
-        });
-      }
-
-      if (
-        !(await this.hashing.compare(
-          resetPasswordDto.oldPassword,
-          account.password,
-        ))
-      )
-        throw new BadRequestException({
-          message: 'reset password failed',
-          details: 'Old password is incorrect or new passwords do not match',
-        });
-
-      const newAccount = await this.accountService.updatePassword(
-        account,
-        await this.hashing.hash(resetPasswordDto.newPassword),
-      );
-
-      const { accessToken, refreshToken } =
-        await this.tokenProvider.generateToken(newAccount);
-
-      newAccount.password = undefined;
-
-      return {
-        newAccount,
-        accessToken,
-        refreshToken,
-      };
-    } catch (err) {
-      this.logger.error(err);
-      throw new InternalServerErrorException({
-        message: 'An unexpected error occurred',
-        details: err.message,
+    if (!account) {
+      throw new NotFoundException({
+        message: 'reset password failed',
+        details: 'Account with provided id not found',
       });
     }
+
+    if (!account.isActive) {
+      throw new GoneException({
+        message: 'reset password failed',
+        details: 'Account is not active',
+      });
+    }
+
+    console.log(account.password, resetPasswordDto.oldPassword);
+
+    if (
+      !(await this.hashing.compare(
+        resetPasswordDto.oldPassword,
+        account.password,
+      ))
+    )
+      throw new BadRequestException({
+        message: 'reset password failed',
+        details: 'Old password is incorrect or new passwords do not match',
+      });
+
+    const newAccount = await this.accountService.updatePassword(
+      account,
+      await this.hashing.hash(resetPasswordDto.newPassword),
+    );
+
+    const { accessToken, refreshToken } =
+      await this.tokenProvider.generateToken(newAccount);
+
+    newAccount.password = undefined;
+
+    return {
+      newAccount,
+      accessToken,
+      refreshToken,
+    };
   }
 
   async forgotPassword(forgetDto: ForgetDto) {
     this.logger.log(`Forgot password attempt for ${forgetDto.email}`);
-    const account = await this.accountService.findByEmail(forgetDto.email);
+
+    const select = [AccountEnum.ID, AccountEnum.EMAIL];
+
+    const account = await this.accountService.findByEmail(
+      forgetDto.email,
+      select,
+    );
     if (!account) {
       throw new NotFoundException({
         message: 'Forget password failed',
@@ -173,8 +179,8 @@ export class AuthService {
 
     this.logger.log(
       `"http://localhost:3000/auth/reset-password/${reset_token}`,
-    ); // 3ashan 5adt baaaan in sendmail
-    //await this.email.sendResetPasswordEmail(account.email, reset_token);
+    );
+    await this.email.sendResetPasswordEmail(account.email, reset_token);
   }
 
   async resetPasswordWithToken(
@@ -194,7 +200,8 @@ export class AuthService {
       });
     }
 
-    const account = await this.accountService.findById(payload.id);
+    const select = [AccountEnum.ID, AccountEnum.PASSWORD];
+    const account = await this.accountService.findById(payload.id, select);
 
     await this.accountService.updatePassword(
       account,

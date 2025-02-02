@@ -26,7 +26,7 @@ export class ResponseInterceptor implements NestInterceptor {
         const responseTime = `${Date.now() - start}ms`;
 
         const res = data?.response;
-        console.log('data', data);
+
         return {
           status: 'success',
           code: statusCode,

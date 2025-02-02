@@ -3,9 +3,25 @@ import {
   IsString,
   MaxLength,
   MinLength,
-  Validate
+  Validate,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  ValidationArguments,
 } from 'class-validator';
-import { IsPasswordMatching } from 'src/common/decorators/password.validation.decotator';
+import { Type } from 'class-transformer';
+
+@ValidatorConstraint({ name: 'isPasswordMatching', async: false })
+export class IsPasswordMatching implements ValidatorConstraintInterface {
+  validate(confirmPassword: string, args: ValidationArguments) {
+    const object = args.object as any;
+
+    return object.newPassword === confirmPassword;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return 'Passwords do not match';
+  }
+}
 
 export class AccountResetPasswordDto {
   @IsNotEmpty()
@@ -18,6 +34,7 @@ export class AccountResetPasswordDto {
   @IsString()
   @MinLength(8)
   @MaxLength(124)
+  @Type(() => String)
   newPassword: string;
 
   @IsNotEmpty()
@@ -25,5 +42,6 @@ export class AccountResetPasswordDto {
   @MinLength(8)
   @MaxLength(124)
   @Validate(IsPasswordMatching)
+  @Type(() => String)
   confirmPassword: string;
 }

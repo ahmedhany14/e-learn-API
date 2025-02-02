@@ -3,25 +3,15 @@ POST http://localhost:3000/auth/sign-in
 content-type: application/json
 
 {
-  "email": "ahmed.admin@gmail.com",
+  "email": "admin@gmail.com",
   "password": "00000000"
 }
 
-### CREATE ADMIN
-POST http://localhost:3000/auth/create-admin
-content-type: application/json
 
-{
-  "email": "ahmed.admin@gmail.com",
-  "password": "00000000",
-  "role": "admin"
-}
-
-
-### FORGET PASSWORD
+### RESET PASSWORD
 POST http://localhost:3000/auth/reset-password
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaDc2MDg4NjdAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MzgyNDczNTUsImV4cCI6MTczODI1MDk1NSwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.RqinhYDIrmt_j0FAyKadc7KQ73-I4v50lFcAOqSSqK8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImVtYWlsIjoiYWg3NjA4ODY3QGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4NTM2NzQxLCJleHAiOjE3Mzg1NDAzNDEsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.pqTatr7M4SPkCzRCDzc8mTO-vNlFOqtoh5YFrUEKuIg
 
 {
     "oldPassword": "12345678",
@@ -42,11 +32,9 @@ POST localhost:3000/auth/sign-up
 content-type: application/json
 
 {
-  "email": "ah7608867@gmail.com",
-  "password": "12345678",
-  "confirmPassword": "12345678",
-  "firstName": "ahmed",
-  "lastName": "hany"
+  "email": "admin@gmail.com",
+  "password": "00000000",
+  "confirmPassword": "00000000"
 }
 
 ### FORGET PASSWORD
@@ -58,10 +46,10 @@ content-type: application/json
 }
 
 ### RESET PASSWORD WITH TOKEN
-POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaDc2MDg4NjdAZ21haWwuY29tIiwiaWF0IjoxNzM4MjYyNjAzLCJleHAiOjE3MzgyNjI5MDMsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.0ZzIPhGFKDXBoP0tFiHR6jfO8fzfX7WBLr5NysV-gfo
+POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImVtYWlsIjoiYWg3NjA4ODY3QGdtYWlsLmNvbSIsImlhdCI6MTczODUzNjc5MSwiZXhwIjoxNzM4NTM3MDkxLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.l94Uk8V6VgGXriqF8Uh1D_V2xEZvQ8shmwToAev1kzI
 content-type: application/json
 
 {
-  "password": "1234567890",
-  "confirmPassword": "1234567890"
+  "password": "12345678",
+  "confirmPassword": "12345678"
 }

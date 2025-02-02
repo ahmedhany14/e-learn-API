@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Profile } from '../../profile/entity/profile.entity';
-import { Order } from '../../admin/entity/order.entity';
+import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 
 @Entity()

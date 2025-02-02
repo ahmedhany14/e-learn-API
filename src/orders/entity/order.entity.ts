@@ -59,6 +59,7 @@ export class Order {
     type: 'varchar',
     length: 64,
     enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
     nullable: false,
     comment: 'Order statues',
   })

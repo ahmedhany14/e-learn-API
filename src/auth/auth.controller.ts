@@ -36,22 +36,20 @@ export class AuthController {
 
   constructor(@Inject() private readonly authService: AuthService) {}
 
-  @Post('create-admin')
-  async createAdmin(@Body() createAdminDto: any) {
-    this.logger.log('create admin attempt');
-
-    return { response: await this.authService.createAdmin(createAdminDto) };
-  }
 
   @Post('sign-in')
   @AUTH(AuthEnum.NONE)
   async login(@Body() accountLoginDto: AccountLoginDto) {
+    this.logger.log('login attempt');
+
     return { response: await this.authService.login(accountLoginDto) };
   }
 
   @Post('sign-up')
   @AUTH(AuthEnum.NONE)
   async signUp(@Body() accountSignupDto: AccountSignupDto) {
+    this.logger.log('sign up attempt');
+
     return { response: await this.authService.signUp(accountSignupDto) };
   }
 
@@ -73,6 +71,8 @@ export class AuthController {
     @Body() resetPasswordDto: AccountResetPasswordDto,
     @ExtractAccountData('id') id: number,
   ) {
+    this.logger.log('reset password attempt');
+
     return {
       response: await this.authService.resetPassword(resetPasswordDto, id),
     };
@@ -91,6 +91,8 @@ export class AuthController {
     @Param('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
   ) {
+    this.logger.log('reset password with token attempt');
+
     return {
       response: await this.authService.resetPasswordWithToken(
         token,
@@ -102,6 +104,8 @@ export class AuthController {
   @AUTH(AuthEnum.NONE)
   @Post('refreshToken')
   async refreshToken(@Body() refreshToken: RefreshTokenDto) {
+    this.logger.log('refresh token attempt');
+
     return await this.authService.refreshToken(refreshToken);
   }
 

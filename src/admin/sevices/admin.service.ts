@@ -1,190 +1,64 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 
 // repo , entity and orm
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Order } from '../entity/order.entity';
+import { Order } from '../../orders/entity/order.entity';
 import { Account } from '../../account/entity/account.entity';
 
 // dto
 import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
 
-// providers
+// providers and services
 import { ApproveTransaction } from '../providers/approve.transaction';
-import { OrderBacklog } from '../entity/order.backlog.entity';
 import { RejectTransaction } from '../providers/reject.transaction';
-import { PaginationService } from '../../common/pagination/pagination.service';
-import { PaginationDto } from '../../common/pagination/pagination.dto';
+import { OrdersService } from '../../orders/services/orders.service';
 
 @Injectable()
 export class AdminService {
   private readonly logger = new Logger(AdminService.name);
 
   constructor(
-    @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>,
-    @InjectRepository(OrderBacklog)
-    private readonly orderBacklogRepository: Repository<OrderBacklog>,
+    @Inject()
+    private readonly orderService: OrdersService,
     @Inject()
     private readonly approveTransaction: ApproveTransaction,
     @Inject()
     private readonly rejectTransaction: RejectTransaction,
-    @Inject()
-    private readonly paginationService: PaginationService,
   ) {}
 
-  async findAll(statues: string, paginationDto: PaginationDto) {
-    try {
-      return await this.paginationService.paginate<Order>(
-        this.orderRepository,
-        paginationDto.page,
-        paginationDto.limit,
-        ['account'],
-        'http://localhost:3000/admin/orders',
-        { statues: statues },
-      );
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while fetching orders',
-      });
-    }
-  }
-
-  async findAllBacklog(state: string, paginationDto: PaginationDto) {
-    try {
-      return await this.paginationService.paginate<OrderBacklog>(
-        this.orderBacklogRepository,
-        paginationDto.page,
-        paginationDto.limit,
-        ['order', 'account'],
-        'http://localhost:3000/admin/orders/backlog',
-        { state: state },
-        {
-          order: {
-            PaymentInfo: true,
-            stripeInfo: true,
-            isApproved: true,
-            account: {
-              email: true,
-              role: true,
-            },
-          },
-          account: {
-            email: true,
-            role: true,
-          },
-        }
-      );
-
-/*      return await this.orderBacklogRepository.find({
-        where: { state: state },
-        relations: {
-          order: true,
-          account: true,
-        },
-        select: {
-          order: {
-            PaymentInfo: true,
-            stripeInfo: true,
-            isApproved: true,
-            account: {
-              email: true,
-              role: true,
-            },
-          },
-          account: {
-            email: true,
-            role: true,
-          },
-        },
-      });
-
- */
-    } catch (error) {
-      this.logger.log(error);
-      throw new InternalServerErrorException({
-        message: 'Error while fetching orders',
-      });
-    }
-  }
-
-  async findOne(id: number): Promise<Order> {
-    try {
-      return await this.orderRepository.findOne({
-        where: { id },
-        relations: ['account'],
-      });
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while fetching order',
-      });
-    }
-  }
-
-  async createOrder(order: UpgradeToInstructorDto, account: Account) {
-    try {
-      const newOrder = this.orderRepository.create({
-        ...order,
-        isApproved: false,
-        account: account,
-      });
-
-      return await this.orderRepository.save(newOrder);
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while creating order',
-      });
-    }
-  }
-
   async approveOrder(orderId: number, adminId: number) {
-    try {
-      const order = await this.orderRepository.findOne({
-        where: { id: orderId },
-        relations: ['account'],
-      });
+    const order = await this.findOne(orderId);
 
-      await this.approveTransaction.approveOrder(
-        orderId,
-        adminId,
-        order.account.id,
-      );
-      return order.account.email;
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while approving order',
+    if (!order) {
+      throw new ConflictException({
+        message: 'Order not found',
+        details: `Order with id: ${orderId} not found`,
       });
     }
+
+    if (order.isApproved) {
+      throw new ConflictException({ message: 'Order already approved' });
+    }
+
+    await this.approveTransaction.approveOrder(
+      orderId,
+      adminId,
+      order.account.id,
+    );
+    return order.account.email;
   }
 
   async rejectOrder(orderId: number, adminId: number) {
-    try {
-      const order = await this.orderRepository.findOne({
-        where: { id: orderId },
-        relations: ['account'],
-      });
+    const order = await this.findOne(orderId);
 
-      await this.rejectTransaction.rejectOrder(orderId, adminId);
-      return order.account.email;
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while rejecting order',
-      });
+    if (!order.isApproved) {
+      throw new ConflictException({ message: 'Order already rejected' });
     }
+
+    await this.rejectTransaction.rejectOrder(orderId, adminId);
+    return order.account.email;
   }
 
-  async delete(id: number): Promise<void> {
-    try {
-      await this.orderRepository.delete({ id });
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while deleting order',
-      });
-    }
+  async findOne(id: number): Promise<Order> {
+    return await this.orderService.getOneOrder(id);
   }
 }

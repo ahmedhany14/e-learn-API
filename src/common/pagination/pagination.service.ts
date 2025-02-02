@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindOptionsSelect, Repository } from 'typeorm';
 
 @Injectable()
 export class PaginationService {
@@ -7,20 +7,21 @@ export class PaginationService {
     repository: Repository<T>,
     page = 1,
     limit = 10,
-    relations: string[] = [],
-    baseUrl = '',
+    relations: string[],
     filter = {},
-    select = {},
+    select: string[],
+    baseUrl = '',
   ) {
     const [items, total] = await repository.findAndCount({
       where: filter,
       skip: (page - 1) * limit,
       take: limit,
-      select,
+      select: select as unknown as FindOptionsSelect<T>,
       relations,
     });
 
-    const totalPages = Math.round(total / limit) ;
+
+    const totalPages = Math.round(total / limit);
     const hasMore = page < totalPages;
 
     return {

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 
 // modules
+import { OrdersModule } from '../orders/orders.module';
 import { EmailModule } from '../common/email/email.module';
 
 // services and repository
@@ -10,10 +11,9 @@ import { ApproveTransaction } from './providers/approve.transaction';
 
 // entity and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Order } from './entity/order.entity';
-import { OrderBacklog } from './entity/order.backlog.entity';
+import { Order } from '../orders/entity/order.entity';
+import { OrderBacklog } from '../orders/entity/order.backlog.entity';
 import { RejectTransaction } from './providers/reject.transaction';
-import { PaginationModule } from '../common/pagination/pagination.module';
 
 @Module({
   controllers: [AdminController],
@@ -21,7 +21,7 @@ import { PaginationModule } from '../common/pagination/pagination.module';
   imports: [
     TypeOrmModule.forFeature([Order, OrderBacklog]),
     EmailModule,
-    PaginationModule,
+    OrdersModule
   ],
   exports: [AdminService],
 })

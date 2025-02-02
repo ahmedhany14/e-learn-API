@@ -4,13 +4,26 @@ FROM account;
 SELECT *
 FROM profile;
 
+
+select *from "order";
+
+
+select *from order_backlog;
 --delete all data from account table
 DELETE
 FROM account
-where id != 0;
+where id = 21;
+
+UPDATE account
+    SET role = 'admin'
+    WHERE id = 23;
 
 DELETE
 FROM profile
+where id != 0;
+
+DELETE
+FROM "order"
 where id != 0;
 
 SELECT column_name

@@ -24,9 +24,7 @@ export class SignupProvider {
   constructor(
     private readonly dataSource: DataSource,
     @Inject() private readonly hashing: Hashing,
-
-  ) { }
-
+  ) {}
 
   private async fixDate(accountSignupDto: AccountSignupDto) {
     const accountDate: CreateAccountInterface = {
@@ -34,47 +32,32 @@ export class SignupProvider {
       password: await this.hashing.hash(accountSignupDto.password),
     };
 
-    const profileDate: CreateProfileInterface = {
-      firstName: accountSignupDto.firstName,
-      lastName: accountSignupDto.lastName,
-      bio: accountSignupDto.bio,
-      phone_number: accountSignupDto.phone_number,
-    };
-
-    return { account: accountDate, profile: profileDate };
+    return { account: accountDate };
   }
 
-  async signup(
-    accountSignupDto: AccountSignupDto,
-  ) {
-
-    const { account, profile } = await this.fixDate(accountSignupDto);
+  async signup(accountSignupDto: AccountSignupDto) {
+    const { account } = await this.fixDate(accountSignupDto);
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    let savedAccount: Account, savedProfile: Profile;
+    let savedAccount: Account;
     try {
       const newAccount = queryRunner.manager.create(Account, account);
       savedAccount = await queryRunner.manager.save(newAccount);
-
-      const newProfile = queryRunner.manager.create(Profile, {
-        ...profile,
-        account: savedAccount,
-      });
-      savedProfile = await queryRunner.manager.save(newProfile);
 
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      this.logger.error('Error creating account and profile', error);
-
-      throw new InternalServerErrorException('An unexpected error occurred');
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
     } finally {
       await queryRunner.release();
     }
 
-    return { account: savedAccount, profile: savedProfile };
+    return { account: savedAccount };
   }
 }

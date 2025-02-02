@@ -25,6 +25,7 @@ import { AuthEnum } from '../auth/enums/auth.enum';
 import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { AccountEnum } from './entity/account.enum';
 
 @Controller('account')
 export class AccountController {
@@ -35,37 +36,40 @@ export class AccountController {
     @Inject() private readonly email: Email,
   ) {}
 
-  @Post()
-  async create(@Body() createAccountDto: CreateAccountDto) {
-    this.logger.log('create account attempted');
-
-    this.logger.log('createAccountDto', createAccountDto);
-    return { response: await this.accountService.create(createAccountDto) };
-  }
-
   @Get()
-  async findByEmail(@Body('email') email: string) {
+  async getAccountWithEmail(@Body('email') email: string) {
     this.logger.log('find account by email attempted');
 
-    return { response: await this.accountService.findByEmail(email) };
+    const select = [
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+      AccountEnum.IS_ACTIVE,
+      AccountEnum.CREATED_AT,
+    ];
+
+    const account = await this.accountService.findByEmail(email, select);
+
+    if (!account) {
+      throw new NotFoundException({
+        message: 'Account not found',
+        details: 'Account with the provided email does not exist',
+      });
+    }
+
+    return { response: account };
   }
 
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
-  @Delete('deactive-account')
+  @Delete('de-active-account')
   async deActive(@ExtractAccountData('id') id: number) {
     this.logger.log('de-activate account attempted');
 
-    try {
-      const account = await this.accountService.findById(id);
-      await this.accountService.flipActiveState(account);
-      return { response: 'Account de-activated successfully' };
-    } catch (err) {
-      this.logger.error(err);
-      throw new InternalServerErrorException({
-        message: 'Error while de-activating account',
-      });
-    }
+    const select = [AccountEnum.ID, AccountEnum.IS_ACTIVE];
+
+    const account = await this.accountService.findById(id, select);
+    await this.accountService.flipActiveState(account);
+    return { response: 'Account de-activated successfully' };
   }
 
   @AUTH(AuthEnum.BEARER)
@@ -73,16 +77,17 @@ export class AccountController {
   async delete(@ExtractAccountData('id') id: number) {
     this.logger.log('delete account attempted');
 
-    try {
-      const account = await this.accountService.findById(id);
-      await this.accountService.delete(account);
-      return { response: 'Account deleted successfully' };
-    } catch (err) {
-      this.logger.error(err);
-      throw new InternalServerErrorException({
-        message: 'Error while deleting account',
-      });
-    }
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.EMAIL,
+      AccountEnum.PASSWORD,
+      AccountEnum.ROLE,
+      AccountEnum.IS_ACTIVE,
+    ];
+
+    const account = await this.accountService.findById(id, select);
+    await this.accountService.delete(account);
+    return { response: 'Account deleted successfully' };
   }
 
   @ROLE(RoleEnum.USER)
@@ -95,22 +100,19 @@ export class AccountController {
   ) {
     this.logger.log('upgrade to instructor attempted');
 
-    try {
-      // in service, create an order and store it in the database for admin to review
-      const order = await this.accountService.upgradeToInstructor(
-        id,
-        upgradeToInstructorDto,
-      );
-      // send a notification to the user that the request has been sent
-      await this.email.sendOrderConfirmationEmail(email, order.id);
-      return {
-        response: 'Upgrade request sent successfully for review',
-      };
-    } catch (err) {
-      this.logger.error(err);
-      throw new InternalServerErrorException({
-        message: 'Error while upgrading to instructor',
-      });
-    }
+
+    const select = [AccountEnum.ID];
+
+    const order = await this.accountService.upgradeToInstructor(
+      id,
+      upgradeToInstructorDto,
+      select,
+    );
+
+    await this.email.sendOrderConfirmationEmail(email, order.id);
+
+    return {
+      response: 'Upgrade request sent successfully for review',
+    };
   }
 }
