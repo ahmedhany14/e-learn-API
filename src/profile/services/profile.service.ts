@@ -31,4 +31,8 @@ export class ProfileService {
     Object.assign(profile, updateProfileDto);
     return await this.profileRepository.updateProfile(profile);
   }
+
+  async findByAccountId(accountId: number): Promise<Profile> {
+    return await this.profileRepository.findByAccountId(accountId);
+  }
 }
