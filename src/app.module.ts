@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 // App Modules
 import { AuthModule } from './auth/auth.module';
@@ -45,6 +46,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { InstructorModule } from './instructor/instructor.module';
+import { PaginationModule } from './common/pagination/pagination.module';
 
 // Redis
 import Redis from 'ioredis';
@@ -80,6 +82,7 @@ const env = process.env.NODE_ENV;
         autoLoadEntities: configService.get<boolean>(
           'database.autoLoadEntities',
         ),
+        namingStrategy: new SnakeNamingStrategy(),
         logger: 'advanced-console', // Use the advanced console logger
         // For even more detailed logging:
         logging: ['query'],
@@ -97,6 +100,8 @@ const env = process.env.NODE_ENV;
     AdminModule,
 
     InstructorModule,
+
+    PaginationModule,
 
     // DbModule,
   ],

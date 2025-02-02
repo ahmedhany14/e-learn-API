@@ -70,7 +70,6 @@ export class Profile {
   nullable: false,
  })
   @JoinColumn({
-    name: 'accountId',
     referencedColumnName: 'id',
   })
   account: Account;
