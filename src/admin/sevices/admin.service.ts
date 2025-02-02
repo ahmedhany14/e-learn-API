@@ -18,6 +18,8 @@ import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor
 import { ApproveTransaction } from '../providers/approve.transaction';
 import { OrderBacklog } from '../entity/order.backlog.entity';
 import { RejectTransaction } from '../providers/reject.transaction';
+import { PaginationService } from '../../common/pagination/pagination.service';
+import { PaginationDto } from '../../common/pagination/pagination.dto';
 
 @Injectable()
 export class AdminService {
@@ -32,13 +34,20 @@ export class AdminService {
     private readonly approveTransaction: ApproveTransaction,
     @Inject()
     private readonly rejectTransaction: RejectTransaction,
+    @Inject()
+    private readonly paginationService: PaginationService,
   ) {}
 
-  async findAll(statues:string): Promise<Order[]> {
+  async findAll(statues: string, paginationDto: PaginationDto) {
     try {
-      return await this.orderRepository.find({
-        where: { statues: statues },
-      });
+      return await this.paginationService.paginate<Order>(
+        this.orderRepository,
+        paginationDto.page,
+        paginationDto.limit,
+        ['account'],
+        'http://localhost:3000/admin/orders',
+        { statues: statues },
+      );
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while fetching orders',
@@ -46,9 +55,33 @@ export class AdminService {
     }
   }
 
-  async findAllBacklog(state: string): Promise<OrderBacklog[]> {
+  async findAllBacklog(state: string, paginationDto: PaginationDto) {
     try {
-      return await this.orderBacklogRepository.find({
+      return await this.paginationService.paginate<OrderBacklog>(
+        this.orderBacklogRepository,
+        paginationDto.page,
+        paginationDto.limit,
+        ['order', 'account'],
+        'http://localhost:3000/admin/orders/backlog',
+        { state: state },
+        {
+          order: {
+            PaymentInfo: true,
+            stripeInfo: true,
+            isApproved: true,
+            account: {
+              email: true,
+              role: true,
+            },
+          },
+          account: {
+            email: true,
+            role: true,
+          },
+        }
+      );
+
+/*      return await this.orderBacklogRepository.find({
         where: { state: state },
         relations: {
           order: true,
@@ -70,6 +103,8 @@ export class AdminService {
           },
         },
       });
+
+ */
     } catch (error) {
       this.logger.log(error);
       throw new InternalServerErrorException({

@@ -1,4 +1,10 @@
-import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Response } from 'express';
@@ -7,7 +13,8 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
   private readonly logger = new Logger(ResponseInterceptor.name);
-  constructor(private configService: ConfigService) { }
+
+  constructor(private configService: ConfigService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const start = Date.now();
@@ -18,27 +25,31 @@ export class ResponseInterceptor implements NestInterceptor {
         const statusCode = response.statusCode;
         const responseTime = `${Date.now() - start}ms`;
 
-        const total = typeof data === 'object' && data?.total ? data.total : 0;
-        const page = typeof data === 'object' && data?.page ? data.page : 0;
-        const perPage = typeof data === 'object' && data?.per_page ? data.per_page : 0;
-
+        const res = data?.response;
+        console.log('data', data);
         return {
           status: 'success',
           code: statusCode,
-          data: data || null,
+          data: res || null,
           error: null,
           meta: {
-            total,
-            page,
-            per_page: perPage,
+            total_rows: data?.meta?.total ?? 0,
+            total_pages: data?.meta?.totalPages ?? 0,
+            page: data?.meta?.page ?? 0,
+            limit: data?.meta?.limit ?? 0,
+            hasMore: data?.meta?.hasMore ?? null,
+            first_page: data?.meta?.firstPage ?? null,
+            last_page: data?.meta?.lastPage ?? null,
+            previous_page: data?.meta?.previous ?? null,
+            next_page: data?.meta?.next ?? null,
+            current_page: data?.meta?.current ?? null,
           },
           metadata: {
             responseTime,
             version: this.configService.get('APP_VERSION'),
-          }
-        }
-
-      })
+          },
+        };
+      }),
     );
   }
 }

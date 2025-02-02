@@ -13,6 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entity/order.entity';
 import { OrderBacklog } from './entity/order.backlog.entity';
 import { RejectTransaction } from './providers/reject.transaction';
+import { PaginationModule } from '../common/pagination/pagination.module';
 
 @Module({
   controllers: [AdminController],
@@ -20,6 +21,7 @@ import { RejectTransaction } from './providers/reject.transaction';
   imports: [
     TypeOrmModule.forFeature([Order, OrderBacklog]),
     EmailModule,
+    PaginationModule,
   ],
   exports: [AdminService],
 })

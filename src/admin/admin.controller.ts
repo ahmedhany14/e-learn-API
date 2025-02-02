@@ -16,6 +16,9 @@ import { RoleEnum } from '../auth/enums/role.enum';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 
+// dtos
+import { PaginationDto } from '../common/pagination/pagination.dto';
+
 //services
 import { AdminService } from './sevices/admin.service';
 import { Email } from '../common/email/email';
@@ -34,15 +37,19 @@ export class AdminController {
   ) {}
 
   @Get('orders')
-  async getRequests(@Query('statues') statues: string) {
-    this.logger.log(`Get all requests`);
-
-    return await this.adminService.findAll(statues);
+  async getRequests(
+    @Query('statues') statues: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return await this.adminService.findAll(statues, paginationDto);
   }
 
   @Get('backlog')
-  async getBacklog(@Query('state') state: string) {
-    return await this.adminService.findAllBacklog(state);
+  async getBacklog(
+    @Query('state') state: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return await this.adminService.findAllBacklog(state, paginationDto);
   }
 
   @Get(':orderId')
@@ -62,7 +69,7 @@ export class AdminController {
     const email = await this.adminService.approveOrder(orderId, id);
 
     await this.email.sendApprovedEmail(orderId, email);
-    return { message: `Order with id: ${orderId} has been approved` };
+    return `Order with id: ${orderId} has been approved`;
   }
 
   @Patch('reject/:orderId')
@@ -76,6 +83,7 @@ export class AdminController {
 
     await this.email.sendRejectedEmail(orderId, email);
 
-    return await this.adminService.delete(orderId);
+    return;
+    await this.adminService.delete(orderId);
   }
 }

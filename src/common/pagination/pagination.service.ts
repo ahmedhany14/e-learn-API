@@ -9,20 +9,24 @@ export class PaginationService {
     limit = 10,
     relations: string[] = [],
     baseUrl = '',
+    filter = {},
+    select = {},
   ) {
     const [items, total] = await repository.findAndCount({
+      where: filter,
       skip: (page - 1) * limit,
       take: limit,
+      select,
       relations,
     });
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.round(total / limit) ;
     const hasMore = page < totalPages;
 
     return {
-      items,
+      response: items,
       meta: {
-        totalResults: total,
+        total,
         page,
         limit,
         totalPages,
