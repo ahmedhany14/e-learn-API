@@ -40,19 +40,19 @@ export class AuthController {
   async createAdmin(@Body() createAdminDto: any) {
     this.logger.log('create admin attempt');
 
-    return await this.authService.createAdmin(createAdminDto);
+    return { response: await this.authService.createAdmin(createAdminDto) };
   }
 
   @Post('sign-in')
   @AUTH(AuthEnum.NONE)
   async login(@Body() accountLoginDto: AccountLoginDto) {
-    return await this.authService.login(accountLoginDto);
+    return { response: await this.authService.login(accountLoginDto) };
   }
 
   @Post('sign-up')
   @AUTH(AuthEnum.NONE)
   async signUp(@Body() accountSignupDto: AccountSignupDto) {
-    return await this.authService.signUp(accountSignupDto);
+    return { response: await this.authService.signUp(accountSignupDto) };
   }
 
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
@@ -63,7 +63,7 @@ export class AuthController {
     Not implemented yet
      */
 
-    return 'Sign out';
+    return { response: 'Sign out' };
   }
 
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
@@ -73,14 +73,16 @@ export class AuthController {
     @Body() resetPasswordDto: AccountResetPasswordDto,
     @ExtractAccountData('id') id: number,
   ) {
-    return await this.authService.resetPassword(resetPasswordDto, id);
+    return {
+      response: await this.authService.resetPassword(resetPasswordDto, id),
+    };
   }
 
   @Post('forgot-password')
   @AUTH(AuthEnum.NONE)
   async forgotPassword(@Body() forgetDto: ForgetDto) {
     await this.authService.forgotPassword(forgetDto);
-    return 'email sent';
+    return { response: 'email sent' };
   }
 
   @Post('reset-password/:token')
@@ -89,10 +91,12 @@ export class AuthController {
     @Param('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
   ) {
-    return await this.authService.resetPasswordWithToken(
-      token,
-      resetPasswordDto,
-    );
+    return {
+      response: await this.authService.resetPasswordWithToken(
+        token,
+        resetPasswordDto,
+      ),
+    };
   }
 
   @AUTH(AuthEnum.NONE)
@@ -105,6 +109,6 @@ export class AuthController {
   @AUTH(AuthEnum.BEARER)
   @Get('test-token')
   async testToken() {
-    return 'valid token';
+    return { response: 'valid token' };
   }
 }

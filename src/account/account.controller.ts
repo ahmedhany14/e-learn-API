@@ -40,14 +40,14 @@ export class AccountController {
     this.logger.log('create account attempted');
 
     this.logger.log('createAccountDto', createAccountDto);
-    return await this.accountService.create(createAccountDto);
+    return { response: await this.accountService.create(createAccountDto) };
   }
 
   @Get()
   async findByEmail(@Body('email') email: string) {
     this.logger.log('find account by email attempted');
 
-    return await this.accountService.findByEmail(email);
+    return { response: await this.accountService.findByEmail(email) };
   }
 
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
@@ -59,7 +59,7 @@ export class AccountController {
     try {
       const account = await this.accountService.findById(id);
       await this.accountService.flipActiveState(account);
-      return 'Account de-activated successfully';
+      return { response: 'Account de-activated successfully' };
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException({
@@ -76,7 +76,7 @@ export class AccountController {
     try {
       const account = await this.accountService.findById(id);
       await this.accountService.delete(account);
-      return 'Account deleted successfully';
+      return { response: 'Account deleted successfully' };
     } catch (err) {
       this.logger.error(err);
       throw new InternalServerErrorException({
@@ -104,7 +104,7 @@ export class AccountController {
       // send a notification to the user that the request has been sent
       await this.email.sendOrderConfirmationEmail(email, order.id);
       return {
-        message: 'Upgrade request sent successfully for review',
+        response: 'Upgrade request sent successfully for review',
       };
     } catch (err) {
       this.logger.error(err);

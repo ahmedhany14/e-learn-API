@@ -20,7 +20,9 @@ export class ProfileController {
 
   @Get('')
   async getProfile(@Query('profileId') profileId: string) {
-    return await this.profileService.findById(parseInt(profileId));
+    return {
+      response: await this.profileService.findById(parseInt(profileId)),
+    };
   }
 
   @ROLE(RoleEnum.ADMIN, RoleEnum.USER, RoleEnum.INSTRUCTOR)
@@ -30,6 +32,11 @@ export class ProfileController {
     @ExtractAccountData('id') accountId: number,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
-    return await this.profileService.updateProfile(accountId, updateProfileDto);
+    return {
+      response: await this.profileService.updateProfile(
+        accountId,
+        updateProfileDto,
+      ),
+    };
   }
 }

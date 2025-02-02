@@ -56,7 +56,7 @@ export class AdminController {
   async getOrder(@Param('orderId') orderId: number) {
     this.logger.log(`Get order with id: ${orderId}`);
 
-    return await this.adminService.findOne(orderId);
+    return { response: await this.adminService.findOne(orderId) };
   }
 
   @Patch('approve/:orderId')
@@ -69,7 +69,9 @@ export class AdminController {
     const email = await this.adminService.approveOrder(orderId, id);
 
     await this.email.sendApprovedEmail(orderId, email);
-    return `Order with id: ${orderId} has been approved`;
+    return {
+      response: `Order with id: ${orderId} has been approved`,
+    };
   }
 
   @Patch('reject/:orderId')
@@ -83,7 +85,6 @@ export class AdminController {
 
     await this.email.sendRejectedEmail(orderId, email);
 
-    return;
-    await this.adminService.delete(orderId);
+    return { response: await this.adminService.delete(orderId) };
   }
 }
