@@ -1,12 +1,10 @@
 import {
   Controller,
-  Delete,
   Get,
   Inject,
   Logger,
   Param,
   Patch,
-  Query,
 } from '@nestjs/common';
 
 //decorators and enums
@@ -16,12 +14,10 @@ import { RoleEnum } from '../auth/enums/role.enum';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 
-// dtos
-import { PaginationDto } from '../common/pagination/pagination.dto';
-
 //services
 import { AdminService } from './sevices/admin.service';
 import { Email } from '../common/email/email';
+import { GetOrderDto } from './dtos/get.order.dto';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
@@ -36,27 +32,13 @@ export class AdminController {
     private readonly email: Email,
   ) {}
 
-  @Get('orders')
-  async getRequests(
-    @Query('statues') statues: string,
-    @Query() paginationDto: PaginationDto,
-  ) {
-    return await this.adminService.findAll(statues, paginationDto);
-  }
-
-  @Get('backlog')
-  async getBacklog(
-    @Query('state') state: string,
-    @Query() paginationDto: PaginationDto,
-  ) {
-    return await this.adminService.findAllBacklog(state, paginationDto);
-  }
-
   @Get(':orderId')
-  async getOrder(@Param('orderId') orderId: number) {
-    this.logger.log(`Get order with id: ${orderId}`);
+  async getOrder(@Param() getOrderDto: GetOrderDto) {
+    this.logger.log(`Get order with id: ${getOrderDto.orderId}`);
 
-    return { response: await this.adminService.findOne(orderId) };
+    return {
+      response: (await this.adminService.findOne(getOrderDto.orderId)) ?? 'Order not found',
+    };
   }
 
   @Patch('approve/:orderId')
@@ -82,9 +64,8 @@ export class AdminController {
     this.logger.log(`Reject order with id: ${orderId}`);
 
     const email = await this.adminService.rejectOrder(orderId, id);
-
     await this.email.sendRejectedEmail(orderId, email);
 
-    return { response: await this.adminService.delete(orderId) };
+    return { response: `Order with id: ${orderId} has been rejected` };
   }
 }

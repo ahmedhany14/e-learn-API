@@ -13,6 +13,7 @@ import { TokenProvider } from '../providers/token.provider';
 import { AccountService } from '../../account/service/account.service';
 // dto and interfaces
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
+import {AccountEnum} from '../../account/entity/account.enum';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -30,7 +31,6 @@ export class AccessTokenGuard implements CanActivate {
         'You are not authorized to access this resource',
       );
 
-    console.log('token', token);
 
     let payload : AccountPayloadInterface;
     try {
@@ -41,11 +41,19 @@ export class AccessTokenGuard implements CanActivate {
     } catch (e) {
       throw new UnauthorizedException('Invalid token');
     }
-    const account = await this.accountService.findById(payload.id);
+
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.IS_ACTIVE,
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE
+    ]
+
+    const account = await this.accountService.findById(payload.id, select);
     if (!account)  throw new NotFoundException('Account not found');
     if (!account.isActive) throw new GoneException('Account is not active');
-    account.password = undefined;
     request.account = account;
+
     return true;
   }
 

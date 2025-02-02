@@ -47,6 +47,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { InstructorModule } from './instructor/instructor.module';
 import { PaginationModule } from './common/pagination/pagination.module';
+import { OrdersModule } from './orders/orders.module';
 
 // Redis
 import Redis from 'ioredis';
@@ -102,6 +103,8 @@ const env = process.env.NODE_ENV;
     InstructorModule,
 
     PaginationModule,
+
+    OrdersModule,
 
     // DbModule,
   ],

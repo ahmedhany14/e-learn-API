@@ -1,14 +1,28 @@
 import {
-  IsNotEmpty,
-  IsString,
   MinLength,
   MaxLength,
+  IsNotEmpty,
+  IsString,
   IsEmail,
-  IsOptional, Matches,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  ValidationArguments,
   Validate,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
-import { IsPasswordMatching } from '../../common/decorators/password.validation.decotator';
+@ValidatorConstraint({ name: 'isPasswordMatching', async: false })
+export class IsPasswordMatching implements ValidatorConstraintInterface {
+  validate(password: string, args: ValidationArguments) {
+    const object = args.object as any;
+
+    return object.password === object.confirmPassword;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return 'Passwords do not match';
+  }
+}
 
 export class AccountSignupDto {
   @IsNotEmpty()
@@ -21,6 +35,7 @@ export class AccountSignupDto {
   @IsString()
   @MinLength(8)
   @MaxLength(124)
+  @Type(() => String)
   password: string;
 
   @IsNotEmpty()
@@ -28,27 +43,6 @@ export class AccountSignupDto {
   @MinLength(8)
   @MaxLength(124)
   @Validate(IsPasswordMatching)
+  @Type(() => String)
   confirmPassword: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(32)
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(32)
-  lastName: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(256)
-  bio?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(16)
-  @MinLength(10)
-  @Matches(/^\d+$/, { message: 'Phone number must contain only numbers' })
-  phone_number?: string;
 }

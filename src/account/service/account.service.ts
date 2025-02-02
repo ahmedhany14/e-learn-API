@@ -1,14 +1,17 @@
-import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable, NotFoundException,
+} from '@nestjs/common';
 
 // Service
 import { AdminService } from '../../admin/sevices/admin.service';
+import { OrdersService } from '../../orders/services/orders.service';
 
 // Repository
 import { AccountRepository } from '../repository/account.repository';
 import { Account } from '../entity/account.entity';
 
 // DTO
-import { CreateAccountDto } from '../dtos/create-account.dto';
 import { UpgradeToInstructorDto } from '../dtos/upgrade.to.instructor.dto';
 
 @Injectable()
@@ -16,27 +19,16 @@ export class AccountService {
   constructor(
     @Inject()
     private readonly accountRepository: AccountRepository,
-    private readonly adminService: AdminService,
+    @Inject()
+    private readonly orderService: OrdersService,
   ) {}
 
-
-  async createAdmin(admin: any) {
-    try {
-      return await this.accountRepository.createAdmin(admin);
-    } catch (err) {
-      throw new InternalServerErrorException('An unexpected error occurred');
-    }
-  }
-  async create(createAccountDto: CreateAccountDto) {
-    return await this.accountRepository.create(createAccountDto);
+  async findByEmail(email: string, select: string[]) {
+    return await this.accountRepository.findByEmail(email, select);
   }
 
-  async findByEmail(email: string) {
-    return await this.accountRepository.findByEmail(email);
-  }
-
-  async findById(id: number) {
-    return await this.accountRepository.findById(id);
+  async findById(id: number, select: string[]) {
+    return await this.accountRepository.findById(id, select);
   }
 
   async updatePassword(account: Account, password: string) {
@@ -56,14 +48,9 @@ export class AccountService {
   async upgradeToInstructor(
     accountId: number,
     upgradeToInstructorDto: UpgradeToInstructorDto,
+    select: string[],
   ) {
-    const account = await this.accountRepository.findById(accountId);
-
-    const order = this.adminService.createOrder(
-      upgradeToInstructorDto,
-      account,
-    );
-
-    return order;
+    const account = await this.accountRepository.findById(accountId, select);
+    return this.orderService.createOrder(upgradeToInstructorDto, account);
   }
 }

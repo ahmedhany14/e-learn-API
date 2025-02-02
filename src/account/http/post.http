@@ -1,26 +1,12 @@
-### CREATE NEW ACCOUNT
-
-POST http://localhost:3000/account
-content-type: application/json
-
-{
-  "email": "ahmed@gamil.com",
-  "password": "123456",
-  "role": "admin",
-  "isActive": true,
-  "createdAt": "2021-09-01T00:00:00.000Z",
-  "updatedAt": "2021-09-01T00:00:00.000Z"
-}
-
 ### SEN UPGRAGE TO INSTRUCTOR REQUEST
 POST  http://localhost:3000/account/upgrade-to-instructor
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhaDc2MDg4NjdAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Mzg0MzE2MDAsImV4cCI6MTczODQzNTIwMCwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.YY_NAAWK3BfDWZ6Mm1FTotvnkcPiUiYgwTnadmJ0d7c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImVtYWlsIjoiYWg3NjA4ODY3QGdtYWlsLmNvbSIsImlhdCI6MTczODUzNzAzMiwiZXhwIjoxNzM4NTQwNjMyLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.8iCvLt1MiWl3Plxq-mQTSbXGOY86nGEiwSTUgIZJ6Qo
 content-type: application/json
 
 {
-  "PaymentInfo": "5500000000000004",
+  "PaymentInfo": "4111111111111111",
   "nationalId":"12345678901234",
-  "stripeInfo": "acct_1JQ3A4GvL5T6YZ78"
+  "stripeInfo": "acct_9XbD2eRkL0WqYpLm"
 }
 
 
