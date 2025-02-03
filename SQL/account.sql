@@ -3,13 +3,13 @@ FROM account;
 
 INSERT INTO profile ("firstName", "lastName", "accountId") VALUES ('John', 'Doe', 20);
 
-update account set "role" = 'admin' where id = 5;
+update account set "role" = 'admin' where id = 2;
 
 SELECT *
 FROM profile;
 
 
-select *from "order";
+select *from "orders";
 
 
 select *from order_backlog;

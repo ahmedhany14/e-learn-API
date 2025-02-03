@@ -9,8 +9,8 @@ import {
 import { Account } from '../../account/entity/account.entity';
 import { OrderBacklog } from './order.backlog.entity';
 
-@Entity()
-@Unique(['nationalId', 'PaymentInfo', 'account'])
+@Entity('orders')
+@Unique(['national_id', 'payment_info', 'stripe_info', 'account'])
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,15 +21,7 @@ export class Order {
     nullable: false,
     comment: 'User Payment Information',
   })
-  PaymentInfo: string;
-
-  @Column({
-    type: 'varchar',
-    length: 64,
-    nullable: false,
-    comment: 'User National ID',
-  })
-  nationalId: string;
+  payment_info: string;
 
   @Column({
     type: 'varchar',
@@ -37,23 +29,15 @@ export class Order {
     nullable: false,
     comment: 'Stripe Payment Information',
   })
-  stripeInfo: string;
+  stripe_info: string;
 
   @Column({
-    type: 'timestamp with time zone',
+    type: 'varchar',
+    length: 64,
     nullable: false,
-    default: () => 'CURRENT_TIMESTAMP',
-    comment: 'Order creation date',
+    comment: 'User National ID',
   })
-  createdAt: Date;
-
-  @Column({
-    type: 'boolean',
-    nullable: false,
-    default: () => 'false',
-    comment: 'Order approval status',
-  })
-  isApproved: boolean;
+  national_id: string;
 
   @Column({
     type: 'varchar',
@@ -63,7 +47,26 @@ export class Order {
     nullable: false,
     comment: 'Order statues',
   })
-  statues: string;
+  state: string;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: () => 'false',
+    comment: 'Order approval status',
+  })
+  is_approved: boolean;
+
+  @Column({
+    type: 'timestamp with time zone',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+    comment: 'Order creation date',
+  })
+  created_at: Date;
+
+  @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.order, {})
+  backlog: OrderBacklog;
 
   @OneToOne(() => Account, (account) => account.order, {
     eager: true,
@@ -72,9 +75,9 @@ export class Order {
     onUpdate: 'CASCADE',
     nullable: false,
   })
-  @JoinColumn()
+  @JoinColumn({
+    name: 'account_id',
+    referencedColumnName: 'id',
+  })
   account: Account;
-
-  @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.order, {})
-  backlog: OrderBacklog;
 }

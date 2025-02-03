@@ -10,15 +10,15 @@ export class RejectTransaction {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      await queryRunner.manager.update('order', orderId, {
-        isApproved: false,
+      await queryRunner.manager.update('orders', orderId, {
+        is_approved: false,
         state: 'rejected',
       });
 
       await queryRunner.manager.insert('order_backlog', {
         state: 'rejected',
         order: orderId,
-        account: adminId,
+        admin: adminId,
       });
       await queryRunner.commitTransaction();
     } catch (error) {

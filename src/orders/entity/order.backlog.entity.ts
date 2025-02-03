@@ -10,7 +10,7 @@ import { Order } from './order.entity';
 import { Account } from '../../account/entity/account.entity';
 
 @Entity()
-@Unique(['order', 'account'])
+@Unique(['order', 'admin'])
 export class OrderBacklog {
   @PrimaryGeneratedColumn()
   id: number;
@@ -29,7 +29,7 @@ export class OrderBacklog {
     default: () => 'CURRENT_TIMESTAMP',
     comment: 'Order creation date',
   })
-  createdAt: Date;
+  created_at: Date;
 
   @OneToOne(() => Order, (order) => order.backlog, {
     // eager: true,
@@ -47,5 +47,5 @@ export class OrderBacklog {
     onUpdate: 'CASCADE',
   })
   @JoinColumn()
-  account: Account;
+  admin: Account;
 }

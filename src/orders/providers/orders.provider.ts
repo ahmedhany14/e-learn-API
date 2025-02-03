@@ -73,17 +73,23 @@ export class OrdersProvider {
 
   async findOrderAssociatedWithAccount<T extends Partial<Account>>(account: T) {
     try {
+
       return await this.orderRepository.findOne({
-        where: { account },
+        where: {  account },
       });
     } catch (error) {
+      console.log(error);
+
       throw new InternalServerErrorException({
         message: 'Error while fetching order',
       });
     }
   }
 
-  async create<T extends Partial<Account>>(order: UpgradeToInstructorDto, account: T) {
+  async create<T extends Partial<Account>>(
+    order: UpgradeToInstructorDto,
+    account: T,
+  ) {
     const existingOrder = await this.findOrderAssociatedWithAccount(account);
 
     if (existingOrder) {
@@ -92,13 +98,14 @@ export class OrdersProvider {
         details: 'This account already has an order',
       });
     }
-
     const newOrder = this.orderRepository.create({
       ...order,
-      isApproved: false,
-      statues: 'pending',
+      is_approved: false,
+      state: 'pending',
       account: account,
     });
+
+  console.log(newOrder);
 
     return await this.orderRepository.save(newOrder);
   }

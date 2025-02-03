@@ -3,5 +3,5 @@ export enum OrderbacklogEnum {
   STATE = 'state',
   CREATED_AT = 'createdAt',
   ORDER = 'order',
-  ACCOUNT = 'account',
+  ADMIN = 'admin',
 }

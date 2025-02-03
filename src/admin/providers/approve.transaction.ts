@@ -15,9 +15,9 @@ export class ApproveTransaction {
       // edit order as approved
 
       this.logger.log(`update order to approved`);
-      await queryRunner.manager.update('order', orderId, {
-        isApproved: true,
-        statues: 'approved',
+      await queryRunner.manager.update('orders', orderId, {
+        is_approved: true,
+        state: 'approved',
       });
 
       // push to order backlog as approved with order id and account id (admin)
@@ -25,7 +25,7 @@ export class ApproveTransaction {
       await queryRunner.manager.insert('order_backlog', {
         state: 'approved',
         order: orderId,
-        account: adminId,
+        admin: adminId,
       });
       this.logger.log(`update account role to instructor`);
       await queryRunner.manager.update('account', userAccountId, {
