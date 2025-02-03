@@ -1,9 +1,9 @@
 ### GET ACCOUNT BY EMAIL
 
 GET http://localhost:3000/account
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwiaWF0IjoxNzM4NTQ1OTQ4LCJleHAiOjE3Mzg1NDk1NDgsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.VTsaCXGG9vGP8gHxHtOdQk-Gr76gqggFaNHYFuAzl1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk
 content-type: application/json
 
 {
-  "email": "admin@gmail.com"
+  "email": "ahmed.hany@gmail.com"
 }

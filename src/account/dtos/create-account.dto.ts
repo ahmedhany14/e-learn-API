@@ -30,13 +30,13 @@ export class CreateAccountDto {
 
   @IsNotEmpty()
   @IsBoolean()
-  isActive: boolean;
+  is_active: boolean;
 
   @IsNotEmpty()
   @IsDate()
-  createdAt: Date;
+  created_at: Date;
 
   @IsNotEmpty()
   @IsDate()
-  updatedAt: Date;
+  updated_at: Date;
 }

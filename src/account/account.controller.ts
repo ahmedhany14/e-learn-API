@@ -31,10 +31,10 @@ import { ExtractAccountInterceptor } from './interceptors/extract.account.interc
 
 // interfaces
 import {
-  IGetAccount,
-  IDeactivateAccount,
-  IDeleteAccount,
-  IUpgradeToInstructor,
+  SafeGetAccount,
+  SafeDeactivateAccount,
+  SafeDeleteAccount,
+  SafeUpgradeToInstructor
 } from './interfaces/accounts.interface';
 
 @UseInterceptors(ExtractAccountInterceptor)
@@ -55,7 +55,7 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Get()
-  async getAccount(@ExtractAccountData() account: IGetAccount) {
+  async getAccount(@ExtractAccountData() account: SafeGetAccount) {
     this.logger.log('find account by email attempted');
     return { response: account };
   }
@@ -64,7 +64,7 @@ export class AccountController {
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
   @Delete('de-active-account')
-  async deActive(@ExtractAccountData() account: IDeactivateAccount) {
+  async deActive(@ExtractAccountData() account: SafeDeactivateAccount) {
     this.logger.log('de-activate account attempted');
 
     await this.accountService.flipActiveState(account);
@@ -80,7 +80,7 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Delete()
-  async delete(@ExtractAccountData() account: IDeleteAccount) {
+  async delete(@ExtractAccountData() account: SafeDeleteAccount) {
     this.logger.log('delete account attempted');
 
     await this.accountService.delete(account);
@@ -94,7 +94,7 @@ export class AccountController {
   @Post('upgrade-to-instructor')
   async upgradeToInstructor(
     @Body() upgradeToInstructorDto: UpgradeToInstructorDto,
-    @ExtractAccountData() account: IUpgradeToInstructor,
+    @ExtractAccountData() account: SafeUpgradeToInstructor,
   ) {
     this.logger.log('upgrade to instructor attempted');
 

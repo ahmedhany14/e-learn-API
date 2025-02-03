@@ -4,7 +4,6 @@ import {
 } from '@nestjs/common';
 
 // Service
-import { AdminService } from '../../admin/sevices/admin.service';
 import { OrdersService } from '../../orders/services/orders.service';
 
 // Repository
@@ -13,7 +12,6 @@ import { Account } from '../entity/account.entity';
 
 // DTO
 import { UpgradeToInstructorDto } from '../dtos/upgrade.to.instructor.dto';
-import { IDeactivateAccount, IDeleteAccount, IUpgradeToInstructor } from '../interfaces/accounts.interface';
 
 @Injectable()
 export class AccountService {
@@ -32,22 +30,22 @@ export class AccountService {
     return await this.accountRepository.findById(id, select);
   }
 
-  async updatePassword(account: Account, password: string) {
-    account.password = password;
+  async updatePassword<T extends Partial<Account>>(account: T, hashedPassword: string) {
+    account.password = hashedPassword;
     return await this.accountRepository.save(account);
   }
 
-  async flipActiveState(account: IDeactivateAccount) {
+  async flipActiveState<T extends Partial<Account>>(account: T) {
     account.is_active = !account.is_active;
     return await this.accountRepository.save(account);
   }
 
-  async delete(account: IDeleteAccount) {
+  async delete<T extends Partial<Account>>(account: T) {
     return await this.accountRepository.delete(account);
   }
 
-  async upgradeToInstructor(
-    account: IUpgradeToInstructor,
+  async upgradeToInstructor<T extends Partial<Account>>(
+    account: T,
     upgradeToInstructorDto: UpgradeToInstructorDto,
   ) {
     return this.orderService.createOrder(upgradeToInstructorDto, account);

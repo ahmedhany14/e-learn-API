@@ -28,4 +28,9 @@ export class PaginationDto {
   @IsEnum(State, { message: 'State must be either approved, pending, or rejected' })
   state: string;
 
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(State, { message: 'State must be either approved, pending, or rejected' })
+  statues: string;
 }

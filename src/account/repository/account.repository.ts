@@ -8,10 +8,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsSelect, Repository } from 'typeorm';
 import { Account } from '../entity/account.entity';
-import {
-  IDeactivateAccount,
-  IDeleteAccount,
-} from '../interfaces/accounts.interface';
 
 @Injectable()
 export class AccountRepository {
@@ -50,7 +46,7 @@ export class AccountRepository {
     }
   }
 
-  async save(account: IDeactivateAccount): Promise<Account> {
+  async save<T extends Partial<Account>>(account: T): Promise<Account> {
     try {
       return await this.accountRepository.save(account);
     } catch (error) {
@@ -61,7 +57,7 @@ export class AccountRepository {
     }
   }
 
-  async delete(account: IDeleteAccount): Promise<void> {
+  async delete<T extends Partial<Account>>(account: T): Promise<void> {
     try {
       await this.accountRepository.remove(
         await this.accountRepository.findOne({

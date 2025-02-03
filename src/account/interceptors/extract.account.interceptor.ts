@@ -14,6 +14,7 @@ import { AccountEnum } from '../entity/account.enum';
 
 // services
 import { AccountService } from '../service/account.service';
+import { Account } from '../entity/account.entity';
 
 @Injectable()
 export class ExtractAccountInterceptor implements NestInterceptor {

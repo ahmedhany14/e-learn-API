@@ -10,7 +10,6 @@ import { PaginationDto } from '../../common/pagination/pagination.dto';
 
 // entity and orm
 import { Account } from '../../account/entity/account.entity';
-import { IUpgradeToInstructor } from '../../account/interfaces/accounts.interface';
 
 @Injectable()
 export class OrdersService {
@@ -63,9 +62,9 @@ export class OrdersService {
     return await this.ordersProvider.findOne(orderId);
   }
 
-  async createOrder(
+  async createOrder<T extends Partial<Account>>(
     order: UpgradeToInstructorDto,
-    account: IUpgradeToInstructor,
+    account: T,
   ) {
     return await this.ordersProvider.create(order, account);
   }

@@ -27,6 +27,7 @@ import { ResetPasswordDto } from '../dto/reset.password.dto';
 import { AccountResetPasswordDto } from '../dto/account.reset-password.dto';
 import { ForgetDto } from '../dto/forget.dto';
 import { AccountEnum } from '../../account/entity/account.enum';
+import { Account } from '../../account/entity/account.entity';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +69,7 @@ export class AuthService {
       select,
     );
     if (!account) throw new NotFoundException('Account not found');
-    if (!account.isActive) throw new GoneException('Account is not active');
+    if (!account.is_active) throw new GoneException('Account is not active');
     if (
       !(await this.hashing.compare(accountLoginDto.password, account.password))
     )
@@ -90,7 +91,7 @@ export class AuthService {
 
     const account = await this.accountService.findById(payload.id, select);
 
-    if (!account || account.isActive === false) {
+    if (!account || account.is_active === false) {
       throw new NotFoundException({
         message: 'Account not found or account is not active',
       });
@@ -99,32 +100,9 @@ export class AuthService {
     return { accessToken };
   }
 
-  async resetPassword(resetPasswordDto: AccountResetPasswordDto, id: number) {
+  async resetPassword<T extends Partial<Account>>(resetPasswordDto: AccountResetPasswordDto, account: T) {
     this.logger.log('Reset password attempt');
-
-    const select = [
-      AccountEnum.ID,
-      AccountEnum.PASSWORD,
-      AccountEnum.IS_ACTIVE,
-    ];
-
-    const account = await this.accountService.findById(id, select);
-
-    if (!account) {
-      throw new NotFoundException({
-        message: 'reset password failed',
-        details: 'Account with provided id not found',
-      });
-    }
-
-    if (!account.isActive) {
-      throw new GoneException({
-        message: 'reset password failed',
-        details: 'Account is not active',
-      });
-    }
-
-    console.log(account.password, resetPasswordDto.oldPassword);
+    console.log(account);
 
     if (
       !(await this.hashing.compare(
@@ -137,10 +115,12 @@ export class AuthService {
         details: 'Old password is incorrect or new passwords do not match',
       });
 
+
     const newAccount = await this.accountService.updatePassword(
       account,
       await this.hashing.hash(resetPasswordDto.newPassword),
     );
+
 
     const { accessToken, refreshToken } =
       await this.tokenProvider.generateToken(newAccount);

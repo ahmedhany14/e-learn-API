@@ -3,7 +3,7 @@ POST http://localhost:3000/auth/sign-in
 content-type: application/json
 
 {
-  "email": "admin@gmail.com",
+  "email": "admin@hotmail.com",
   "password": "00000000"
 }
 
@@ -11,12 +11,12 @@ content-type: application/json
 ### RESET PASSWORD
 POST http://localhost:3000/auth/reset-password
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImVtYWlsIjoiYWg3NjA4ODY3QGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4NTM2NzQxLCJleHAiOjE3Mzg1NDAzNDEsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.pqTatr7M4SPkCzRCDzc8mTO-vNlFOqtoh5YFrUEKuIg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJhZG1pbkBob3RtYWlsLmNvbSIsImlhdCI6MTczODU5NDQwMiwiZXhwIjoxNzM4NTk4MDAyLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.3eoszPer7Dg5uRg94Y_VZQt-hpyphbAXeueL6ueP81Q
 
 {
-    "oldPassword": "12345678",
-    "newPassword": "12345678",
-    "confirmPassword": "12345678"
+    "oldPassword": "00000000",
+    "newPassword": "00000000",
+    "confirmPassword": "00000000"
 }
 
 ### REFRESH TOKEN
@@ -24,7 +24,7 @@ POST http://localhost:3000/auth/refreshToken
 content-type: application/json
 
 {
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM3ODk3NTAxLCJleHAiOjE3Mzc5ODM1MDEsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.miGgGK2ioj9pCpuWtrfvT2G9DNB53YsHeKaBkD8FghQ"
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzM4NTkxOTgzLCJleHAiOjE3Mzg2Nzc5ODMsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.VOawtOT6Bxpnqeb_W2UW_Z8al9M_QOAw36EUS4eVhwA"
 }
 
 ### SIGN UP
@@ -32,7 +32,7 @@ POST localhost:3000/auth/sign-up
 content-type: application/json
 
 {
-  "email": "admin@gmail.com",
+  "email": "admin2@hotmail.com",
   "password": "00000000",
   "confirmPassword": "00000000"
 }
@@ -42,14 +42,14 @@ POST http://localhost:3000/auth/forgot-password
 content-type: application/json
 
 {
-  "email": "ah7608867@gmail.com"
+  "email": "admin2@hotmail.com"
 }
 
 ### RESET PASSWORD WITH TOKEN
-POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImVtYWlsIjoiYWg3NjA4ODY3QGdtYWlsLmNvbSIsImlhdCI6MTczODUzNjc5MSwiZXhwIjoxNzM4NTM3MDkxLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.l94Uk8V6VgGXriqF8Uh1D_V2xEZvQ8shmwToAev1kzI
+POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJhZG1pbjJAaG90bWFpbC5jb20iLCJpYXQiOjE3Mzg1OTQ0NDYsImV4cCI6MTczODU5NDc0NiwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.GAzdbh2-3umAl6IYDAyR61mArr0kFOtay2Tn-4IMWP8
 content-type: application/json
 
 {
-  "password": "12345678",
-  "confirmPassword": "12345678"
+  "password": "00000000",
+  "confirmPassword": "00000000"
 }

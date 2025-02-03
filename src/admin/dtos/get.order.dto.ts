@@ -6,5 +6,5 @@ import {
 export class GetOrderDto {
   @IsNotEmpty()
   @IsNumber()
-  orderId: number;
+  order_id: number;
 }
