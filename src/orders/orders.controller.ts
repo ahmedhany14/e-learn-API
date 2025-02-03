@@ -25,7 +25,7 @@ export class OrdersController {
   @AUTH(AuthEnum.BEARER)
   @Get('requests')
   async getRequests(
-    @Query('statues') statues: string,
+    @Query('state') state: string,
     @Query() paginationDto: PaginationDto,
   ) {
     const select = [
@@ -33,10 +33,10 @@ export class OrdersController {
       OrderEnum.PAYMENT_INFO,
       OrderEnum.NATIONAL_ID,
       OrderEnum.STRIPE_INFO,
-      OrderEnum.STATUES,
+      OrderEnum.STATE,
     ];
     const filter = {
-      statues: statues,
+      state: state,
     };
     const relations = ['account'];
 
@@ -55,13 +55,13 @@ export class OrdersController {
     const select = [
       OrderbacklogEnum.ID,
       OrderbacklogEnum.STATE,
-      OrderbacklogEnum.ACCOUNT,
+      OrderbacklogEnum.ADMIN,
     ];
 
     const filter = {
       state: paginationDto.state,
     };
-    const relations = ['account', 'order'];
+    const relations = ['admin', 'order'];
 
     return await this.ordersService.getAllBacklog({
       select,

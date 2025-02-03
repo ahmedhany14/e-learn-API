@@ -50,15 +50,15 @@ export class Instructor {
   })
   update_at: Date;
 
-  @OneToOne(() => Account, (account) => account.instructor, {
-    eager: true,
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({
-    name: 'profile_id',
-    referencedColumnName: 'id',
-  })
-  account: Account;
+  // @OneToOne(() => Account, (account) => account.instructor, {
+  //   eager: true,
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  // })
+  // @JoinColumn({
+  //   name: 'profile_id',
+  //   referencedColumnName: 'id',
+  // })
+  // account: Account;
 }

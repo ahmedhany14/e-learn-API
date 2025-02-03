@@ -49,7 +49,7 @@ export class SignupProvider {
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-
+    console.log(error);
       throw new InternalServerErrorException({
         message: 'An unexpected error occurred',
         details: error.message,

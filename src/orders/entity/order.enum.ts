@@ -1,10 +1,10 @@
 export enum OrderEnum {
   ID = 'id',
-  PAYMENT_INFO = 'PaymentInfo',
-  NATIONAL_ID = 'nationalId',
-  STRIPE_INFO = 'stripeInfo',
-  CREATED_AT = 'createdAt',
-  IS_APPROVED = 'isApproved',
+  PAYMENT_INFO = 'payment_info',
+  NATIONAL_ID = 'national_id',
+  STRIPE_INFO = 'stripe_info',
+  CREATED_AT = 'created_at',
+  IS_APPROVED = 'is_approved',
   ACCOUNT = 'account',
-  STATUES = 'statues',
+  STATE= 'state',
 }

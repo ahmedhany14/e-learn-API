@@ -11,7 +11,7 @@ content-type: application/json
 ### RESET PASSWORD
 POST http://localhost:3000/auth/reset-password
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJhZG1pbkBob3RtYWlsLmNvbSIsImlhdCI6MTczODU5NDQwMiwiZXhwIjoxNzM4NTk4MDAyLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.3eoszPer7Dg5uRg94Y_VZQt-hpyphbAXeueL6ueP81Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZEBob3RtYWlsLmNvbSIsImlhdCI6MTczODU5OTE3MCwiZXhwIjoxNzM4NjAyNzcwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.iJffkE5Me223QoHkXrOqUJ9ACQ1yF_bvgyRa0mP1e0E
 
 {
     "oldPassword": "00000000",
@@ -32,7 +32,7 @@ POST localhost:3000/auth/sign-up
 content-type: application/json
 
 {
-  "email": "admin2@hotmail.com",
+  "email": "admin@hotmail.com",
   "password": "00000000",
   "confirmPassword": "00000000"
 }
@@ -42,11 +42,11 @@ POST http://localhost:3000/auth/forgot-password
 content-type: application/json
 
 {
-  "email": "admin2@hotmail.com"
+  "email": "ahmed@hotmail.com"
 }
 
 ### RESET PASSWORD WITH TOKEN
-POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJhZG1pbjJAaG90bWFpbC5jb20iLCJpYXQiOjE3Mzg1OTQ0NDYsImV4cCI6MTczODU5NDc0NiwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.GAzdbh2-3umAl6IYDAyR61mArr0kFOtay2Tn-4IMWP8
+POST http://localhost:3000/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZEBob3RtYWlsLmNvbSIsImlhdCI6MTczODU5OTIwMiwiZXhwIjoxNzM4NTk5NTAyLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.theDMwg8tbK6cHU7IvQmFwaVb4UFliz96_rxiN4T8E0
 content-type: application/json
 
 {

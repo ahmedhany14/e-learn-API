@@ -9,8 +9,9 @@ import {
 import { Profile } from '../../profile/entity/profile.entity';
 import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
+import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 
-@Entity()
+@Entity('account')
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
 export class Account {
   @PrimaryGeneratedColumn()
@@ -75,9 +76,9 @@ export class Account {
   @OneToOne(() => Order, (order) => order.account, { lazy: true })
   order: Order;
 
-  @OneToOne(() => Order, (order) => order.account, { lazy: true })
-  backlog: Order;
+  @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, { lazy: true })
+  backlog: OrderBacklog;
 
-  @OneToOne(() => Instructor, (instructor) => instructor.account, { lazy: true })
-  instructor: Instructor;
+  // @OneToOne(() => Instructor, (instructor) => instructor.account, { lazy: true })
+  // instructor: Instructor;
 }

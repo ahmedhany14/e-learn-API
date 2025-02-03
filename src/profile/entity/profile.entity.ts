@@ -7,7 +7,6 @@ import {
   Unique
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { Instructor } from '../../instructor/entity/instructor.entity';
 
 @Entity()
 //@Check(`"phone_number" SIMILAR TO '^[0-9]{10,16}$'`) // will validate phone number, it should be between 10 and 16 digits
@@ -18,14 +17,14 @@ export class Profile {
 
   @Column({
     type: 'varchar',
-    length: 32,
+    length: 16,
     comment: "User's first name",
   })
   firstName: string;
 
   @Column({
     type: 'varchar',
-    length: 32,
+    length: 16,
     comment: "User's last name",
   })
   lastName: string;

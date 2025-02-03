@@ -46,6 +46,8 @@ export class BacklogOrdersProvider {
         'http://localhost:3000/admin/orders/backlog',
       );
     } catch (error) {
+      console.log(error)
+
       throw new InternalServerErrorException({
         message: 'Error while fetching orders',
       });

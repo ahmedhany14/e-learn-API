@@ -32,7 +32,7 @@ export class AdminController {
     private readonly email: Email,
   ) {}
 
-  @Get(':orderId')
+  @Get(':order_id')
   async getOrder(@Param() getOrderDto: GetOrderDto) {
     this.logger.log(`Get order with id: ${getOrderDto.order_id}`);
 
@@ -41,18 +41,18 @@ export class AdminController {
     };
   }
 
-  @Patch('approve/:orderId')
+  @Patch('approve/:order_id')
   async approve(
-    @Param('orderId') orderId: number,
+    @Param('order_id') order_id: number,
     @ExtractAccountData('id') id: number,
   ) {
-    this.logger.log(`Approve order with id: ${orderId}`);
+    this.logger.log(`Approve order with id: ${order_id}`);
 
-    const email = await this.adminService.approveOrder(orderId, id);
+    const email = await this.adminService.approveOrder(order_id, id);
 
-    await this.email.sendApprovedEmail(orderId, email);
+    await this.email.sendApprovedEmail(order_id, email);
     return {
-      response: `Order with id: ${orderId} has been approved`,
+      response: `Order with id: ${order_id} has been approved`,
     };
   }
 
