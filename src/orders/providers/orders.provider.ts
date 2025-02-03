@@ -71,7 +71,7 @@ export class OrdersProvider {
     }
   }
 
-  async findOrderAssociatedWithAccount(account: Account) {
+  async findOrderAssociatedWithAccount<T extends Partial<Account>>(account: T) {
     try {
       return await this.orderRepository.findOne({
         where: { account },
@@ -83,7 +83,7 @@ export class OrdersProvider {
     }
   }
 
-  async create(order: UpgradeToInstructorDto, account: Account) {
+  async create<T extends Partial<Account>>(order: UpgradeToInstructorDto, account: T) {
     const existingOrder = await this.findOrderAssociatedWithAccount(account);
 
     if (existingOrder) {

@@ -6,6 +6,10 @@ import { PaginationDto } from '../common/pagination/pagination.dto';
 // enums
 import { OrderEnum } from './entity/order.enum';
 import { OrderbacklogEnum } from './entity/orderbacklog.enum';
+import { AUTH } from '../auth/decorators/auth.decorator';
+import { AuthEnum } from '../auth/enums/auth.enum';
+import { ROLE } from '../auth/decorators/role.decorator';
+import { RoleEnum } from '../auth/enums/role.enum';
 
 // services
 import { OrdersService } from './services/orders.service';
@@ -17,6 +21,8 @@ export class OrdersController {
     private readonly ordersService: OrdersService,
   ) {}
 
+  @ROLE(RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
   @Get('requests')
   async getRequests(
     @Query('statues') statues: string,
@@ -42,6 +48,8 @@ export class OrdersController {
     });
   }
 
+  @ROLE(RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
   @Get('backlog')
   async getBacklog(@Query() paginationDto: PaginationDto) {
     const select = [

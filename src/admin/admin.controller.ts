@@ -34,10 +34,10 @@ export class AdminController {
 
   @Get(':orderId')
   async getOrder(@Param() getOrderDto: GetOrderDto) {
-    this.logger.log(`Get order with id: ${getOrderDto.orderId}`);
+    this.logger.log(`Get order with id: ${getOrderDto.order_id}`);
 
     return {
-      response: (await this.adminService.findOne(getOrderDto.orderId)) ?? 'Order not found',
+      response: (await this.adminService.findOne(getOrderDto.order_id)) ?? 'Order not found',
     };
   }
 

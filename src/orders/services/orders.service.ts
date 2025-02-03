@@ -8,7 +8,6 @@ import { BacklogOrdersProvider } from '../providers/backlog.orders.provider';
 import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
 import { PaginationDto } from '../../common/pagination/pagination.dto';
 
-
 // entity and orm
 import { Account } from '../../account/entity/account.entity';
 
@@ -51,7 +50,6 @@ export class OrdersService {
     relations: string[];
     paginationDto: PaginationDto;
   }) {
-
     return await this.backlogOrdersProvider.getAllBacklog({
       select,
       filter,
@@ -64,8 +62,10 @@ export class OrdersService {
     return await this.ordersProvider.findOne(orderId);
   }
 
-  async createOrder(order:UpgradeToInstructorDto, account:Account){
+  async createOrder<T extends Partial<Account>>(
+    order: UpgradeToInstructorDto,
+    account: T,
+  ) {
     return await this.ordersProvider.create(order, account);
   }
-
 }

@@ -9,8 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsSelect, Repository } from 'typeorm';
 import { Account } from '../entity/account.entity';
 
-
-
 @Injectable()
 export class AccountRepository {
   private readonly logger = new Logger(AccountRepository.name);
@@ -20,10 +18,7 @@ export class AccountRepository {
     private accountRepository: Repository<Account>,
   ) {}
 
-  async findByEmail(
-    email: string,
-    select: string[],
-  ): Promise<Account> {
+  async findByEmail(email: string, select: string[]): Promise<Account> {
     try {
       return await this.accountRepository.findOne({
         where: { email },
@@ -51,7 +46,7 @@ export class AccountRepository {
     }
   }
 
-  async save(account: Account): Promise<Account> {
+  async save<T extends Partial<Account>>(account: T): Promise<Account> {
     try {
       return await this.accountRepository.save(account);
     } catch (error) {
@@ -62,9 +57,13 @@ export class AccountRepository {
     }
   }
 
-  async delete(account: Account): Promise<void> {
+  async delete<T extends Partial<Account>>(account: T): Promise<void> {
     try {
-      await this.accountRepository.remove(account);
+      await this.accountRepository.remove(
+        await this.accountRepository.findOne({
+          where: { id: account.id },
+        }),
+      );
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'An unexpected error occurred',

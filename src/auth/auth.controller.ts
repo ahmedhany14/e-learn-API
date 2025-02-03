@@ -10,6 +10,7 @@ import {
   BadRequestException,
   Logger,
   Param,
+  UseInterceptors,
 } from '@nestjs/common';
 
 // services and providers
@@ -29,13 +30,19 @@ import { ROLE } from './decorators/role.decorator';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { RoleEnum } from './enums/role.enum';
 import { AuthEnum } from './enums/auth.enum';
+import { AccountEnum } from '../account/entity/account.enum';
+import { ACCOUNT_SELECT } from '../account/decorators/account.select.decorator';
 
+// interfaces
+import { SafeResetAccountPassword } from '../account/interfaces/accounts.interface';
+import { ExtractAccountInterceptor } from '../account/interceptors/extract.account.interceptor';
+
+@UseInterceptors(ExtractAccountInterceptor)
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
   constructor(@Inject() private readonly authService: AuthService) {}
-
 
   @Post('sign-in')
   @AUTH(AuthEnum.NONE)
@@ -64,17 +71,18 @@ export class AuthController {
     return { response: 'Sign out' };
   }
 
+  @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.PASSWORD, AccountEnum.IS_ACTIVE)
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
   @Post('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: AccountResetPasswordDto,
-    @ExtractAccountData('id') id: number,
+    @ExtractAccountData() account: SafeResetAccountPassword,
   ) {
     this.logger.log('reset password attempt');
-
+    console.log(account);
     return {
-      response: await this.authService.resetPassword(resetPasswordDto, id),
+      response: await this.authService.resetPassword(resetPasswordDto, account),
     };
   }
 
@@ -106,10 +114,11 @@ export class AuthController {
   async refreshToken(@Body() refreshToken: RefreshTokenDto) {
     this.logger.log('refresh token attempt');
 
-    return await this.authService.refreshToken(refreshToken);
+    return {
+      response: await this.authService.refreshToken(refreshToken),
+    };
   }
 
-  @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
   @Get('test-token')
   async testToken() {

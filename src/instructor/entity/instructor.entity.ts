@@ -19,28 +19,28 @@ export class Instructor {
     length: 124,
     nullable: false,
   })
-  PaymentInfo: string;
+  Payment_info: string;
 
   @Column({
     type: 'varchar',
     length: 64,
     nullable: false,
   })
-  stripeInfo: string;
+  stripe_info: string;
 
   @Column({
     type: 'varchar',
     length: 64,
     nullable: false,
   })
-  nationalId: string;
+  national_id: string;
 
   @Column({
     type: 'timestamp with time zone',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
-  cratedAt: Date;
+  crated_at: Date;
 
   @Column({
     type: 'time with time zone',
@@ -48,7 +48,7 @@ export class Instructor {
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
-  updateAt: Date;
+  update_at: Date;
 
   @OneToOne(() => Account, (account) => account.instructor, {
     eager: true,

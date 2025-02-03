@@ -1,6 +1,10 @@
 SELECT *
 FROM account;
 
+INSERT INTO profile ("firstName", "lastName", "accountId") VALUES ('John', 'Doe', 20);
+
+update account set "role" = 'admin' where id = 5;
+
 SELECT *
 FROM profile;
 
@@ -12,7 +16,7 @@ select *from order_backlog;
 --delete all data from account table
 DELETE
 FROM account
-where id = 21;
+where id = 4;
 
 UPDATE account
     SET role = 'admin'

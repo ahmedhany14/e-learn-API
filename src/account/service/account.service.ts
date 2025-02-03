@@ -4,7 +4,6 @@ import {
 } from '@nestjs/common';
 
 // Service
-import { AdminService } from '../../admin/sevices/admin.service';
 import { OrdersService } from '../../orders/services/orders.service';
 
 // Repository
@@ -31,26 +30,24 @@ export class AccountService {
     return await this.accountRepository.findById(id, select);
   }
 
-  async updatePassword(account: Account, password: string) {
-    account.password = password;
+  async updatePassword<T extends Partial<Account>>(account: T, hashedPassword: string) {
+    account.password = hashedPassword;
     return await this.accountRepository.save(account);
   }
 
-  async flipActiveState(account: Account) {
-    account.isActive = !account.isActive;
+  async flipActiveState<T extends Partial<Account>>(account: T) {
+    account.is_active = !account.is_active;
     return await this.accountRepository.save(account);
   }
 
-  async delete(account: Account) {
+  async delete<T extends Partial<Account>>(account: T) {
     return await this.accountRepository.delete(account);
   }
 
-  async upgradeToInstructor(
-    accountId: number,
+  async upgradeToInstructor<T extends Partial<Account>>(
+    account: T,
     upgradeToInstructorDto: UpgradeToInstructorDto,
-    select: string[],
   ) {
-    const account = await this.accountRepository.findById(accountId, select);
     return this.orderService.createOrder(upgradeToInstructorDto, account);
   }
 }

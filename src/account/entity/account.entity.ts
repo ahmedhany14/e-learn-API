@@ -50,7 +50,7 @@ export class Account {
     default: () => 'true',
     comment: `user's account status, true if active, false if inactive`,
   })
-  isActive: boolean;
+  is_active: boolean;
 
   @Column({
     type: 'timestamp with time zone',
@@ -58,7 +58,7 @@ export class Account {
     default: () => 'CURRENT_TIMESTAMP',
     comment: 'Account creation date',
   })
-  createdAt: Date;
+  created_at: Date;
 
   @Column({
     type: 'timestamp with time zone',
@@ -67,7 +67,7 @@ export class Account {
     onUpdate: 'CURRENT_TIMESTAMP',
     comment: 'Account last update date',
   })
-  updatedAt: Date;
+  updated_at: Date;
 
   @OneToOne(() => Profile, (profile) => profile.account)
   profile: Profile;
