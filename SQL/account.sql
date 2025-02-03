@@ -1,6 +1,8 @@
 SELECT *
 FROM account;
 
+INSERT INTO profile ("firstName", "lastName", "accountId") VALUES ('John', 'Doe', 20);
+
 SELECT *
 FROM profile;
 

@@ -8,8 +8,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsSelect, Repository } from 'typeorm';
 import { Account } from '../entity/account.entity';
-
-
+import {
+  IDeactivateAccount,
+  IDeleteAccount,
+} from '../interfaces/accounts.interface';
 
 @Injectable()
 export class AccountRepository {
@@ -20,10 +22,7 @@ export class AccountRepository {
     private accountRepository: Repository<Account>,
   ) {}
 
-  async findByEmail(
-    email: string,
-    select: string[],
-  ): Promise<Account> {
+  async findByEmail(email: string, select: string[]): Promise<Account> {
     try {
       return await this.accountRepository.findOne({
         where: { email },
@@ -51,7 +50,7 @@ export class AccountRepository {
     }
   }
 
-  async save(account: Account): Promise<Account> {
+  async save(account: IDeactivateAccount): Promise<Account> {
     try {
       return await this.accountRepository.save(account);
     } catch (error) {
@@ -62,9 +61,13 @@ export class AccountRepository {
     }
   }
 
-  async delete(account: Account): Promise<void> {
+  async delete(account: IDeleteAccount): Promise<void> {
     try {
-      await this.accountRepository.remove(account);
+      await this.accountRepository.remove(
+        await this.accountRepository.findOne({
+          where: { id: account.id },
+        }),
+      );
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'An unexpected error occurred',

@@ -18,6 +18,7 @@ import { Repository } from 'typeorm';
 import { PaginationService } from '../../common/pagination/pagination.service';
 import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
 import { Account } from '../../account/entity/account.entity';
+import { IUpgradeToInstructor } from '../../account/interfaces/accounts.interface';
 
 @Injectable()
 export class OrdersProvider {
@@ -71,7 +72,7 @@ export class OrdersProvider {
     }
   }
 
-  async findOrderAssociatedWithAccount(account: Account) {
+  async findOrderAssociatedWithAccount(account: IUpgradeToInstructor) {
     try {
       return await this.orderRepository.findOne({
         where: { account },
@@ -83,7 +84,7 @@ export class OrdersProvider {
     }
   }
 
-  async create(order: UpgradeToInstructorDto, account: Account) {
+  async create(order: UpgradeToInstructorDto, account: IUpgradeToInstructor) {
     const existingOrder = await this.findOrderAssociatedWithAccount(account);
 
     if (existingOrder) {

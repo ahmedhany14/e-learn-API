@@ -13,6 +13,7 @@ import { Account } from '../entity/account.entity';
 
 // DTO
 import { UpgradeToInstructorDto } from '../dtos/upgrade.to.instructor.dto';
+import { IDeactivateAccount, IDeleteAccount, IUpgradeToInstructor } from '../interfaces/accounts.interface';
 
 @Injectable()
 export class AccountService {
@@ -36,21 +37,19 @@ export class AccountService {
     return await this.accountRepository.save(account);
   }
 
-  async flipActiveState(account: Account) {
-    account.isActive = !account.isActive;
+  async flipActiveState(account: IDeactivateAccount) {
+    account.is_active = !account.is_active;
     return await this.accountRepository.save(account);
   }
 
-  async delete(account: Account) {
+  async delete(account: IDeleteAccount) {
     return await this.accountRepository.delete(account);
   }
 
   async upgradeToInstructor(
-    accountId: number,
+    account: IUpgradeToInstructor,
     upgradeToInstructorDto: UpgradeToInstructorDto,
-    select: string[],
   ) {
-    const account = await this.accountRepository.findById(accountId, select);
     return this.orderService.createOrder(upgradeToInstructorDto, account);
   }
 }
