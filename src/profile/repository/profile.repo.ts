@@ -9,6 +9,9 @@ import { Profile } from '../entity/profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+// dto
+import { UpdateProfileDto } from '../dtos/update.profile.dto';
+
 @Injectable()
 export class ProfileRepository {
   private readonly logger = new Logger(ProfileRepository.name);
@@ -18,19 +21,17 @@ export class ProfileRepository {
     private profileRepository: Repository<Profile>,
   ) {}
 
+  async create(updateProfileDto: UpdateProfileDto, accountId: number) {
+    return this.profileRepository.create({
+      ...updateProfileDto,
+      account: { id: accountId },
+    });
+  }
+
   async findById(id: number): Promise<Profile> {
     try {
       return await this.profileRepository.findOne({
         where: { id },
-        select: [
-          'id',
-          'firstName',
-          'lastName',
-          'bio',
-          'phone_number',
-          'created_at',
-        ],
-        relations: ['account'],
       });
     } catch (error) {
       throw new InternalServerErrorException({
@@ -44,20 +45,11 @@ export class ProfileRepository {
     try {
       return await this.profileRepository.findOne({
         where: { account: { id: accountId } },
-        select: [
-          'id',
-          'firstName',
-          'lastName',
-          'bio',
-          'phone_number',
-          'created_at',
-        ],
-        relations: ['account'],
       });
     } catch (error) {
       throw new InternalServerErrorException({
-        message: 'An unexpected error occurred',
-        details: error,
+        message: 'Un expected error occurred while fetching profile',
+        details: "Couldn't fetch profile",
       });
     }
   }
@@ -67,7 +59,8 @@ export class ProfileRepository {
       return await this.profileRepository.save(profile);
     } catch (error) {
       throw new InternalServerErrorException({
-        message: 'An unexpected error occurred',
+        message: 'Un expected error occurred while updating profile',
+        details: "Couldn't update profile",
       });
     }
   }

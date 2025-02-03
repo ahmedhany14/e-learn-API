@@ -14,7 +14,11 @@ export class ProfileService {
   ) {}
 
   async findById(id: number): Promise<Profile> {
-    return await this.profileRepository.findById(id);
+    return (await this.profileRepository.findById(id)) ;
+  }
+
+  async findByAccountId(accountId: number): Promise<Profile> {
+    return (await this.profileRepository.findByAccountId(accountId));
   }
 
   async updateProfile(
@@ -22,17 +26,14 @@ export class ProfileService {
     updateProfileDto: UpdateProfileDto,
   ): Promise<Profile> {
     let profile = await this.profileRepository.findByAccountId(accountId);
-    if (!profile) {
-      throw new NotFoundException({
-        message: 'Profile not found',
-        details: 'Profile not found for the provided account',
-      });
-    }
-    Object.assign(profile, updateProfileDto);
-    return await this.profileRepository.updateProfile(profile);
-  }
+    if (!profile)
+      profile = await this.profileRepository.create(
+        updateProfileDto,
+        accountId,
+      );
 
-  async findByAccountId(accountId: number): Promise<Profile> {
-    return await this.profileRepository.findByAccountId(accountId);
+    console.log(profile);
+
+    return await this.profileRepository.updateProfile(profile);
   }
 }

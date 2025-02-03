@@ -1,0 +1,4 @@
+### GET PROFILE DATE
+
+GET http://localhost:3000/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJhaG1lZC5oYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4NjE4NjY1LCJleHAiOjE3Mzg2MjIyNjUsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.Ts-3fv4JHfOB-QrEnF1fEl91DozE_W_AMKy9IIqb9ME

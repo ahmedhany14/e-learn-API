@@ -10,13 +10,13 @@ export class UpdateProfileDto {
   @IsNotEmpty()
   @IsOptional()
   @MaxLength(32)
-  firstName: string;
+  first_name: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
   @MaxLength(32)
-  lastName: string;
+  last_name: string;
 
   @IsString()
   @IsNotEmpty()

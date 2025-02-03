@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Logger,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ProfileService } from './services/profile.service';
 
 // decorators and enums
@@ -11,17 +19,28 @@ import { ExtractAccountData } from '../common/decorators/request.extractData.dec
 // dto
 import { UpdateProfileDto } from './dtos/update.profile.dto';
 
+// safety types
+import { SafeGetProfile } from './types/profile.typeSafety';
+import { PickType } from '@nestjs/mapped-types';
+
 @Controller('profile')
 export class ProfileController {
+  private readonly logger = new Logger(ProfileController.name);
+
   constructor(
     @Inject()
     private profileService: ProfileService,
   ) {}
 
+  @AUTH(AuthEnum.BEARER)
   @Get('')
-  async getProfile(@Query('profileId') profileId: string) {
+  async getProfile(@ExtractAccountData('id') accountId: number) {
+    this.logger.log('Fetching profile');
+
     return {
-      response: await this.profileService.findById(parseInt(profileId)),
+      response: new SafeGetProfile(
+        await this.profileService.findByAccountId(accountId),
+      ),
     };
   }
 
@@ -32,6 +51,8 @@ export class ProfileController {
     @ExtractAccountData('id') accountId: number,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
+    this.logger.log('Updating profile');
+
     return {
       response: await this.profileService.updateProfile(
         accountId,

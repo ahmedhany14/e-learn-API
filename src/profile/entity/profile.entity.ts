@@ -3,8 +3,9 @@ import {
   Column,
   Check,
   PrimaryGeneratedColumn,
-  OneToOne, JoinColumn,
-  Unique
+  OneToOne,
+  JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 
@@ -20,14 +21,14 @@ export class Profile {
     length: 16,
     comment: "User's first name",
   })
-  firstName: string;
+  first_name: string;
 
   @Column({
     type: 'varchar',
     length: 16,
     comment: "User's last name",
   })
-  lastName: string;
+  last_name: string;
 
   @Column({
     type: 'varchar',
@@ -62,13 +63,14 @@ export class Profile {
   updated_at: Date;
 
   @OneToOne(() => Account, (account) => account.profile, {
-  eager: true,
-  cascade: ['remove'],
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-  nullable: false,
- })
+    eager: true,
+    cascade: ['remove'],
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn({
+    name: 'account_id',
     referencedColumnName: 'id',
   })
   account: Account;
