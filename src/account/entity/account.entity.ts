@@ -79,6 +79,6 @@ export class Account {
   @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, { lazy: true })
   backlog: OrderBacklog;
 
-  // @OneToOne(() => Instructor, (instructor) => instructor.account, { lazy: true })
-  // instructor: Instructor;
+  @OneToOne(() => Instructor, (instructor) => instructor.account, { lazy: true })
+  instructor: Instructor;
 }
