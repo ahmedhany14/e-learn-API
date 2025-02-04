@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import dataSource from '../common/config/typeORM.conf';
+import dataSource from '../common/config/moduleTypeORM';
 
 @Injectable()
 export class MigrationService implements OnApplicationBootstrap {

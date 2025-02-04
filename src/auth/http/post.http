@@ -32,7 +32,7 @@ POST localhost:3000/auth/sign-up
 content-type: application/json
 
 {
-  "email": "ahmed.hany@hotmail.com",
+  "email": "admin@hotmail.com",
   "password": "00000000",
   "confirmPassword": "00000000"
 }

@@ -106,7 +106,7 @@ const env = process.env.NODE_ENV;
 
     OrdersModule,
 
-    DbModule,
+    // DbModule,
   ],
   controllers: [AppController],
   providers: [
@@ -114,7 +114,7 @@ const env = process.env.NODE_ENV;
     AccessTokenGuard,
     TokenProvider,
     Email,
-    MigrationService,
+    // MigrationService,
 
     // Guards
     {

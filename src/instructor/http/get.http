@@ -1,0 +1,11 @@
+### GET ALL COURSES
+GET http://localhost:3000/instructor/all-courses
+
+
+### GET COURSE BY ID
+GET http://localhost:3000/instructor/course/:1
+
+### GET PAYMENTS OF THE INSTRUCTOR
+GET http://localhost:3000/instructor/payments
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGhvdG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3Mzg2ODE5OTEsImV4cCI6MTczODY4NTU5MSwiYXVkIjoibG9jYWxob3N0OjMwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6MzAwMCJ9.U9pL84vs3nr-eSv_8-bJPP_X8a4OtLZ8cMUCKdgYbu4
+
