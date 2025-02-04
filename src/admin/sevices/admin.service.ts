@@ -50,7 +50,7 @@ export class AdminService {
   async rejectOrder(orderId: number, adminId: number) {
     const order = await this.findOne(orderId);
 
-    if (!order.is_approved) {
+    if (order.state === 'rejected') {
       throw new ConflictException({ message: 'Order already rejected' });
     }
 

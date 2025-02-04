@@ -31,6 +31,7 @@ export class OrderBacklog {
   })
   created_at: Date;
 
+  // one order can have one backlog
   @OneToOne(() => Order, (order) => order.backlog, {
     // eager: true,
     cascade: true,
@@ -40,6 +41,7 @@ export class OrderBacklog {
   @JoinColumn()
   order: Order;
 
+  // one admin can have many backlogs
   @ManyToOne(() => Account, (account) => account.backlog, {
     // eager: true,
     cascade: true,

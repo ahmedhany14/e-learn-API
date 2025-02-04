@@ -4,6 +4,7 @@ import {
   Get,
   Inject,
   Logger,
+  NotFoundException,
   Post,
   Query,
 } from '@nestjs/common';
@@ -36,11 +37,11 @@ export class ProfileController {
   @Get('')
   async getProfile(@ExtractAccountData('id') accountId: number) {
     this.logger.log('Fetching profile');
-
+    const profile = await this.profileService.findByAccountId(accountId);
+    if (!profile)
+      throw new NotFoundException('Profile not found');
     return {
-      response: new SafeGetProfile(
-        await this.profileService.findByAccountId(accountId),
-      ),
+      response: new SafeGetProfile(profile),
     };
   }
 

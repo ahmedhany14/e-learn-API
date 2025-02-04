@@ -4,13 +4,13 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
-  Unique,
+  Unique, OneToMany, ManyToOne,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { OrderBacklog } from './order.backlog.entity';
 
 @Entity('orders')
-@Unique(['national_id', 'payment_info', 'stripe_info', 'account'])
+@Unique(['national_id', 'payment_info', 'stripe_info'])
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
@@ -65,10 +65,16 @@ export class Order {
   })
   created_at: Date;
 
+  // One order can have one backlog
   @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.order, {})
   backlog: OrderBacklog;
 
-  @OneToOne(() => Account, (account) => account.order, {
+  /*
+    here is a logic error.
+    if a user takes a rejection on her or his order, we should allow him to create a new order.
+    os many orders can have one account
+   */
+  @ManyToOne(() => Account, (account) => account.order, {
     eager: true,
     cascade: true,
     onDelete: 'CASCADE',

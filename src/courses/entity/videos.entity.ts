@@ -45,7 +45,9 @@ export class Videos {
   })
   duration: number;
 
+  // Many videos can belong to one course
   @ManyToOne(() => Course, (course) => course.videos, {
+    eager: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'course_id' })

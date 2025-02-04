@@ -92,12 +92,19 @@ export class OrdersProvider {
   ) {
     const existingOrder = await this.findOrderAssociatedWithAccount(account);
 
-    if (existingOrder) {
+    if (existingOrder && existingOrder.state === 'pending') {
       throw new ConflictException({
         message: 'Order already exists',
         details: 'This account already has an order',
       });
     }
+    if(existingOrder && existingOrder.state === 'approved') {
+      throw new ConflictException({
+        message: 'Order already exists',
+        details: 'This account already has an approved order',
+      });
+    }
+
     const newOrder = this.orderRepository.create({
       ...order,
       is_approved: false,

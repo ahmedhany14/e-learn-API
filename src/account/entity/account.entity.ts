@@ -73,22 +73,29 @@ export class Account {
   })
   updated_at: Date;
 
-  @OneToOne(() => Profile, (profile) => profile.account)
-  profile: Promise<Profile>;
-
-  @OneToOne(() => Order, (order) => order.account, { lazy: true })
-  order: Promise<Order>;
-
-  @OneToMany(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, {
+  // each account has one profile
+  @OneToOne(() => Profile, (profile) => profile.account,{
     lazy: true,
   })
-  backlog: Promise<OrderBacklog>;
+  profile: Promise<Profile>;
 
+  // each account can be assigned to one instructor
   @OneToOne(() => Instructor, (instructor) => instructor.account, {
     lazy: true,
   })
   instructor: Promise<Instructor>;
 
+  // each user can have one order to be instructor
+  @OneToMany(() => Order, (order) => order.account, { lazy: true })
+  order: Promise<Order[]>;
+
+  // each admin can review multiple orders and add them to the backlog
+  @OneToMany(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, {
+    lazy: true,
+  })
+  backlog: Promise<OrderBacklog[]>;
+
+  // each instructor can have multiple courses
   @OneToMany(() => Course, (course) => course.instructor, {
     lazy: true,
   })

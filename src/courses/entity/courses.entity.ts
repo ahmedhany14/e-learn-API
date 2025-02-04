@@ -58,11 +58,13 @@ export class Course {
   })
   created_at: Date;
 
+  // each course has many videos
   @OneToMany(() => Videos, (videos) => videos.course, {
     lazy: true,
   })
   videos: Promise<Videos[]>;
 
+  // many courses can be created by the same instructor
   @ManyToOne(() => Account, (account) => account.courses, {
     nullable: false,
     onDelete: 'CASCADE',

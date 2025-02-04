@@ -62,6 +62,7 @@ export class Profile {
   })
   updated_at: Date;
 
+  // One profile can have one account
   @OneToOne(() => Account, (account) => account.profile, {
     eager: true,
     cascade: ['remove'],

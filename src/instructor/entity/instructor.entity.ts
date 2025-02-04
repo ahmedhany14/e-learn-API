@@ -50,6 +50,7 @@ export class Instructor {
   })
   updated_at: Date;
 
+  // One instructor can have one account
   @OneToOne(() => Account, (account) => account.instructor, {
     eager: true,
     cascade: true,

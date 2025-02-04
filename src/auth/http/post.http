@@ -3,7 +3,7 @@ POST http://localhost:3000/auth/sign-in
 content-type: application/json
 
 {
-  "email": "ahmed.hany@hotmail.com",
+  "email": "hany@hotmail.com",
   "password": "00000000"
 }
 
@@ -11,7 +11,7 @@ content-type: application/json
 ### RESET PASSWORD
 POST http://localhost:3000/auth/reset-password
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZEBob3RtYWlsLmNvbSIsImlhdCI6MTczODU5OTE3MCwiZXhwIjoxNzM4NjAyNzcwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.iJffkE5Me223QoHkXrOqUJ9ACQ1yF_bvgyRa0mP1e0E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJoYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4NzA3NTk2LCJleHAiOjE3Mzg3MTExOTYsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.k0yuvUJh7MhA7wfjBYtHCX2XI69Ff5tdl3aSWoP6XfI
 
 {
     "oldPassword": "00000000",
@@ -32,7 +32,7 @@ POST localhost:3000/auth/sign-up
 content-type: application/json
 
 {
-  "email": "admin@hotmail.com",
+  "email": "hany@hotmail.com",
   "password": "00000000",
   "confirmPassword": "00000000"
 }
