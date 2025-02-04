@@ -3,9 +3,10 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  JoinColumn,
+  JoinColumn, OneToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
+import { Videos } from './videos.entity';
 
 @Entity('courses')
 export class Course {
@@ -56,6 +57,11 @@ export class Course {
     default: () => 'CURRENT_TIMESTAMP',
   })
   created_at: Date;
+
+  @OneToMany(() => Videos, (videos) => videos.course, {
+    lazy: true,
+  })
+  videos: Promise<Videos[]>;
 
   @ManyToOne(() => Account, (account) => account.courses, {
     nullable: false,
