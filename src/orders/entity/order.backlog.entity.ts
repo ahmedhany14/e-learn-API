@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
-  Unique,
+  Unique, ManyToOne,
 } from 'typeorm';
 import { Order } from './order.entity';
 import { Account } from '../../account/entity/account.entity';
@@ -40,7 +40,7 @@ export class OrderBacklog {
   @JoinColumn()
   order: Order;
 
-  @OneToOne(() => Account, (account) => account.backlog, {
+  @ManyToOne(() => Account, (account) => account.backlog, {
     // eager: true,
     cascade: true,
     onDelete: 'CASCADE',

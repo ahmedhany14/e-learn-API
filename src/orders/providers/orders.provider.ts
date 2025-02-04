@@ -75,7 +75,7 @@ export class OrdersProvider {
     try {
 
       return await this.orderRepository.findOne({
-        where: {  account },
+        where: { account: { id: account.id } },
       });
     } catch (error) {
       console.log(error);
