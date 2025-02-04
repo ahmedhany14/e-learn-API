@@ -1,0 +1,4 @@
+### CREATE A NEW COURSE
+POST http://localhost:3000/instructor/course
+Authorization: Bearer
+

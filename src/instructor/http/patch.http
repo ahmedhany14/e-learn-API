@@ -1,0 +1,12 @@
+### UPDATE A COURSE
+PATCH http://localhost:3000/instructor/course/1
+
+### UPDATE INSTRUCTOR PAYMENTS
+PATCH http://localhost:3000/instructor/payments
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4Njg1NjU3LCJleHAiOjE3Mzg2ODkyNTcsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.vU2S5PKBFRnp_8yXBE9cH7xi4IG9kHZru3_Eg9VXGrw
+Content-Type: application/json
+
+{
+}
+
+
