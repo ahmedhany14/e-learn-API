@@ -48,6 +48,7 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
 import { InstructorModule } from './instructor/instructor.module';
 import { PaginationModule } from './common/pagination/pagination.module';
 import { OrdersModule } from './orders/orders.module';
+import { CoursesModule } from './courses/courses.module';
 
 // Redis
 import Redis from 'ioredis';
@@ -105,6 +106,8 @@ const env = process.env.NODE_ENV;
     PaginationModule,
 
     OrdersModule,
+
+    CoursesModule,
 
     // DbModule,
   ],

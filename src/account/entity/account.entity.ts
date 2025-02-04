@@ -4,12 +4,15 @@ import {
   PrimaryGeneratedColumn,
   Check,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { Profile } from '../../profile/entity/profile.entity';
 import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
+import { Course } from '../../courses/entity/courses.entity';
+
 
 @Entity('account')
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
@@ -71,14 +74,23 @@ export class Account {
   updated_at: Date;
 
   @OneToOne(() => Profile, (profile) => profile.account)
-  profile: Profile;
+  profile: Promise<Profile>;
 
   @OneToOne(() => Order, (order) => order.account, { lazy: true })
-  order: Order;
+  order: Promise<Order>;
 
-  @OneToOne(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, { lazy: true })
-  backlog: OrderBacklog;
+  @OneToMany(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, {
+    lazy: true,
+  })
+  backlog: Promise<OrderBacklog>;
 
-  @OneToOne(() => Instructor, (instructor) => instructor.account, { lazy: true })
-  instructor: Instructor;
+  @OneToOne(() => Instructor, (instructor) => instructor.account, {
+    lazy: true,
+  })
+  instructor: Promise<Instructor>;
+
+  @OneToMany(() => Course, (course) => course.instructor, {
+    lazy: true,
+  })
+  courses: Promise<Course[]>;
 }
