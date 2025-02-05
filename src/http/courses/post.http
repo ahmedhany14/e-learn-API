@@ -1,7 +1,7 @@
 ### UPLOAD COURSE IMAGE
 
-POST http://localhost:3000/file/upload-course-image/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBob3RtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4NzU5NDg3LCJleHAiOjE3Mzg3NjMwODcsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.qoPGSNVIknPX-Z_V69JJcKE0haL9jF3uzQkjfmjXcSg
+POST http://localhost:3000/file/upload-course-image/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJoYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4NzYwNDY2LCJleHAiOjE3Mzg3NjQwNjYsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.KMFB1q2WGGl25GdCvadabinZuaQZ36eLaWoNW72kvVw
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary123
 
 ------WebKitFormBoundary123
@@ -10,3 +10,15 @@ Content-Type: image/png
 
 < /home/hany_jr/Pictures/my_photo.jpeg
 ------WebKitFormBoundary123--
+
+
+### CREATE COURSE
+POST http://localhost:3000/courses/course
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJoYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4NzYwNDY2LCJleHAiOjE3Mzg3NjQwNjYsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.KMFB1q2WGGl25GdCvadabinZuaQZ36eLaWoNW72kvVw
+Content-Type: application/json
+
+{
+  "description": "course description",
+  "requirements": "You should have a basic knowledge of programming",
+  "what_you_learn": "You will learn how to build a full stack application"
+}

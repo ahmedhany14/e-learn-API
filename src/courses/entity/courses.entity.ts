@@ -66,6 +66,7 @@ export class Course {
 
   // many courses can be created by the same instructor
   @ManyToOne(() => Account, (account) => account.courses, {
+    eager: true,
     nullable: false,
     onDelete: 'CASCADE',
   })

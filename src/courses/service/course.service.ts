@@ -8,6 +8,10 @@ export class CourseService {
     private readonly courserRepo: CourseRepo,
   ) {}
 
+  async createCourse(createCourseDto: any, account_id: number) {
+    await this.courserRepo.createCourse(createCourseDto, account_id);
+  }
+
   async getCourse(id: number) {
     return await this.courserRepo.getCourse(id);
   }

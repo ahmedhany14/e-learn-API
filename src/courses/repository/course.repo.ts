@@ -2,7 +2,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Course } from '../entity/courses.entity';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { CreateCourseDto } from '../dto/create.course.dto';
 
 @Injectable()
 export class CourseRepo {
@@ -12,6 +17,23 @@ export class CourseRepo {
     @InjectRepository(Course)
     private courseRepository: Repository<Course>,
   ) {}
+
+  async createCourse(createCourseDto: CreateCourseDto, account_id: number) {
+    try {
+      const course = this.courseRepository.create({
+        image_url: createCourseDto.image_url ?? 'default.jpg',
+        description: createCourseDto.description,
+        requirements: createCourseDto.requirements,
+        what_you_learn: createCourseDto.what_you_learn,
+        instructor: { id: account_id },
+      });
+
+      await this.courseRepository.save(course);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Error while creating course');
+    }
+  }
 
   async getCourse(id: number) {
     try {
