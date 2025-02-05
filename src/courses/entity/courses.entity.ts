@@ -32,6 +32,7 @@ export class Course {
     type: 'varchar',
     length: 16,
     enum: ['draft', 'published', 'archived', 'in_review'],
+    default: 'draft',
     nullable: false,
   })
   status: string;
@@ -68,12 +69,13 @@ export class Course {
   created_at: Date;
 
   // each course belongs to a plan, and multiple courses can belong to the same plan
-  @ManyToOne(() => Plan, (plan) => plan.courses, {
-    eager: true,
-    nullable: false,
-  })
-  @JoinColumn({ name: 'plan_name', referencedColumnName: 'plan_name' })
-  plan: Plan;
+  // course can be created without a plan, so plan can be nullable
+  // @ManyToOne(() => Plan, (plan) => plan.courses, {
+  //   eager: true,
+  //   nullable: true,
+  // })
+  // @JoinColumn({ name: 'plan_name', referencedColumnName: 'plan_name' })
+  // plan: Plan;
 
   // each course has many videos, but each video belongs to only one course
   @OneToMany(() => Videos, (videos) => videos.course, {

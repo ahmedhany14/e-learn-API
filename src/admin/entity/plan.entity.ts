@@ -71,8 +71,8 @@ export class Plan {
   updated_by: Account;
 
   // each plan can have multiple courses
-  @OneToMany(() => Course, (course) => course.plan, {
-    lazy: true,
-  })
-  courses: Promise<Course[]>;
+  // @OneToMany(() => Course, (course) => course.plan, {
+  //   lazy: true,
+  // })
+  // courses: Promise<Course[]>;
 }

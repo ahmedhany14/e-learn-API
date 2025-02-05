@@ -1,3 +1,4 @@
+
 import { IsString, IsOptional, IsNotEmpty, MaxLength, IsNumber } from 'class-validator';
 
 export class CreateCourseDto {
@@ -10,9 +11,9 @@ export class CreateCourseDto {
   @IsOptional()
   price : number;
 
-  @IsString()
-  @IsOptional()
-  plan: string;
+  // @IsString()
+  // @IsOptional()
+  // plan: string;
 
   @IsString()
   @IsNotEmpty()
