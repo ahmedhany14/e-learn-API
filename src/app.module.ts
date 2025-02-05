@@ -49,6 +49,7 @@ import { InstructorModule } from './instructor/instructor.module';
 import { PaginationModule } from './common/pagination/pagination.module';
 import { OrdersModule } from './orders/orders.module';
 import { CoursesModule } from './courses/courses.module';
+import { FileModule } from './file/file.module';
 
 // Redis
 import Redis from 'ioredis';
@@ -108,6 +109,8 @@ const env = process.env.NODE_ENV;
     OrdersModule,
 
     CoursesModule,
+
+    FileModule,
 
     // DbModule,
   ],
