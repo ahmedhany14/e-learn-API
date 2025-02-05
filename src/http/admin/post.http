@@ -1,0 +1,11 @@
+### POST NEW PLAN
+
+POST http://localhost:3000/admin/new-plan
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBob3RtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4Nzk4MzYwLCJleHAiOjE3Mzg4MDE5NjAsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.72GMe1xpowppVbjalboEEN9hPXLf_ha1K46ZiFM4B0M
+Content-Type: application/json
+
+{
+  "plan_name": "monthly",
+  "plan_price": 49,
+  "plan_duration": 30
+}

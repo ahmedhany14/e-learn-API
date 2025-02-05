@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entity/courses.entity';
 import { Videos } from './entity/videos.entity';
-import { Plan } from './entity/plan.entity';
 
 // controllers
 import { CoursesController } from './courses.controller';
@@ -14,7 +13,7 @@ import { CourseService } from './service/course.service';
 import { CourseRepo } from './repository/course.repo';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Course, Videos,Plan])],
+  imports: [TypeOrmModule.forFeature([Course, Videos])],
   controllers: [CoursesController],
   providers: [CourseService, CourseRepo],
   exports: [CourseService],

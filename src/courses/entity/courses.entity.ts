@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Videos } from './videos.entity';
-import { Plan } from './plan.entity';
+import { Plan } from '../../admin/entity/plan.entity';
 
 @Entity('courses')
 export class Course {
@@ -67,6 +67,7 @@ export class Course {
   })
   created_at: Date;
 
+  // each course belongs to a plan, and multiple courses can belong to the same plan
   @ManyToOne(() => Plan, (plan) => plan.courses, {
     eager: true,
     nullable: false,
@@ -74,7 +75,7 @@ export class Course {
   @JoinColumn({ name: 'plan_name', referencedColumnName: 'plan_name' })
   plan: Plan;
 
-  // each course has many videos
+  // each course has many videos, but each video belongs to only one course
   @OneToMany(() => Videos, (videos) => videos.course, {
     lazy: true,
   })

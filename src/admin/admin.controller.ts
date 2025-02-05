@@ -1,10 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   Logger,
   Param,
-  Patch,
+  Patch, Post,
 } from '@nestjs/common';
 
 //decorators and enums
@@ -17,7 +18,10 @@ import { ExtractAccountData } from '../common/decorators/request.extractData.dec
 //services
 import { AdminService } from './sevices/admin.service';
 import { Email } from '../common/email/email';
+
+//dtos
 import { GetOrderDto } from './dtos/get.order.dto';
+import { CreatePlanDto } from './dtos/create.plan.dto';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
@@ -31,6 +35,20 @@ export class AdminController {
     @Inject()
     private readonly email: Email,
   ) {}
+
+  @Post('new-plan')
+  async createPlan(
+    @Body() createPlanDto: CreatePlanDto,
+    @ExtractAccountData('id') admin_id: number,
+  ) {
+    this.logger.log('Create new plan');
+
+    const plan = await this.adminService.createPlan(createPlanDto, admin_id);
+
+    return {
+      response: plan,
+    };
+  }
 
   @Get(':order_id')
   async getOrder(@Param() getOrderDto: GetOrderDto) {
