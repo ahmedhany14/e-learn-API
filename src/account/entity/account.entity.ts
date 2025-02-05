@@ -12,6 +12,7 @@ import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Course } from '../../courses/entity/courses.entity';
+import { Plan } from '../../courses/entity/plan.entity';
 
 
 @Entity('account')
@@ -100,4 +101,14 @@ export class Account {
     lazy: true,
   })
   courses: Promise<Course[]>;
+
+  @OneToMany(() => Plan, (plan) => plan.admin_id, {
+    lazy: true,
+  })
+  plans: Promise<Plan[]>;
+
+  @OneToMany(() => Plan, (plan) => plan.updated_by, {
+    lazy: true,
+  })
+  plans_updated: Promise<Plan[]>;
 }

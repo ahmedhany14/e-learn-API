@@ -3,10 +3,12 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  JoinColumn, OneToMany,
+  JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Videos } from './videos.entity';
+import { Plan } from './plan.entity';
 
 @Entity('courses')
 export class Course {
@@ -53,10 +55,24 @@ export class Course {
   what_you_learn: string;
 
   @Column({
+    type: 'int',
+    nullable: false,
+    default: 0,
+  })
+  price: number;
+
+  @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
   created_at: Date;
+
+  @ManyToOne(() => Plan, (plan) => plan.courses, {
+    eager: true,
+    nullable: false,
+  })
+  @JoinColumn({ name: 'plan_name', referencedColumnName: 'plan_name' })
+  plan: Plan;
 
   // each course has many videos
   @OneToMany(() => Videos, (videos) => videos.course, {
