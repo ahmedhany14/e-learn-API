@@ -22,10 +22,12 @@ export class CourseRepo {
     try {
       const course = this.courseRepository.create({
         image_url: createCourseDto.image_url ?? 'default.jpg',
+        price: createCourseDto.price ?? 0,
         description: createCourseDto.description,
         requirements: createCourseDto.requirements,
         what_you_learn: createCourseDto.what_you_learn,
         instructor: { id: account_id },
+        plan: { plan_name: createCourseDto.plan ?? 'free' },
       });
 
       await this.courseRepository.save(course);

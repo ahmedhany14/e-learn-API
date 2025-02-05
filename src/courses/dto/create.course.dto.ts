@@ -1,10 +1,18 @@
-import { IsString, IsOptional, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty, MaxLength, IsNumber } from 'class-validator';
 
 export class CreateCourseDto {
   @IsString()
   @IsOptional()
   @MaxLength(100)
   image_url: string;
+
+  @IsNumber()
+  @IsOptional()
+  price : number;
+
+  @IsString()
+  @IsOptional()
+  plan: string;
 
   @IsString()
   @IsNotEmpty()
@@ -17,4 +25,6 @@ export class CreateCourseDto {
   @IsString()
   @IsNotEmpty()
   what_you_learn: string;
+
+
 }
