@@ -1,0 +1,1 @@
+export const storagePath = '/home/hany-jr/BackEnd/e-learn-api/storage';
