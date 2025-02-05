@@ -1,0 +1,12 @@
+### UPLOAD COURSE IMAGE
+
+POST http://localhost:3000/file/upload-course-image/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhZG1pbkBob3RtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4NzU5NDg3LCJleHAiOjE3Mzg3NjMwODcsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.qoPGSNVIknPX-Z_V69JJcKE0haL9jF3uzQkjfmjXcSg
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary123
+
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="course-image"; filename="course-image.png"
+Content-Type: image/png
+
+< /home/hany_jr/Pictures/my_photo.jpeg
+------WebKitFormBoundary123--

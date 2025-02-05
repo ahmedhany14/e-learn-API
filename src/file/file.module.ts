@@ -1,5 +1,8 @@
 import { BadRequestException, Module } from '@nestjs/common';
 
+// modules
+import { CoursesModule } from '../courses/courses.module';
+
 // file upload packages
 import * as path from 'path';
 import * as sharp from 'sharp';
@@ -48,6 +51,8 @@ import { FileService } from './file.service';
         cb(null, true);
       },
     }),
+
+    CoursesModule,
   ],
   controllers: [FileController],
   providers: [FileService],
