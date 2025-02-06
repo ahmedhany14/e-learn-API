@@ -15,6 +15,7 @@ import { Course } from '../../courses/entity/courses.entity';
 import { Plan } from '../../admin/entity/plan.entity';
 import { Plan_Account } from '../../admin/entity/account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
+import { Tags } from '../../tags/entity/tags.entity';
 
 @Entity('account')
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
@@ -120,4 +121,9 @@ export class Account {
     lazy: true,
   })
   plans_updated: Promise<Plan[]>;
+
+  @OneToMany(() => Tags, (tags) => tags.tag_creator, {
+    lazy: true,
+  })
+  tags: Promise<Tags[]>;
 }

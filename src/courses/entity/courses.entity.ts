@@ -4,11 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
+  OneToMany, ManyToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Videos } from './videos.entity';
 import { Plan } from '../../admin/entity/plan.entity';
+import { CourseTags } from '../../tags/entity/course.tags.entity';
 
 @Entity('courses')
 export class Course {
@@ -91,4 +92,9 @@ export class Course {
   })
   @JoinColumn({ name: 'instructor_id' })
   instructor: Account;
+
+  @OneToMany(() => CourseTags, (courseTags) => courseTags.course, {
+    lazy: true,
+  })
+  tags: Promise<CourseTags[]>;
 }
