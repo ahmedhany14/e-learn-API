@@ -1,0 +1,10 @@
+### CREATE NEW TAG
+POST http://localhost:3000/tags/new-tag
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBob3RtYWlsLmNvbSIsImlhdCI6MTczODg1NDU4NSwiZXhwIjoxNzM4ODU4MTg1LCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.cnDFOvR6wpuNXozpA2CEd_8zl4VnycjDKX2w5GA_b18
+Content-Type: application/json
+
+{
+  "category": "Development",
+  "subcategory": "Data Development&Design",
+  "tag": "Nest.js"
+}
