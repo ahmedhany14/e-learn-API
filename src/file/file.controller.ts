@@ -4,7 +4,8 @@ import {
   Inject,
   NotFoundException,
   Param,
-  Post, UnauthorizedException,
+  Post,
+  UnauthorizedException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,6 +24,7 @@ import { RoleEnum } from '../auth/enums/role.enum';
 
 // decorators
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ProfileService } from '../profile/services/profile.service';
 
 @Controller('file')
 export class FileController {
@@ -31,6 +33,8 @@ export class FileController {
     private readonly fileService: FileService,
     @Inject()
     private readonly courseService: CourseService,
+    @Inject()
+    private readonly profileService: ProfileService,
   ) {}
 
   @Post('upload')
@@ -56,10 +60,12 @@ export class FileController {
     @ExtractAccountData('id') account_id: number,
   ) {
     const course = await this.courseService.getCourse(parseInt(course_id));
-    if (!course) throw new NotFoundException({
-      message: 'Course not found',
-      details: 'you are trying to upload image for a course that does not exist',
-    });
+    if (!course)
+      throw new NotFoundException({
+        message: 'Course not found',
+        details:
+          'you are trying to upload image for a course that does not exist',
+      });
     if (course.instructor.id !== account_id)
       throw new UnauthorizedException({
         message: 'Unauthorized',
@@ -76,6 +82,30 @@ export class FileController {
     return {
       response: {
         message: 'Course image uploaded successfully',
+        fileName: filename,
+      },
+    };
+  }
+
+  @ROLE(RoleEnum.USER, RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Post('upload-profile-image')
+  @UseInterceptors(FileInterceptor('profile-image'))
+  async uploadProfileImage(
+    @UploadedFile() file: Express.Multer.File,
+    @ExtractAccountData('id') account_id: number,
+  ) {
+    const filename = await this.fileService.resizeAndOptimize(
+      file,
+      'profile',
+      account_id,
+    );
+
+    // add it to the DB
+    await this.profileService.updateProfileImage(account_id, filename);
+    return {
+      response: {
+        message: 'Profile image uploaded successfully',
         fileName: filename,
       },
     };

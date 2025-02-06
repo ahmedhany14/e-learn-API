@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 
 // dto
 import { UpdateProfileDto } from '../dtos/update.profile.dto';
+import * as console from 'node:console';
 
 @Injectable()
 export class ProfileRepository {
@@ -43,6 +44,7 @@ export class ProfileRepository {
 
   async findByAccountId(accountId: number): Promise<Profile> {
     try {
+      console.log('account id', accountId);
       return await this.profileRepository.findOne({
         where: { account: { id: accountId } },
       });

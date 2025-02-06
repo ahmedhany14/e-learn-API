@@ -1,24 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as sharp from 'sharp';
 import * as fs from 'fs';
 
-import {
-  storagePath,
-  courseImageName,
-} from '../common/constants/path.constants';
+import { GeneratePathConstants } from '../common/constants/path.constants';
+import { ConfigService } from '@nestjs/config';
+import * as console from 'node:console';
 
 @Injectable()
 export class FileService {
   private readonly logger = new Logger(FileService.name);
+  private readonly storagePath: string;
+
+  constructor(
+    @Inject()
+    private readonly configService: ConfigService,
+  ) {
+    this.storagePath = this.configService.get('app.storagePath');
+  }
 
   getDestination(moduleName: string): string {
     switch (moduleName) {
+
       case 'profile':
-        return `${storagePath}/profile`;
+        return `${this.storagePath}/profile`;
       case 'course':
-        return `${storagePath}/courses`;
+        return `${this.storagePath}/courses`;
       default:
-        return `${storagePath}`;
+        return `${this.storagePath}`;
     }
   }
 
@@ -27,9 +35,13 @@ export class FileService {
     moduleName: string,
     id: number,
   ) {
-    const image_name = courseImageName(id);
+    console.log(moduleName)
+    const image_name = new GeneratePathConstants().generatePathForProfile(
+      id,
+      moduleName,
+    )
     const dir_path = this.getDestination(moduleName);
-    const filePath = dir_path + '/' + image_name ;
+    const filePath = dir_path + '/' + image_name;
 
     try {
       if (!fs.existsSync(dir_path)) {
