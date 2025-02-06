@@ -14,12 +14,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from '../orders/entity/order.entity';
 import { OrderBacklog } from '../orders/entity/order.backlog.entity';
 import { RejectTransaction } from './providers/reject.transaction';
+import { Plan } from './entity/plan.entity';
+import { PlanRepository } from './repository/plan.repo';
+import { Plan_Account } from './entity/account.plan.entity';
 
 @Module({
   controllers: [AdminController],
-  providers: [AdminService, ApproveTransaction, RejectTransaction],
+  providers: [AdminService, PlanRepository, ApproveTransaction, RejectTransaction],
   imports: [
-    TypeOrmModule.forFeature([Order, OrderBacklog]),
+    TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account]),
     EmailModule,
     OrdersModule
   ],

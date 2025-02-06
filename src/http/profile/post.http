@@ -10,3 +10,15 @@ content-type: application/json
   "bio": "I am a software engineer",
   "phone_number": "01015029848"
 }
+
+### UPLOAD PROFILE IMAGE
+POST http://localhost:3000/file/upload-profile-image
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJoYW55MkBob3RtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM4ODAxMjgzLCJleHAiOjE3Mzg4MDQ4ODMsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.QG9h1QCdnKWecp4DDN12iQxzjSFUQUStVOQa79ABlbA
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary123
+
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="profile-image"; filename="course-image.png"
+Content-Type: image/png
+
+< /home/hany-jr/Pictures/Screenshots/im2.png
+------WebKitFormBoundary123--

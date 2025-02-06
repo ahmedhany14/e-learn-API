@@ -32,8 +32,20 @@ export class ProfileService {
         accountId,
       );
 
-    console.log(profile);
 
     return await this.profileRepository.updateProfile(profile);
   }
+
+  async updateProfileImage(
+    accountId: number,
+    image: string,
+  ): Promise<Profile> {
+    let profile = await this.profileRepository.findByAccountId(accountId);
+    if (!profile)
+      throw new NotFoundException('Profile not found');
+
+    profile.profile_image = image;
+    return await this.profileRepository.updateProfile(profile);
+  }
+
 }

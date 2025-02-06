@@ -11,6 +11,8 @@ import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor
 import { ApproveTransaction } from '../providers/approve.transaction';
 import { RejectTransaction } from '../providers/reject.transaction';
 import { OrdersService } from '../../orders/services/orders.service';
+import { PlanRepository } from '../repository/plan.repo';
+import { CreatePlanDto } from '../dtos/create.plan.dto';
 
 @Injectable()
 export class AdminService {
@@ -23,7 +25,14 @@ export class AdminService {
     private readonly approveTransaction: ApproveTransaction,
     @Inject()
     private readonly rejectTransaction: RejectTransaction,
+
+    @Inject()
+    private readonly planRepository: PlanRepository,
   ) {}
+
+  async createPlan(plan: CreatePlanDto, admin_id: number) {
+    await this.planRepository.createPlan(plan, admin_id);
+  }
 
   async approveOrder(orderId: number, adminId: number) {
     const order = await this.findOne(orderId);

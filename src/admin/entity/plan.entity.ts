@@ -7,7 +7,8 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { Course } from './courses.entity';
+import { Course } from '../../courses/entity/courses.entity';
+import { Plan_Account } from './account.plan.entity';
 
 @Entity('plans')
 export class Plan {
@@ -48,9 +49,12 @@ export class Plan {
   })
   updated_at: Date;
 
-  @OneToMany(() => Course, (course) => course.plan, {})
-  courses: Promise<Course[]>;
+  @OneToMany(() => Plan_Account, (plan_account) => plan_account.plan, {
+    lazy: true,
+  })
+  plans_account: Promise<Plan_Account[]>;
 
+  // each plan is created by an admin, and multiple plans can be created by the same admin
   @ManyToOne(() => Account, (account) => account.plans, {
     eager: true,
     nullable: false,
@@ -58,10 +62,17 @@ export class Plan {
   @JoinColumn({ name: 'admin_id' })
   admin_id: Account;
 
+  // each plan can be updated by an admin, and multiple plans can be updated by the same admin
   @ManyToOne(() => Account, (account) => account.plans_updated, {
     eager: true,
     nullable: false,
   })
   @JoinColumn({ name: 'updated_by' })
   updated_by: Account;
+
+  // each plan can have multiple courses
+  // @OneToMany(() => Course, (course) => course.plan, {
+  //   lazy: true,
+  // })
+  // courses: Promise<Course[]>;
 }

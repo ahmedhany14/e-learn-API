@@ -20,13 +20,23 @@ export class Profile {
     type: 'varchar',
     length: 16,
     comment: "User's first name",
+    nullable: true,
   })
   first_name: string;
 
   @Column({
     type: 'varchar',
+    length: 32,
+    nullable: true,
+    comment: "User's profile image",
+  })
+  profile_image: string;
+
+  @Column({
+    type: 'varchar',
     length: 16,
     comment: "User's last name",
+    nullable: true,
   })
   last_name: string;
 

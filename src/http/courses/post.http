@@ -1,20 +1,20 @@
 ### UPLOAD COURSE IMAGE
 
-POST http://localhost:3000/file/upload-course-image/2
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJoYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4NzYwNDY2LCJleHAiOjE3Mzg3NjQwNjYsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.KMFB1q2WGGl25GdCvadabinZuaQZ36eLaWoNW72kvVw
+POST http://localhost:3000/file/upload-course-image/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhaG1lZEBob3RtYWlsLmNvbSIsImlhdCI6MTczODgwMDI3MiwiZXhwIjoxNzM4ODAzODcyLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.qZSlhvB8e4PYuK1AZr14zanBzlc7gWjkzELu6Ka6-ZU
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary123
 
 ------WebKitFormBoundary123
 Content-Disposition: form-data; name="course-image"; filename="course-image.png"
 Content-Type: image/png
 
-< /home/hany_jr/Pictures/my_photo.jpeg
+< /home/hany-jr/Pictures/Screenshots/image.png
 ------WebKitFormBoundary123--
 
 
 ### CREATE COURSE
 POST http://localhost:3000/courses/course
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJoYW55QGhvdG1haWwuY29tIiwiaWF0IjoxNzM4NzYwNDY2LCJleHAiOjE3Mzg3NjQwNjYsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.KMFB1q2WGGl25GdCvadabinZuaQZ36eLaWoNW72kvVw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhaG1lZEBob3RtYWlsLmNvbSIsImlhdCI6MTczODc5OTU0NiwiZXhwIjoxNzM4ODAzMTQ2LCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.Wu9R77agdyH_Hl2tdvQs8p0YnJTteo43l7EzHyTbxHM
 Content-Type: application/json
 
 {

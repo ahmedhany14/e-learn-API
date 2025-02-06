@@ -2,15 +2,15 @@ import { BadRequestException, Module } from '@nestjs/common';
 
 // modules
 import { CoursesModule } from '../courses/courses.module';
+import { ConfigModule } from '@nestjs/config';
+import { ProfileModule } from '../profile/profile.module';
 
 // file upload packages
 import * as path from 'path';
-import * as sharp from 'sharp';
 
 // multer
 import * as multer from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
-import { Express } from 'express';
 
 // controllers
 import { FileController } from './file.controller';
@@ -53,6 +53,10 @@ import { FileService } from './file.service';
     }),
 
     CoursesModule,
+
+    ConfigModule,
+
+    ProfileModule
   ],
   controllers: [FileController],
   providers: [FileService],

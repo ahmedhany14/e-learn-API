@@ -41,15 +41,20 @@ export class SignupProvider {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    let savedAccount: Account;
+    let savedAccount: Account, savedProfile: Profile;
     try {
       const newAccount = queryRunner.manager.create(Account, account);
       savedAccount = await queryRunner.manager.save(newAccount);
 
+      const newProfile = queryRunner.manager.create(Profile, {
+        account: { id: savedAccount.id },
+      });
+      savedProfile = await queryRunner.manager.save(newProfile);
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-    console.log(error);
+      console.log(error);
       throw new InternalServerErrorException({
         message: 'An unexpected error occurred',
         details: error.message,
@@ -58,6 +63,6 @@ export class SignupProvider {
       await queryRunner.release();
     }
 
-    return { account: savedAccount };
+    return { account: savedAccount, profile: savedProfile };
   }
 }

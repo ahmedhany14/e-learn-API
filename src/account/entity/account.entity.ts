@@ -12,8 +12,9 @@ import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Course } from '../../courses/entity/courses.entity';
-import { Plan } from '../../courses/entity/plan.entity';
-
+import { Plan } from '../../admin/entity/plan.entity';
+import { Plan_Account } from '../../admin/entity/account.plan.entity';
+import { RoleEnum } from '../../auth/enums/role.enum';
 
 @Entity('account')
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
@@ -44,7 +45,7 @@ export class Account {
     length: 16,
     nullable: false,
     default: 'user',
-    enum: ['admin', 'user', 'instructor', 'guest'],
+    enum: RoleEnum,
     comment: "User's role",
   })
   role: string;
@@ -74,8 +75,14 @@ export class Account {
   })
   updated_at: Date;
 
+  // each account can have multiple plans, but if the account activates a plan, he can't activate it again until it expires
+  @OneToMany(() => Plan_Account, (plan_account) => plan_account.account, {
+    lazy: true,
+  })
+  plans_account: Promise<Plan_Account[]>;
+
   // each account has one profile
-  @OneToOne(() => Profile, (profile) => profile.account,{
+  @OneToOne(() => Profile, (profile) => profile.account, {
     lazy: true,
   })
   profile: Promise<Profile>;
@@ -102,11 +109,13 @@ export class Account {
   })
   courses: Promise<Course[]>;
 
+  // each admin can create multiple plans
   @OneToMany(() => Plan, (plan) => plan.admin_id, {
     lazy: true,
   })
   plans: Promise<Plan[]>;
 
+  // each admin can update multiple plans
   @OneToMany(() => Plan, (plan) => plan.updated_by, {
     lazy: true,
   })
