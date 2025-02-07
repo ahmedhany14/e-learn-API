@@ -20,16 +20,22 @@ import { AuthRedisService } from './service/auth.redis.service';
 import jwtCong from '../common/config/jwt.cong';
 import { JwtModule } from '@nestjs/jwt';
 
+// Redis
+import redisCon from '../common/config/redis.conf';
+
 // ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from '../profile/entity/profile.entity';
 import { Account } from '../account/entity/account.entity';
+import { AccountRedisService } from '../account/service/account.redis.service';
 
 @Module({
   imports: [
     // JWT
     ConfigModule.forFeature(jwtCong),
     JwtModule.registerAsync(jwtCong.asProvider()),
+    // Redis
+    ConfigModule.forFeature(redisCon),
     forwardRef(() => AccountModule),
     TypeOrmModule.forFeature([
       Account, Profile
@@ -50,6 +56,7 @@ import { Account } from '../account/entity/account.entity';
     },
     SignupProvider,
     AuthRedisService,
+    AccountRedisService
   ],
 
   exports: [AuthService, Hashing],

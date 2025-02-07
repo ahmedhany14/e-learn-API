@@ -5,8 +5,9 @@ import {
   Get,
   Inject,
   Logger,
-  NotFoundException,
-  Post,
+  Param,
+  ParseIntPipe,
+  Post, UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
@@ -17,14 +18,18 @@ import { UpgradeToInstructorDto } from './dtos/upgrade.to.instructor.dto';
 import { AccountService } from './service/account.service';
 import { Email } from '../common/email/email';
 
-// decorators
+// decorators for auth
 import { AUTH } from '../auth/decorators/auth.decorator';
-import { ACCOUNT_SELECT } from './decorators/account.select.decorator';
 import { ROLE } from '../auth/decorators/role.decorator';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { AccountEnum } from './entity/account.enum';
+
+// decorators
+import { TokenIsInRedisGuard } from './guards/account.redis.guard';
+import { AccountIsExistingDecorator } from './decorators/account.is_existing.decorator';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ACCOUNT_SELECT } from './decorators/account.select.decorator';
 
 // interceptors
 import { ExtractAccountInterceptor } from './interceptors/extract.account.interceptor';
@@ -34,7 +39,7 @@ import {
   SafeGetAccount,
   SafeDeactivateAccount,
   SafeDeleteAccount,
-  SafeUpgradeToInstructor
+  SafeUpgradeToInstructor,
 } from './interfaces/accounts.interface';
 
 @UseInterceptors(ExtractAccountInterceptor)
@@ -108,5 +113,15 @@ export class AccountController {
     return {
       response: 'Upgrade request sent successfully for review',
     };
+  }
+
+  @Get('active-account/:account_id/:token')
+  @UseGuards(TokenIsInRedisGuard)
+  async activeAccount(
+    @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
+    account_id: number,
+  ) {
+    await this.accountService.activeAccount(account_id);
+    return { response: 'Account activated successfully' };
   }
 }

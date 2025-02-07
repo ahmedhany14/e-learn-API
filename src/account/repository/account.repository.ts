@@ -73,4 +73,20 @@ export class AccountRepository {
       this.logger.log(`Account with id ${account.id} has been deleted`);
     }
   }
+
+  async activeAccount(account_id: number): Promise<void> {
+    try {
+      await this.accountRepository.update(
+        { id: account_id },
+        { is_active: true },
+      );
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
+    } finally {
+      this.logger.log(`Account with id ${account_id} has been activated`);
+    }
+  }
 }

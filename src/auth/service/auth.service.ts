@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+
 import {
   BadRequestException,
   ConflictException,
@@ -16,7 +18,8 @@ import { Hashing } from '../interfaces/Hashing';
 import { SignupProvider } from '../providers/transactions/signup.provider';
 import { Email } from '../../common/email/email';
 import { AuthRedisService } from './auth.redis.service';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import { AccountRedisService } from '../../account/service/account.redis.service';
 
 // Dto and Interfaces
 import { RefreshTokenDto } from '../dto/refresh_token.dto';
@@ -28,6 +31,10 @@ import { AccountResetPasswordDto } from '../dto/account.reset-password.dto';
 import { ForgetDto } from '../dto/forget.dto';
 import { AccountEnum } from '../../account/entity/account.enum';
 import { Account } from '../../account/entity/account.entity';
+
+// Configurations
+import redisCon from '../../common/config/redis.conf';
+import * as console from 'node:console';
 
 @Injectable()
 export class AuthService {
@@ -41,6 +48,9 @@ export class AuthService {
     @Inject() private readonly redisService: AuthRedisService,
     @Inject() private readonly configService: ConfigService,
     @Inject() private readonly signupProvider: SignupProvider,
+    @Inject() private readonly accountRedisService: AccountRedisService,
+    @Inject(redisCon.KEY)
+    private readonly redisConfigurations: ConfigType<typeof redisCon>,
   ) {}
 
   async signUp(accountSignupDto: AccountSignupDto) {
@@ -49,7 +59,22 @@ export class AuthService {
     const { accessToken, refreshToken } =
       await this.tokenProvider.generateToken(account);
 
-    await this.email.sendWelcomeEmail(account.email, accessToken);
+    const randomToken = crypto.randomBytes(8).toString('hex');
+
+    await this.accountRedisService.hashActiveToken(
+      randomToken,
+      account.id,
+      this.redisConfigurations.active_token_expiration,
+    );
+
+    console.log(
+      'http://localhost:3000/account/active-account/' +
+        account.id +
+        '/' +
+        randomToken,
+    );
+
+    //await this.email.sendWelcomeEmail(account.email, accessToken);
 
     return { accessToken, refreshToken };
   }
@@ -62,6 +87,7 @@ export class AuthService {
       AccountEnum.EMAIL,
       AccountEnum.PASSWORD,
       AccountEnum.IS_ACTIVE,
+      AccountEnum.IS_VERIFIED,
     ];
 
     const account = await this.accountService.findByEmail(
@@ -70,6 +96,12 @@ export class AuthService {
     );
     if (!account) throw new NotFoundException('Account not found');
     if (!account.is_active) throw new GoneException('Account is not active');
+    if (account.is_verified === false) {
+      throw new NotFoundException({
+        message: 'Account not found',
+        details: 'Account is not verified',
+      });
+    }
     if (
       !(await this.hashing.compare(accountLoginDto.password, account.password))
     )
@@ -100,7 +132,10 @@ export class AuthService {
     return { accessToken };
   }
 
-  async resetPassword<T extends Partial<Account>>(resetPasswordDto: AccountResetPasswordDto, account: T) {
+  async resetPassword<T extends Partial<Account>>(
+    resetPasswordDto: AccountResetPasswordDto,
+    account: T,
+  ) {
     this.logger.log('Reset password attempt');
     console.log(account);
 
@@ -115,12 +150,10 @@ export class AuthService {
         details: 'Old password is incorrect or new passwords do not match',
       });
 
-
     const newAccount = await this.accountService.updatePassword(
       account,
       await this.hashing.hash(resetPasswordDto.newPassword),
     );
-
 
     const { accessToken, refreshToken } =
       await this.tokenProvider.generateToken(newAccount);
