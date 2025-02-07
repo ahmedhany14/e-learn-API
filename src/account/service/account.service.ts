@@ -22,11 +22,11 @@ export class AccountService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async findByEmail(email: string, select: string[]) {
+  async findByEmail(email: string, select: string[] = ['email', 'role', 'is_active']) {
     return await this.accountRepository.findByEmail(email, select);
   }
 
-  async findById(id: number, select: string[]) {
+  async findById(id: number, select: string[] = ['email', 'role', 'is_active']) {
     return await this.accountRepository.findById(id, select);
   }
 
@@ -42,6 +42,10 @@ export class AccountService {
 
   async delete<T extends Partial<Account>>(account: T) {
     return await this.accountRepository.delete(account);
+  }
+
+  async activeAccount(account_id: number) {
+    await this.accountRepository.activeAccount(account_id);
   }
 
   async upgradeToInstructor<T extends Partial<Account>>(

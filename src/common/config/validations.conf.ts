@@ -39,7 +39,7 @@ export default Joi.object({
   REDIS_HOST: Joi.string().required(),
   REDIS_PORT: Joi.number().required(),
   REDIS_PW: Joi.string().required(),
-
+  REDIS_ACTIVE_TOKEN_EXPIRATION: Joi.number().required().default(300),
   // storage configurations validation
   STORAGE_PATH: Joi.string().required(),
 });

@@ -9,4 +9,5 @@ content-type: application/json
   "stripe_info": "acct_9XbD2eRkL0WqYpLm"
 }
 
-
+### ACTIVE ACCOUNT
+PATCH http://localhost:3000/account/active-account/8/3e5ffef6a72a6692

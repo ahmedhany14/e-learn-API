@@ -17,7 +17,13 @@ import { Plan_Account } from '../../admin/entity/account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
 import { Tags } from '../../tags/entity/tags.entity';
 
-@Entity('account')
+@Entity({
+  name: 'accounts',
+  comment: 'User accounts',
+  orderBy: {
+    created_at: 'ASC',
+  }
+})
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
 export class Account {
   @PrimaryGeneratedColumn()
@@ -58,6 +64,14 @@ export class Account {
     comment: `user's account status, true if active, false if inactive`,
   })
   is_active: boolean;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: () => 'false',
+    comment: `user's account verification status, true if verified, false if not verified`,
+  })
+  is_verified: boolean;
 
   @Column({
     type: 'timestamp with time zone',
