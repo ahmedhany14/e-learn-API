@@ -51,7 +51,7 @@ export class AuthService {
     @Inject() private readonly accountRedisService: AccountRedisService,
     @Inject(redisCon.KEY)
     private readonly redisConfigurations: ConfigType<typeof redisCon>,
-  ) {}
+  ) { }
 
   async signUp(accountSignupDto: AccountSignupDto) {
     this.logger.log('sign up attempt');
@@ -69,9 +69,9 @@ export class AuthService {
 
     console.log(
       'http://localhost:3000/account/active-account/' +
-        account.id +
-        '/' +
-        randomToken,
+      account.id +
+      '/' +
+      randomToken,
     );
 
     //await this.email.sendWelcomeEmail(account.email, accessToken);
@@ -141,7 +141,7 @@ export class AuthService {
 
     if (
       !(await this.hashing.compare(
-        resetPasswordDto.oldPassword,
+        resetPasswordDto.old_password,
         account.password,
       ))
     )
@@ -152,7 +152,7 @@ export class AuthService {
 
     const newAccount = await this.accountService.updatePassword(
       account,
-      await this.hashing.hash(resetPasswordDto.newPassword),
+      await this.hashing.hash(resetPasswordDto.new_password),
     );
 
     const { accessToken, refreshToken } =

@@ -7,7 +7,8 @@ import {
   Logger,
   Param,
   ParseIntPipe,
-  Post, UseGuards,
+  Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
@@ -42,6 +43,17 @@ import {
   SafeUpgradeToInstructor,
 } from './interfaces/accounts.interface';
 
+// swagger
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+  ApiSecurity
+} from '@nestjs/swagger';
+
+@ApiTags('Account')
 @UseInterceptors(ExtractAccountInterceptor)
 @Controller('account')
 export class AccountController {
@@ -60,6 +72,29 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Get()
+  @ApiSecurity('access-token')
+  @ApiResponse({
+    status: 200,
+    description: 'Account data retrieved successfully',
+    schema: {
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            id: { type: 'number', example: 1 },
+            email: { type: 'string', example: 'user@example.com' },
+            role: {
+              type: 'string',
+              enum: Object.values(RoleEnum),
+              example: 'user',
+            },
+            is_active: { type: 'boolean', example: true },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized access' })
   async getAccount(@ExtractAccountData() account: SafeGetAccount) {
     this.logger.log('find account by email attempted');
     return { response: account };
@@ -69,6 +104,25 @@ export class AccountController {
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
   @Delete('de-active-account')
+  @ApiSecurity('access-token')
+  @ApiOperation({
+    summary: 'Deactivate account',
+    description: 'Deactivates the authenticated user account',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Account deactivated successfully',
+    schema: {
+      properties: {
+        response: {
+          type: 'string',
+          example: 'Account de-activated successfully',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized access' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Invalid role' })
   async deActive(@ExtractAccountData() account: SafeDeactivateAccount) {
     this.logger.log('de-activate account attempted');
 
@@ -85,6 +139,21 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Delete()
+  @ApiSecurity('access-token')
+  @ApiOperation({
+    summary: 'Delete account',
+    description: 'Permanently deletes the authenticated user account',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Account deleted successfully',
+    schema: {
+      properties: {
+        response: { type: 'string', example: 'Account deleted successfully' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized access' })
   async delete(@ExtractAccountData() account: SafeDeleteAccount) {
     this.logger.log('delete account attempted');
 
@@ -97,6 +166,35 @@ export class AccountController {
   @ROLE(RoleEnum.USER)
   @AUTH(AuthEnum.BEARER)
   @Post('upgrade-to-instructor')
+  @ApiSecurity('access-token')
+  @ApiOperation({
+    summary: 'Upgrade to instructor',
+    description:
+      'Upgrade to instructor by using the token provided in the header',
+  })
+  @ApiBody({ type: UpgradeToInstructorDto })
+  @ApiOperation({
+    summary: 'Upgrade to instructor account',
+    description: 'Processes a user request to upgrade to instructor status',
+  })
+  @ApiBody({ type: UpgradeToInstructorDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Upgrade request processed',
+    schema: {
+      properties: {
+        response: {
+          type: 'string',
+          example: 'Upgrade request sent successfully for review',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized access' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Invalid payment details',
+  })
   async upgradeToInstructor(
     @Body() upgradeToInstructorDto: UpgradeToInstructorDto,
     @ExtractAccountData() account: SafeUpgradeToInstructor,
@@ -117,6 +215,34 @@ export class AccountController {
 
   @Get('active-account/:account_id/:token')
   @UseGuards(TokenIsInRedisGuard)
+  @ApiOperation({
+    summary: 'Activate account',
+    description: 'Activates an account using the provided activation token',
+  })
+  @ApiParam({
+    name: 'account_id',
+    type: 'number',
+    description: 'The ID of the account to activate',
+    example: 1,
+  })
+  @ApiParam({
+    name: 'token',
+    type: 'string',
+    description: 'The activation token',
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Account activated successfully',
+    schema: {
+      properties: {
+        response: { type: 'string', example: 'Account activated successfully' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Invalid token' })
+  @ApiResponse({ status: 404, description: 'Account not found' })
   async activeAccount(
     @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
     account_id: number,

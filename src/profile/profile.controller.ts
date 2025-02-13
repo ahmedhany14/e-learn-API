@@ -22,8 +22,17 @@ import { UpdateProfileDto } from './dtos/update.profile.dto';
 
 // safety types
 import { SafeGetProfile } from './types/profile.typeSafety';
-import { PickType } from '@nestjs/mapped-types';
 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+  ApiBody,
+} from '@nestjs/swagger';
+
+@ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {
   private readonly logger = new Logger(ProfileController.name);
@@ -33,18 +42,63 @@ export class ProfileController {
     private profileService: ProfileService,
   ) {}
 
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiSecurity('access-token')
+  @ApiResponse({
+    status: 200,
+    description: 'Profile retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            id: { type: 'number', example: 1 },
+            first_name: { type: 'string', example: 'John' },
+            last_name: { type: 'string', example: 'Doe' },
+            bio: { type: 'string', example: 'Software Engineer' },
+            phone_number: { type: 'string', example: '+123456789' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Profile not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @AUTH(AuthEnum.BEARER)
   @Get('')
   async getProfile(@ExtractAccountData('id') accountId: number) {
     this.logger.log('Fetching profile');
     const profile = await this.profileService.findByAccountId(accountId);
-    if (!profile)
-      throw new NotFoundException('Profile not found');
+    if (!profile) throw new NotFoundException('Profile not found');
     return {
       response: new SafeGetProfile(profile),
     };
   }
 
+  @ApiOperation({ summary: 'Update user profile' })
+  @ApiBody({ type: UpdateProfileDto })
+  @ApiSecurity('access-token')
+  @ApiResponse({
+    status: 200,
+    description: 'Profile updated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            first_name: { type: 'string', example: 'John' },
+            last_name: { type: 'string', example: 'Doe' },
+            bio: { type: 'string', example: 'Software Engineer' },
+            phone_number: { type: 'string', example: '+123456789' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid request data' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ROLE(RoleEnum.ADMIN, RoleEnum.USER, RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
   @Post()
