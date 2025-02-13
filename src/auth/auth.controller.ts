@@ -36,7 +36,17 @@ import { ACCOUNT_SELECT } from '../account/decorators/account.select.decorator';
 // interfaces
 import { SafeResetAccountPassword } from '../account/interfaces/accounts.interface';
 import { ExtractAccountInterceptor } from '../account/interceptors/extract.account.interceptor';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiHeaders, ApiSecurity,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @UseInterceptors(ExtractAccountInterceptor)
 @Controller('auth')
 export class AuthController {
@@ -44,16 +54,47 @@ export class AuthController {
 
   constructor(@Inject() private readonly authService: AuthService) {}
 
-  @Post('sign-in')
   @AUTH(AuthEnum.NONE)
+  @Post('sign-in')
+  @ApiOperation({ summary: 'Sign in to account' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    schema: {
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            accessToken: {
+              type: 'string',
+              description: 'Bearer token',
+              example: 'Bearer <token>',
+            },
+            refreshToken: {
+              type: 'string',
+              description: 'Refresh token',
+              example: '<token>',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiBody({ type: AccountLoginDto })
   async login(@Body() accountLoginDto: AccountLoginDto) {
     this.logger.log('login attempt');
 
     return { response: await this.authService.login(accountLoginDto) };
   }
 
-  @Post('sign-up')
   @AUTH(AuthEnum.NONE)
+  @Post('sign-up')
+  @ApiOperation({ summary: 'Create new account' })
+  @ApiResponse({ status: 201, description: 'Account created successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiResponse({ status: 409, description: 'Email already exists' })
+  @ApiBody({ type: AccountSignupDto })
   async signUp(@Body() accountSignupDto: AccountSignupDto) {
     this.logger.log('sign up attempt');
 
@@ -63,6 +104,9 @@ export class AuthController {
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
   @Post('sign-out')
+  @ApiOperation({ summary: 'Sign out from account' })
+  @ApiResponse({ status: 200, description: 'Signed out successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async signOut() {
     /*
     Not implemented yet
@@ -71,6 +115,37 @@ export class AuthController {
     return { response: 'Sign out' };
   }
 
+  @ApiOperation({
+    summary: 'Reset account password',
+    description: 'Reset account password',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset successfully',
+    schema: {
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            newAccount: { type: 'object', description: 'New account data' },
+            accessToken: {
+              type: 'string',
+              description: 'Bearer token',
+              example: '<token>',
+            },
+            refreshToken: {
+              type: 'string',
+              description: 'Refresh token',
+              example: '<token>',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid password format' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiSecurity('access-token')
   @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.PASSWORD, AccountEnum.IS_ACTIVE)
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
@@ -88,6 +163,22 @@ export class AuthController {
 
   @Post('forgot-password')
   @AUTH(AuthEnum.NONE)
+  @ApiOperation({ summary: 'Reset account password' })
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset successfully',
+    schema: {
+      properties: {
+        response: {
+          type: 'string',
+          description: 'email sent',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid email' })
+  @ApiResponse({ status: 404, description: 'Account not found' })
+  @ApiBody({ type: ForgetDto })
   async forgotPassword(@Body() forgetDto: ForgetDto) {
     await this.authService.forgotPassword(forgetDto);
     return { response: 'email sent' };
@@ -95,6 +186,35 @@ export class AuthController {
 
   @Post('reset-password/:token')
   @AUTH(AuthEnum.NONE)
+  @ApiOperation({
+    summary: 'Request password reset email',
+    description: 'Request password reset email with token',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reset email sent',
+    schema: {
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            accessToken: {
+              type: 'string',
+              description: 'Bearer token',
+              example: '<token>',
+            },
+            refreshToken: {
+              type: 'string',
+              description: 'Refresh token',
+              example: '<token>',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Account not found' })
+  @ApiResponse({ status: 410, description: 'Token expired' })
   async resetPasswordWithToken(
     @Param('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
@@ -111,17 +231,30 @@ export class AuthController {
 
   @AUTH(AuthEnum.NONE)
   @Post('refreshToken')
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token refreshed successfully',
+    schema: {
+      properties: {
+        response: {
+          type: 'object',
+          properties: {
+            accessToken: {
+              type: 'string',
+              description: 'Bearer token',
+              example: '<token>',
+            },
+          },
+        },
+      },
+    },
+  })
   async refreshToken(@Body() refreshToken: RefreshTokenDto) {
     this.logger.log('refresh token attempt');
 
     return {
       response: await this.authService.refreshToken(refreshToken),
     };
-  }
-
-  @AUTH(AuthEnum.BEARER)
-  @Get('test-token')
-  async testToken() {
-    return { response: 'valid token' };
   }
 }

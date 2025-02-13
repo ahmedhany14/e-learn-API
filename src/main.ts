@@ -74,7 +74,24 @@ async function bootstrap() {
     .setTitle('e-learning platform API')
     .setDescription('The e-learning platform API description')
     .addServer(`http://localhost:${process.env.PORT ?? 3000}`)
-    .addApiKey({ type: 'apiKey', in: 'header', name: 'Authorization' })
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: 'Please enter token with Bearer prefix',
+      },
+      'Authorization',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
 

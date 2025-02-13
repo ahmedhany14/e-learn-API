@@ -50,8 +50,7 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
-  ApiBearerAuth,
-  ApiHeader,
+  ApiSecurity
 } from '@nestjs/swagger';
 
 @ApiTags('Account')
@@ -73,16 +72,7 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Get()
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-    required: true,
-    schema: {
-      type: 'string',
-      example:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk',
-    },
-  })
+  @ApiSecurity('access-token')
   @ApiResponse({
     status: 200,
     description: 'Account data retrieved successfully',
@@ -114,16 +104,7 @@ export class AccountController {
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
   @Delete('de-active-account')
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-    required: true,
-    schema: {
-      type: 'string',
-      example:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk',
-    },
-  })
+  @ApiSecurity('access-token')
   @ApiOperation({
     summary: 'Deactivate account',
     description: 'Deactivates the authenticated user account',
@@ -158,16 +139,7 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Delete()
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-    required: true,
-    schema: {
-      type: 'string',
-      example:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk',
-    },
-  })
+  @ApiSecurity('access-token')
   @ApiOperation({
     summary: 'Delete account',
     description: 'Permanently deletes the authenticated user account',
@@ -194,16 +166,7 @@ export class AccountController {
   @ROLE(RoleEnum.USER)
   @AUTH(AuthEnum.BEARER)
   @Post('upgrade-to-instructor')
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-    required: true,
-    schema: {
-      type: 'string',
-      example:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk',
-    },
-  })
+  @ApiSecurity('access-token')
   @ApiOperation({
     summary: 'Upgrade to instructor',
     description:
