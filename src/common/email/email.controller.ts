@@ -7,14 +7,4 @@ export class EmailController {
     @Inject()
     private readonly emailService: Email,
   ) {}
-
-  @Get('test-email')
-  async send() {
-    // await this.emailService.sendWelcomeEmail(
-    //   'ahmedhany14.work@gmail.com',
-    //   'Ahmed Hany',
-    //   "any text you'd like to add",
-    // );
-    return 'Email sent';
-  }
 }
