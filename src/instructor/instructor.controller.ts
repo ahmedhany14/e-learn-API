@@ -26,7 +26,15 @@ import { SafePaymentInfo } from './types/instructor.types';
 
 // dto
 import { UpdatePaymentsDto } from './dtos/update.payments.dto';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('instructor')
 @Controller('instructor')
 export class InstructorController {
   private readonly logger = new Logger(InstructorController.name);
@@ -38,7 +46,31 @@ export class InstructorController {
 
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Get('payments')
+  @Get('my-payments')
+  @ApiOperation({
+    summary: 'Get payments for instructor',
+  })
+  @ApiSecurity('access-token')
+  @ApiResponse({
+    status: 200,
+    description: 'Payments fetched successfully',
+    schema: {
+      example: {
+        response: {
+          stripe_info: 'acct_1Ku3gq2eZvKYlo2C',
+          payment_info: '4111111111111111',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No payments found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async getPayments(@ExtractAccountData('id') account_id: number) {
     this.logger.log(`Getting payments for account_id: ${account_id}`);
 
@@ -53,12 +85,29 @@ export class InstructorController {
 
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Patch('payments')
+  @Patch('edit-payments')
+  @ApiOperation({
+    summary: 'Update payments for instructor',
+  })
+  @ApiSecurity('access-token')
+  @ApiBody({ type: UpdatePaymentsDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Payments updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'No data provided to update',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async updatePayments(
     @ExtractAccountData('id') account_id: number,
     @Body() updatePaymentsDto: UpdatePaymentsDto,
   ) {
-    if(Object.keys(updatePaymentsDto).length === 0) {
+    if (Object.keys(updatePaymentsDto).length === 0) {
       return {
         response: 'No data provided to update',
       };
