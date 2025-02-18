@@ -4,7 +4,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany, ManyToMany,
+  OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Videos } from './videos.entity';
@@ -68,6 +69,13 @@ export class Course {
     default: () => 'CURRENT_TIMESTAMP',
   })
   created_at: Date;
+
+  @Column({
+    type: 'timestamp with time zone',
+    onUpdate: 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updated_at: Date;
 
   // each course belongs to a plan, and multiple courses can belong to the same plan
   // course can be created without a plan, so plan can be nullable
