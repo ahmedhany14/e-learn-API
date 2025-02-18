@@ -16,6 +16,28 @@ export class TagsRepository {
     private readonly tagsRepository: Repository<Tags>,
   ) {}
 
+  async getTagById(id: number) {
+    try {
+      return await this.tagsRepository.findOne({
+        where: { id },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while fetching tag',
+      });
+    }
+  }
+
+  async deleteTagById(id: number) {
+    try {
+      return await this.tagsRepository.delete({ id });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while deleting tag',
+      });
+    }
+  }
+
   async getOneTageByThree(getByThree: GetByThree) {
     try {
       return await this.tagsRepository.findOne({
@@ -40,6 +62,56 @@ export class TagsRepository {
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while creating tag',
+      });
+    }
+  }
+
+  async getAllCategories() {
+    try {
+      return await this.tagsRepository.find({
+        select: ['category'],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while fetching categories',
+      });
+    }
+  }
+
+  async getAllSubcategories() {
+    try {
+      return await this.tagsRepository.find({
+        select: ['subcategory'],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while fetching subcategories',
+      });
+    }
+  }
+
+  async getAllTags() {
+    try {
+      return await this.tagsRepository.find({
+        select: ['tag'],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while fetching tags',
+      });
+    }
+  }
+
+  async getTagsWithDetails() {
+    try {
+      return await this.tagsRepository.find({
+        relations: {
+          tag_creator: true,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while fetching tags',
       });
     }
   }
