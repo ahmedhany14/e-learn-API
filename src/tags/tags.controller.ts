@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Inject, Post, ConflictException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  ConflictException,
+  Delete,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 
 // decorators and enums from auth
 import { AUTH } from '../auth/decorators/auth.decorator';
@@ -22,6 +32,18 @@ export class TagsController {
 
   @ROLE(RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
+  @Get('all-tags-with-details')
+  async getAllTagsWithDetails() {
+    const tags = await this.tagsService.getAllTags();
+    return {
+      response: {
+        tags,
+      },
+    };
+  }
+
+  @ROLE(RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
   @Post('new-tag')
   async createTag(
     @Body() createTagDto: CreateTagDto,
@@ -31,12 +53,12 @@ export class TagsController {
       category: createTagDto.category,
       subcategory: createTagDto.subcategory,
       tag: createTagDto.tag,
-    })
-    if(tagExists) {
+    });
+    if (tagExists) {
       throw new ConflictException({
         message: 'Tag already exists',
         details: `Tag with category: ${createTagDto.category}, subcategory: ${createTagDto.subcategory}, tag: ${createTagDto.tag} already exists`,
-      })
+      });
     }
 
     const tag = await this.tagsService.createNewTage(createTagDto, admin_id);
@@ -49,15 +71,54 @@ export class TagsController {
     };
   }
 
-  @Get('all-tags')
-  async getAllTags() {}
+  @ROLE(RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
+  @Delete('tag/:tagId')
+  async deleteTag(@Param('tagId', ParseIntPipe) tagId: number) {
+    const tag = await this.tagsService.getTagById(tagId);
+    if (!tag) {
+      throw new ConflictException({
+        message: 'Tag not found',
+        details: `Tag with id: ${tagId} not found`,
+      });
+    }
+
+    await this.tagsService.deleteTagById(tagId);
+
+    return {
+      response: {
+        message: 'Tag deleted successfully',
+      },
+    };
+  }
 
   @Get('categories')
-  async getCategories() {}
+  async getCategories() {
+    const categories = await this.tagsService.getAllCategories();
+    return {
+      response: {
+        categories,
+      },
+    };
+  }
 
   @Get('subcategories')
-  async getSubcategories() {}
+  async getSubcategories() {
+    const subcategories = await this.tagsService.getAllSubcategories();
+    return {
+      response: {
+        subcategories,
+      },
+    };
+  }
 
-  @Get('tags')
-  async getTags() {}
+  @Get('all-tags')
+  async getAllTags() {
+    const tags = await this.tagsService.getAllTags();
+    return {
+      response: {
+        tags,
+      },
+    };
+  }
 }
