@@ -21,7 +21,7 @@ export class PlanRepository {
         updated_by: { id: admin_id },
       });
 
-      await this.planRepository.save(newPlan);
+      return await this.planRepository.save(newPlan);
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error creating plan',

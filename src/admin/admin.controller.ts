@@ -68,7 +68,10 @@ export class AdminController {
     const plan = await this.adminService.createPlan(createPlanDto, admin_id);
 
     return {
-      response: plan,
+      response: {
+        message: 'Plan created successfully',
+        plan,
+      },
     };
   }
 
