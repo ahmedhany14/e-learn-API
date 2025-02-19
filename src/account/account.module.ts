@@ -16,12 +16,18 @@ import { Account } from './entity/account.entity';
 import { AccountRedisService } from './service/account.redis.service';
 import { AppModule } from '../app.module';
 
+// Config
+import { ConfigModule } from '@nestjs/config';
+import redisCon from '../common/config/redis.conf';
+
 @Module({
   controllers: [AccountController],
   exports: [AccountService],
   providers: [AccountService, AccountRepository, AccountRedisService],
   imports: [
     TypeOrmModule.forFeature([Account]),
+    ConfigModule.forFeature(redisCon),
+
     forwardRef(() => AuthModule),
     forwardRef(() => AppModule),
     AdminModule,

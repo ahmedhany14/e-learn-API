@@ -59,6 +59,6 @@ import { AccountRedisService } from '../account/service/account.redis.service';
     AccountRedisService
   ],
 
-  exports: [AuthService, Hashing],
+  exports: [AuthService, Hashing, TokenProvider],
 })
 export class AuthModule {}

@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -17,7 +18,9 @@ import { UpgradeToInstructorDto } from './dtos/upgrade.to.instructor.dto';
 
 // service
 import { AccountService } from './service/account.service';
+import { TokenProvider } from '../auth/providers/token.provider';
 import { Email } from '../common/email/email';
+import { AccountRedisService } from './service/account.redis.service';
 
 // decorators for auth
 import { AUTH } from '../auth/decorators/auth.decorator';
@@ -43,17 +46,10 @@ import {
   SafeUpgradeToInstructor,
 } from './interfaces/accounts.interface';
 
-// swagger
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiParam,
-  ApiSecurity
-} from '@nestjs/swagger';
+// Configurations
+import redisCon from './../common/config/redis.conf';
+import { ConfigType } from '@nestjs/config';
 
-@ApiTags('Account')
 @UseInterceptors(ExtractAccountInterceptor)
 @Controller('account')
 export class AccountController {
@@ -61,6 +57,10 @@ export class AccountController {
 
   constructor(
     @Inject() private readonly accountService: AccountService,
+    @Inject() private readonly tokenProvider: TokenProvider,
+    @Inject(redisCon.KEY)
+    private readonly redisConfigurations: ConfigType<typeof redisCon>,
+    @Inject() private readonly accountRedisService: AccountRedisService,
     @Inject() private readonly email: Email,
   ) {}
 
@@ -72,29 +72,6 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Get()
-  @ApiSecurity('access-token')
-  @ApiResponse({
-    status: 200,
-    description: 'Account data retrieved successfully',
-    schema: {
-      properties: {
-        response: {
-          type: 'object',
-          properties: {
-            id: { type: 'number', example: 1 },
-            email: { type: 'string', example: 'user@example.com' },
-            role: {
-              type: 'string',
-              enum: Object.values(RoleEnum),
-              example: 'user',
-            },
-            is_active: { type: 'boolean', example: true },
-          },
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized access' })
   async getAccount(@ExtractAccountData() account: SafeGetAccount) {
     this.logger.log('find account by email attempted');
     return { response: account };
@@ -104,25 +81,6 @@ export class AccountController {
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
   @Delete('de-active-account')
-  @ApiSecurity('access-token')
-  @ApiOperation({
-    summary: 'Deactivate account',
-    description: 'Deactivates the authenticated user account',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Account deactivated successfully',
-    schema: {
-      properties: {
-        response: {
-          type: 'string',
-          example: 'Account de-activated successfully',
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized access' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Invalid role' })
   async deActive(@ExtractAccountData() account: SafeDeactivateAccount) {
     this.logger.log('de-activate account attempted');
 
@@ -139,21 +97,6 @@ export class AccountController {
   )
   @AUTH(AuthEnum.BEARER)
   @Delete()
-  @ApiSecurity('access-token')
-  @ApiOperation({
-    summary: 'Delete account',
-    description: 'Permanently deletes the authenticated user account',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Account deleted successfully',
-    schema: {
-      properties: {
-        response: { type: 'string', example: 'Account deleted successfully' },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized access' })
   async delete(@ExtractAccountData() account: SafeDeleteAccount) {
     this.logger.log('delete account attempted');
 
@@ -166,35 +109,6 @@ export class AccountController {
   @ROLE(RoleEnum.USER)
   @AUTH(AuthEnum.BEARER)
   @Post('upgrade-to-instructor')
-  @ApiSecurity('access-token')
-  @ApiOperation({
-    summary: 'Upgrade to instructor',
-    description:
-      'Upgrade to instructor by using the token provided in the header',
-  })
-  @ApiBody({ type: UpgradeToInstructorDto })
-  @ApiOperation({
-    summary: 'Upgrade to instructor account',
-    description: 'Processes a user request to upgrade to instructor status',
-  })
-  @ApiBody({ type: UpgradeToInstructorDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Upgrade request processed',
-    schema: {
-      properties: {
-        response: {
-          type: 'string',
-          example: 'Upgrade request sent successfully for review',
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized access' })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden - Invalid payment details',
-  })
   async upgradeToInstructor(
     @Body() upgradeToInstructorDto: UpgradeToInstructorDto,
     @ExtractAccountData() account: SafeUpgradeToInstructor,
@@ -215,39 +129,46 @@ export class AccountController {
 
   @Get('active-account/:account_id/:token')
   @UseGuards(TokenIsInRedisGuard)
-  @ApiOperation({
-    summary: 'Activate account',
-    description: 'Activates an account using the provided activation token',
-  })
-  @ApiParam({
-    name: 'account_id',
-    type: 'number',
-    description: 'The ID of the account to activate',
-    example: 1,
-  })
-  @ApiParam({
-    name: 'token',
-    type: 'string',
-    description: 'The activation token',
-    example:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhaG1lZC5oYW55QGdtYWlsLmNvbSIsImlhdCI6MTczODU5MjE0MCwiZXhwIjoxNzM4NTk1NzQwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.YxBTrvN7cYMvPo3Y0JQ-cO3sB3Vgl7P37GCTlcr1kMk',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Account activated successfully',
-    schema: {
-      properties: {
-        response: { type: 'string', example: 'Account activated successfully' },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Invalid token' })
-  @ApiResponse({ status: 404, description: 'Account not found' })
   async activeAccount(
     @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
     account_id: number,
   ) {
     await this.accountService.activeAccount(account_id);
     return { response: 'Account activated successfully' };
+  }
+
+  @Get('reset-active-token/:account_id')
+  async resetActiveToken(
+    @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
+    account_id: number,
+  ) {
+    const account = await this.accountService.findById(account_id);
+    if (account.is_active) {
+      throw new ConflictException({
+        message: 'Account already active',
+        details:
+          'account you are trying to activate is already active, login to use it',
+      });
+    }
+
+    const randomToken = await this.tokenProvider.generate_active_token();
+    const url =
+      'http://localhost:3000/account/active-account/' +
+      account_id +
+      '/' +
+      randomToken;
+
+    await this.accountRedisService.hashActiveToken(
+      randomToken,
+      account_id,
+      this.redisConfigurations.active_token_expiration,
+    );
+
+    return {
+      response: {
+        message: 'Token reset successfully',
+        url,
+      },
+    };
   }
 }
