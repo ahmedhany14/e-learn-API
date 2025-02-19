@@ -10,7 +10,6 @@ import {
   ValidatorConstraintInterface,
   Validate,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 @ValidatorConstraint({
   name: 'atLeastOneFieldRequired',
@@ -30,13 +29,6 @@ class AtLeastOneFieldRequired implements ValidatorConstraintInterface {
 }
 
 export class UpdatePaymentsDto {
-  @ApiProperty({
-    description: 'Credit card number',
-    example: '4111111111111111',
-    required: false,
-    minLength: 16,
-    maxLength: 124,
-  })
   @IsString()
   @IsOptional()
   @MaxLength(124)
@@ -45,13 +37,6 @@ export class UpdatePaymentsDto {
   @Validate(AtLeastOneFieldRequired) // Validate that at least one of the fields is filled
   payment_info: string;
 
-  @ApiProperty({
-    description: 'Stripe account ID',
-    example: 'acct_1Ku3gq2eZvKYlo2C',
-    required: false,
-    minLength: 16,
-    maxLength: 64,
-  })
   @IsString()
   @IsOptional()
   @MaxLength(64)

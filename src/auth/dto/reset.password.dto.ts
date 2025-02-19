@@ -9,7 +9,6 @@ import {
   Validate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
 
 @ValidatorConstraint({ name: 'isPasswordMatching', async: false })
 export class IsPasswordMatching implements ValidatorConstraintInterface {
@@ -25,15 +24,6 @@ export class IsPasswordMatching implements ValidatorConstraintInterface {
 }
 
 export class ResetPasswordDto {
-  @ApiProperty({
-    description: 'New password for the account',
-    type: String,
-    required: true,
-    minLength: 8,
-    maxLength: 124,
-    example: 'newSecurePass123',
-    format: 'password',
-  })
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
@@ -41,15 +31,6 @@ export class ResetPasswordDto {
   @Type(() => String)
   password: string;
 
-  @ApiProperty({
-    description: 'Confirm new password for the account',
-    type: String,
-    required: true,
-    minLength: 8,
-    maxLength: 124,
-    example: 'newSecurePass123',
-    format: 'password',
-  })
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
