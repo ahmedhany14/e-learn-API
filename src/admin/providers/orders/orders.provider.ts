@@ -7,17 +7,17 @@ import {
 } from '@nestjs/common';
 
 // dto
-import { PaginationDto } from '../../common/pagination/pagination.dto';
+import { PaginationDto } from '../../../common/pagination/pagination.dto';
 
 // entity and orm
-import { Order } from '../entity/order.entity';
+import { Order } from './../../entity/orders/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // providers
-import { PaginationService } from '../../common/pagination/pagination.service';
-import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
-import { Account } from '../../account/entity/account.entity';
+import { PaginationService } from '../../../common/pagination/pagination.service';
+import { UpgradeToInstructorDto } from '../../../account/dtos/upgrade.to.instructor.dto';
+import { Account } from '../../../account/entity/account.entity';
 
 @Injectable()
 export class OrdersProvider {

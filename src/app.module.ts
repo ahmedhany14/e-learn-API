@@ -47,7 +47,6 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { InstructorModule } from './instructor/instructor.module';
 import { PaginationModule } from './common/pagination/pagination.module';
-import { OrdersModule } from './orders/orders.module';
 import { CoursesModule } from './courses/courses.module';
 import { FileModule } from './file/file.module';
 import { TagsModule } from './tags/tags.module';
@@ -107,7 +106,7 @@ const env = process.env.NODE_ENV;
 
     PaginationModule,
 
-    OrdersModule,
+//    OrdersModule,
 
     CoursesModule,
 

@@ -1,10 +1,7 @@
-import {
-  Inject,
-  Injectable, NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 // Service
-import { OrdersService } from '../../orders/services/orders.service';
+import { OrdersService } from '../../admin/sevices/orders.service';
 
 // Repository
 import { AccountRepository } from '../repository/account.repository';
@@ -22,15 +19,24 @@ export class AccountService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async findByEmail(email: string, select: string[] = ['email', 'role', 'is_active']) {
+  async findByEmail(
+    email: string,
+    select: string[] = ['email', 'role', 'is_active'],
+  ) {
     return await this.accountRepository.findByEmail(email, select);
   }
 
-  async findById(id: number, select: string[] = ['email', 'role', 'is_active']) {
+  async findById(
+    id: number,
+    select: string[] = ['email', 'role', 'is_active'],
+  ) {
     return await this.accountRepository.findById(id, select);
   }
 
-  async updatePassword<T extends Partial<Account>>(account: T, hashedPassword: string) {
+  async updatePassword<T extends Partial<Account>>(
+    account: T,
+    hashedPassword: string,
+  ) {
     account.password = hashedPassword;
     return await this.accountRepository.save(account);
   }
