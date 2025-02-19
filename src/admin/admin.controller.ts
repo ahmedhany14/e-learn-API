@@ -4,6 +4,7 @@ import {
   Get,
   Inject,
   Logger,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -106,12 +107,7 @@ export class AdminController {
       plansPaginationDto,
     );
 
-    return {
-      response: {
-        message: `Plans fetched successfully`,
-        plans,
-      },
-    };
+    return plans;
   }
 
   @Get('plan/:plan_id')
@@ -139,7 +135,7 @@ export class AdminController {
     ---------------------------------------------------------------------------------
   */
 
-  @Get('submited-orders')
+  @Get('submitted-orders')
   async getOrders(@Query() paginationDto: PaginationDto) {
     /*
       API Endpoint to get all orders
@@ -166,12 +162,10 @@ export class AdminController {
       paginationDto: paginationDto,
     });
 
-    return {
-      response: orders,
-    };
+    return orders;
   }
 
-  @Get(':order_id')
+  @Get('submitted-order/:order_id')
   async getOrder(@Param() getOrderDto: GetOrderDto) {
     /*
       API Endpoint to get an order by id
@@ -183,10 +177,14 @@ export class AdminController {
 
     this.logger.log(`Get order with id: ${getOrderDto.order_id}`);
 
+    const order = await this.ordersService.getOneOrder(getOrderDto.order_id);
+    if (!order) {
+      throw new NotFoundException(
+        `Order with id ${getOrderDto.order_id} not found`,
+      );
+    }
     return {
-      response:
-        (await this.adminService.findOne(getOrderDto.order_id)) ??
-        'Order not found',
+      response: order,
     };
   }
 
@@ -267,8 +265,6 @@ export class AdminController {
       paginationDto: paginationDto,
     });
 
-    return {
-      response: reviewedOrders,
-    };
+    return reviewedOrders;
   }
 }
