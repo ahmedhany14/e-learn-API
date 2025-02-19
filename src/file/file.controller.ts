@@ -25,13 +25,6 @@ import { RoleEnum } from '../auth/enums/role.enum';
 // decorators
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { ProfileService } from '../profile/services/profile.service';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
 
 @Controller('file')
 export class FileController {
@@ -44,33 +37,6 @@ export class FileController {
     private readonly profileService: ProfileService,
   ) {}
 
-  @ApiOperation({
-    summary: 'Upload course image',
-    description: 'api used by instructor to upload course image',
-  })
-  @ApiSecurity('access-token')
-  @ApiParam({
-    name: 'course_id',
-    description: 'Course ID',
-    example: 1,
-    required: true,
-  })
-  @ApiBody({
-    description: 'Course image',
-    type: File,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Course image uploaded successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Course not found',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
-  })
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
   @Post('upload-course-image/:course_id')
@@ -108,23 +74,6 @@ export class FileController {
     };
   }
 
-  @ApiOperation({
-    summary: 'Upload profile image',
-    description: 'api used by user to upload profile image',
-  })
-  @ApiSecurity('access-token')
-  @ApiBody({
-    description: 'Profile image',
-    type: File,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Profile image uploaded successfully',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
-  })
   @ROLE(RoleEnum.USER, RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
   @Post('upload-profile-image')
