@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 // providers
-import { OrdersProvider } from '../providers/orders.provider';
-import { BacklogOrdersProvider } from '../providers/backlog.orders.provider';
+import { OrdersProvider } from '../providers/orders/orders.provider';
+import { BacklogOrdersProvider } from '../providers/orders/backlog.orders.provider';
 
 // dto
 import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';

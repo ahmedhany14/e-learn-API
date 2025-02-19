@@ -4,7 +4,6 @@ import { AccountController } from './account.controller';
 // Module
 import { AdminModule } from '../admin/admin.module';
 import { EmailModule } from '../common/email/email.module';
-import { OrdersModule } from '../orders/orders.module';
 
 // Repository and Service
 import { AccountService } from './service/account.service';
@@ -27,7 +26,6 @@ import { AppModule } from '../app.module';
     forwardRef(() => AppModule),
     AdminModule,
     EmailModule,
-    OrdersModule
   ],
 })
 export class AccountModule {}

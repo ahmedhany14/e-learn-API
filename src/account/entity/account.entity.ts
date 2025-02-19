@@ -8,9 +8,9 @@ import {
 } from 'typeorm';
 
 import { Profile } from '../../profile/entity/profile.entity';
-import { Order } from '../../orders/entity/order.entity';
+import { Order } from '../../admin/entity/orders/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
-import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
+import { OrderBacklog } from '../../admin/entity/orders/order.backlog.entity';
 import { Course } from '../../courses/entity/courses.entity';
 import { Plan } from '../../admin/entity/plan.entity';
 import { Plan_Account } from '../../admin/entity/account.plan.entity';
@@ -22,7 +22,7 @@ import { Tags } from '../../tags/entity/tags.entity';
   comment: 'User accounts',
   orderBy: {
     created_at: 'ASC',
-  }
+  },
 })
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
 export class Account {

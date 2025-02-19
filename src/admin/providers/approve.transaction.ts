@@ -1,6 +1,10 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { Order } from '../../orders/entity/order.entity';
+import { Order } from '../entity/orders/order.entity';
 
 @Injectable()
 export class ApproveTransaction {
@@ -35,9 +39,9 @@ export class ApproveTransaction {
 
       this.logger.log('insert into instructor table');
 
-      const order = await queryRunner.manager.findOne('orders', {
+      const order = (await queryRunner.manager.findOne('orders', {
         where: { id: orderId },
-      }) as Order;
+      })) as Order;
       await queryRunner.manager.insert('instructor', {
         payment_info: order.payment_info,
         stripe_info: order.stripe_info,

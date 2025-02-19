@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 
 // repo , entity and orm
-import { Order } from '../../orders/entity/order.entity';
+import { Order } from '../entity/orders/order.entity';
 import { Account } from '../../account/entity/account.entity';
 
 // dto
@@ -10,7 +10,7 @@ import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor
 // providers and services
 import { ApproveTransaction } from '../providers/approve.transaction';
 import { RejectTransaction } from '../providers/reject.transaction';
-import { OrdersService } from '../../orders/services/orders.service';
+import { OrdersService } from '../sevices/orders.service';
 import { PlanRepository } from '../repository/plan.repo';
 import { CreatePlanDto } from '../dtos/create.plan.dto';
 

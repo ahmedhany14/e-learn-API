@@ -7,13 +7,13 @@ import {
 // entity and orm
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderBacklog } from '../entity/order.backlog.entity';
+import { OrderBacklog } from '../../entity/orders/order.backlog.entity';
 
 // dto
-import { PaginationDto } from '../../common/pagination/pagination.dto';
+import { PaginationDto } from '../../../common/pagination/pagination.dto';
 
 // providers
-import { PaginationService } from '../../common/pagination/pagination.service';
+import { PaginationService } from '../../../common/pagination/pagination.service';
 
 @Injectable()
 export class BacklogOrdersProvider {
@@ -46,7 +46,7 @@ export class BacklogOrdersProvider {
         'http://localhost:3000/admin/orders/backlog',
       );
     } catch (error) {
-      console.log(error)
+      console.log(error);
 
       throw new InternalServerErrorException({
         message: 'Error while fetching orders',
