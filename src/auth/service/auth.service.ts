@@ -1,5 +1,3 @@
-import * as crypto from 'crypto';
-
 import {
   BadRequestException,
   ConflictException,
@@ -34,7 +32,6 @@ import { Account } from '../../account/entity/account.entity';
 
 // Configurations
 import redisCon from '../../common/config/redis.conf';
-import * as console from 'node:console';
 
 @Injectable()
 export class AuthService {
@@ -51,15 +48,19 @@ export class AuthService {
     @Inject() private readonly accountRedisService: AccountRedisService,
     @Inject(redisCon.KEY)
     private readonly redisConfigurations: ConfigType<typeof redisCon>,
-  ) { }
+  ) {}
 
   async signUp(accountSignupDto: AccountSignupDto) {
     this.logger.log('sign up attempt');
     const { account } = await this.signupProvider.signup(accountSignupDto);
-    const { accessToken, refreshToken } =
-      await this.tokenProvider.generateToken(account);
 
-    const randomToken = crypto.randomBytes(8).toString('hex');
+    const randomToken = await this.tokenProvider.generate_active_token();
+
+    const url =
+      'http://localhost:3000/account/active-account/' +
+      account.id +
+      '/' +
+      randomToken;
 
     await this.accountRedisService.hashActiveToken(
       randomToken,
@@ -67,16 +68,14 @@ export class AuthService {
       this.redisConfigurations.active_token_expiration,
     );
 
-    console.log(
-      'http://localhost:3000/account/active-account/' +
-      account.id +
-      '/' +
-      randomToken,
-    );
-
     //await this.email.sendWelcomeEmail(account.email, accessToken);
 
-    return { accessToken, refreshToken };
+    return {
+      response: {
+        message: 'Account created successfully',
+        url,
+      },
+    };
   }
 
   async login(accountLoginDto: AccountLoginDto) {

@@ -1,8 +1,9 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
-// JWT
+// JWT and Crypto
 import { JwtService } from '@nestjs/jwt';
 import jwtConf from '../../common/config/jwt.cong';
+import * as crypto from 'crypto';
 
 // Configurations
 import { ConfigType } from '@nestjs/config';
@@ -91,7 +92,13 @@ export class TokenProvider {
       throw new UnauthorizedException({
         message: 'Invalid token',
         details: e.message,
-      })
+      });
     }
+  }
+
+  async generate_active_token() {
+    const randomToken = crypto.randomBytes(8).toString('hex');
+
+    return randomToken;
   }
 }
