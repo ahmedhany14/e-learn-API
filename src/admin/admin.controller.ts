@@ -5,6 +5,7 @@ import {
   Inject,
   Logger,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -16,18 +17,22 @@ import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { IsExistPlan } from './pip_validators/is.exist.plan.decorator';
 
 //services
 import { AdminService } from './sevices/admin.service';
 import { Email } from '../common/email/email';
+import { PlansService } from './sevices/plans.service';
+import { OrdersService } from './sevices/orders.service';
 
 //dtos
 import { GetOrderDto } from './dtos/get.order.dto';
 import { CreatePlanDto } from './dtos/create.plan.dto';
-import { OrdersService } from './sevices/orders.service';
 import { PaginationDto } from 'src/common/pagination/pagination.dto';
 import { OrderEnum } from 'src/admin/entity/orders/order.enum';
 import { OrderbacklogEnum } from 'src/admin/entity/orders/orderbacklog.enum';
+import { PlansPaginationDto } from './dtos/plans.pagination.dto';
+import { Plan } from './entity/plan.entity';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
@@ -40,7 +45,8 @@ export class AdminController {
     private readonly adminService: AdminService,
     @Inject()
     private readonly ordersService: OrdersService,
-
+    @Inject()
+    private readonly planService: PlansService,
     @Inject()
     private readonly email: Email,
   ) {}
@@ -68,12 +74,17 @@ export class AdminController {
     const plan = await this.adminService.createPlan(createPlanDto, admin_id);
 
     return {
-      response: plan,
+      response: {
+        message: 'Plan created successfully',
+        plan,
+      },
     };
   }
 
   @Get('plans')
-  async getPlans() {
+  async getAllPlans(@Query() plansPaginationDto: PlansPaginationDto) {
+    this.logger.log('Get all plans');
+
     /*
       API Endpoint to get all plans
 
@@ -81,15 +92,32 @@ export class AdminController {
         call the admin service to get all plans
     */
 
-    this.logger.log('Get all plans');
+    const select = [];
+
+    const filter = {
+      email: plansPaginationDto.email,
+    };
+    const relations = ['updated_by', 'admin_id'];
+
+    const plans = await this.planService.getAllPlans(
+      select,
+      filter,
+      relations,
+      plansPaginationDto,
+    );
 
     return {
-      response: '', //await this.adminService.getPlans(),
+      response: {
+        message: `Plans fetched successfully`,
+        plans,
+      },
     };
   }
 
   @Get('plan/:plan_id')
-  async getPlan(@Param('plan_id') plan_id: number) {
+  async getPlan(@Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number) {
+    this.logger.log(`Get plan with id: ${plan_id}`);
+
     /*
       API Endpoint to get a plan by id
 
@@ -98,10 +126,11 @@ export class AdminController {
         call the admin service to get the plan by id
     */
 
-    this.logger.log(`Get plan with id: ${plan_id}`);
-
     return {
-      response: '', //await this.adminService.getPlan(plan_id),
+      response: {
+        message: `Plan with id ${plan_id} fetched successfully`,
+        plans: await this.planService.getPlanById(plan_id),
+      },
     };
   }
 

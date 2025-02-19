@@ -20,6 +20,7 @@ import { RejectTransaction } from './providers/reject.transaction';
 import { Plan } from './entity/plan.entity';
 import { PlanRepository } from './repository/plan.repo';
 import { Plan_Account } from './entity/account.plan.entity';
+import { PlansService } from './sevices/plans.service';
 
 @Module({
   controllers: [AdminController],
@@ -32,6 +33,7 @@ import { Plan_Account } from './entity/account.plan.entity';
     OrdersService,
     OrdersProvider,
     BacklogOrdersProvider,
+    PlansService,
   ],
   imports: [
     TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account]),

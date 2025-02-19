@@ -57,7 +57,7 @@ export class Plan {
 
   // each plan is created by an admin, and multiple plans can be created by the same admin
   @ManyToOne(() => Account, (account) => account.plans, {
-    eager: true,
+    //eager: true,
     nullable: false,
   })
   @JoinColumn({ name: 'admin_id' })
@@ -65,7 +65,7 @@ export class Plan {
 
   // each plan can be updated by an admin, and multiple plans can be updated by the same admin
   @ManyToOne(() => Account, (account) => account.plans_updated, {
-    eager: true,
+    //eager: true,
     nullable: false,
   })
   @JoinColumn({ name: 'updated_by' })

@@ -31,7 +31,7 @@ export class AdminService {
   ) {}
 
   async createPlan(plan: CreatePlanDto, admin_id: number) {
-    await this.planRepository.createPlan(plan, admin_id);
+    return await this.planRepository.createPlan(plan, admin_id);
   }
 
   async approveOrder(orderId: number, adminId: number) {
