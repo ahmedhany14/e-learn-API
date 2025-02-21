@@ -116,7 +116,7 @@ export class InstructorController {
     };
   }
 
-  @Get('push-my-course/:course_id')
+  @Get('push-course-to-review/:course_id')
   @UseGuards(IsYourCourseGuard)
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
