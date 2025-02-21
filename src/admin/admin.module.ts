@@ -21,6 +21,7 @@ import { Plan } from './entity/plan.entity';
 import { PlanRepository } from './repository/plan.repo';
 import { Plan_Account } from './entity/account.plan.entity';
 import { PlansService } from './sevices/plans.service';
+import { CourseReview } from './entity/courses/course.reviwe.entity';
 
 @Module({
   controllers: [AdminController],
@@ -36,7 +37,7 @@ import { PlansService } from './sevices/plans.service';
     PlansService,
   ],
   imports: [
-    TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account]),
+    TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account,CourseReview]),
     EmailModule,
     PaginationModule,
   ],
