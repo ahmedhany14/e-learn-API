@@ -30,7 +30,7 @@ export class CourseRepo {
         // plan: { plan_name: createCourseDto.plan ?? 'free' },
       });
 
-      await this.courseRepository.save(course);
+      return await this.courseRepository.save(course);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException('Error while creating course');

@@ -37,15 +37,29 @@ export class CoursesController {
 
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Post('course')
+  @Post('new-course')
   async createCourse(
     @Body() createCourseDto: CreateCourseDto,
     @ExtractAccountData('id') account_id: number,
   ) {
-    await this.courseService.createCourse(createCourseDto, account_id);
+    /*
+        API Endpoint to create a new course
+        Steps:
+          1) get the instructor id from the request
+          2) create a new course
+          3) return a success message
+    */
+
+    const course = await this.courseService.createCourse(
+      createCourseDto,
+      account_id,
+    );
 
     return {
-      response: 'Course created successfully',
+      response: {
+        message: 'Course created successfully',
+        course,
+      },
     };
   }
 
