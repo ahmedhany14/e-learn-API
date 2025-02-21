@@ -5,9 +5,12 @@ import {
   Get,
   Inject,
   Logger,
+  Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 // Auth and role decorators
@@ -28,7 +31,9 @@ import { SafePaymentInfo } from './types/instructor.types';
 // dto
 import { UpdatePaymentsDto } from './dtos/update.payments.dto';
 import { QueryDto } from './dtos/my.courses.query.dto';
-import { query } from 'express';
+import { query, response } from 'express';
+import { IsYourCourseGuard } from './guards/is.your.course.guard';
+import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
 
 @Controller('instructor')
 export class InstructorController {
@@ -74,13 +79,19 @@ export class InstructorController {
     };
   }
 
-  @Get('my-course')
+  @Get('my-courses')
   @AUTH(AuthEnum.BEARER)
   @AUTH(AuthEnum.BEARER)
   async getMyCourses(
     @Query() queryDto: QueryDto,
     @ExtractAccountData('id') account_id: number,
   ) {
+    /*
+      API Endpoint: to get courses for the instructor
+      - The endpoint is protected and only accessible to the instructor
+      - The instructor can filter the courses by status, and use pagination to fetch data
+    */
+
     this.logger.log(
       `Getting courses for the instuctor account_id: ${account_id}`,
     );
@@ -102,6 +113,19 @@ export class InstructorController {
         message: 'Courses fetched successfully',
         data: courses,
       },
+    };
+  }
+
+  @Get('push-course-to-review/:course_id')
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  async pushCourseToBeReviewed(@ExtractCourseDate('id') course_id: number) {
+    this.logger.log(`Pushing course with id: ${course_id} for review`);
+    const review = await this.instructorService.pushCourseForReview(course_id);
+
+    return {
+      response: `Course with id: ${course_id} has been pushed for review, with review id: ${review.id}`,
     };
   }
 }
