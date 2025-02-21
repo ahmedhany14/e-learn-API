@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CourseRepo } from '../repository/course.repo';
+import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 
 @Injectable()
 export class CourseService {
@@ -20,4 +21,11 @@ export class CourseService {
     return await this.courserRepo.updateImageName(course_id, image_name);
   }
 
+  async getMyCourses(
+    filter: any,
+    select: string[],
+    queryDto: QueryDto,
+  ) {
+    return await this.courserRepo.getMyCourses(filter, select, queryDto);
+  }
 }

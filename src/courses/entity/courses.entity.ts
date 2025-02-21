@@ -6,11 +6,15 @@ import {
   JoinColumn,
   OneToMany,
   ManyToMany,
+  OneToOne,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Videos } from './videos.entity';
 import { Plan } from '../../admin/entity/plan.entity';
 import { CourseTags } from '../../tags/entity/course.tags.entity';
+import { CourseReview } from 'src/admin/entity/courses/course.reviwe.entity';
+
+import { CourseStatusEnum } from '../enums/course.status.enum';
 
 @Entity('courses')
 export class Course {
@@ -33,7 +37,7 @@ export class Course {
   @Column({
     type: 'varchar',
     length: 16,
-    enum: ['draft', 'published', 'archived', 'in_review'],
+    enum: CourseStatusEnum,
     default: 'draft',
     nullable: false,
   })
@@ -105,4 +109,9 @@ export class Course {
     lazy: true,
   })
   tags: Promise<CourseTags[]>;
+
+  @OneToOne(() => CourseReview, (courseReview) => courseReview.course, {
+    lazy: true,
+  })
+  course_review: Promise<CourseReview>;
 }
