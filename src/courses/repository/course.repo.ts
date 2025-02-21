@@ -3,11 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Course } from '../entity/courses.entity';
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { CreateCourseDto } from '../dto/create.course.dto';
+
+import { PaginationService } from 'src/common/pagination/pagination.service';
+import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 
 @Injectable()
 export class CourseRepo {
@@ -16,6 +20,8 @@ export class CourseRepo {
   constructor(
     @InjectRepository(Course)
     private courseRepository: Repository<Course>,
+    @Inject()
+    private readonly paginationService: PaginationService,
   ) {}
 
   async createCourse(createCourseDto: CreateCourseDto, account_id: number) {
@@ -60,5 +66,17 @@ export class CourseRepo {
         'Error while updating course image',
       );
     }
+  }
+
+  async getMyCourses(filter: any, select: string[], queryDto: QueryDto) {
+    return await this.paginationService.paginate(
+      this.courseRepository,
+      queryDto.page,
+      queryDto.limit,
+      ['instructor'],
+      filter,
+      select,
+      'http://localhost:3000/instructor/my-course',
+    );
   }
 }

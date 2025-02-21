@@ -14,6 +14,8 @@ import { Plan } from '../../admin/entity/plan.entity';
 import { CourseTags } from '../../tags/entity/course.tags.entity';
 import { CourseReview } from 'src/admin/entity/courses/course.reviwe.entity';
 
+import { CourseStatusEnum } from '../enums/course.status.enum';
+
 @Entity('courses')
 export class Course {
   @PrimaryGeneratedColumn()
@@ -35,7 +37,7 @@ export class Course {
   @Column({
     type: 'varchar',
     length: 16,
-    enum: ['draft', 'published', 'archived', 'in_review'],
+    enum: CourseStatusEnum,
     default: 'draft',
     nullable: false,
   })

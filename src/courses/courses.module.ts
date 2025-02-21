@@ -11,9 +11,10 @@ import { CoursesController } from './courses.controller';
 // providers and services
 import { CourseService } from './service/course.service';
 import { CourseRepo } from './repository/course.repo';
+import { PaginationModule } from 'src/common/pagination/pagination.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Course, Videos])],
+  imports: [TypeOrmModule.forFeature([Course, Videos]), PaginationModule],
   controllers: [CoursesController],
   providers: [CourseService, CourseRepo],
   exports: [CourseService],

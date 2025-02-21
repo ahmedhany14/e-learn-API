@@ -7,6 +7,7 @@ import {
   Logger,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 // Auth and role decorators
@@ -26,6 +27,8 @@ import { SafePaymentInfo } from './types/instructor.types';
 
 // dto
 import { UpdatePaymentsDto } from './dtos/update.payments.dto';
+import { QueryDto } from './dtos/my.courses.query.dto';
+import { query } from 'express';
 
 @Controller('instructor')
 export class InstructorController {
@@ -68,6 +71,37 @@ export class InstructorController {
 
     return {
       response: 'Payments updated successfully',
+    };
+  }
+
+  @Get('my-course')
+  @AUTH(AuthEnum.BEARER)
+  @AUTH(AuthEnum.BEARER)
+  async getMyCourses(
+    @Query() queryDto: QueryDto,
+    @ExtractAccountData('id') account_id: number,
+  ) {
+    this.logger.log(
+      `Getting courses for the instuctor account_id: ${account_id}`,
+    );
+
+    const filter = {
+      instructor: { id: account_id },
+      status: queryDto.status,
+    };
+
+    const select = ['id', 'image_url', 'price', 'instructor'];
+    const courses = await this.instructorService.getMyCourses(
+      filter,
+      select,
+      queryDto,
+    );
+
+    return {
+      response: {
+        message: 'Courses fetched successfully',
+        data: courses,
+      },
     };
   }
 }

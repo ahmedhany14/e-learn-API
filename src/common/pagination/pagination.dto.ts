@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsOptional,
-  IsNumber,
-  IsEnum,
-} from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsEnum } from 'class-validator';
 
 export enum State {
   APPROVED = 'approved',
@@ -14,17 +9,19 @@ export enum State {
 export class PaginationDto {
   @IsOptional()
   @IsNumber()
-  page: number;
+  page?: number;
 
   @IsOptional()
   @IsNumber()
-  limit: number;
+  limit?: number;
 
   @IsOptional()
   @IsString()
-  sort: string;
+  sort?: string;
 
   @IsOptional()
-  @IsEnum(State, { message: 'State must be either approved, pending, or rejected' })
-  state: string;
+  @IsEnum(State, {
+    message: 'State must be either approved, pending, or rejected',
+  })
+  state?: string;
 }
