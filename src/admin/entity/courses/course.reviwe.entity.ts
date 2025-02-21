@@ -30,5 +30,5 @@ export class CourseReview {
     nullable: false,
   })
   @JoinColumn()
-  course: number;
+  course: Course;
 }

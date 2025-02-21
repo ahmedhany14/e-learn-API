@@ -5,9 +5,10 @@ import { InstructorController } from './instructor.controller';
 import { InstructorService } from './services/instructor.service';
 import { InstructorRepository } from './repository/instructor.repository';
 import { CoursesModule } from 'src/courses/courses.module';
+import { AdminModule } from 'src/admin/admin.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Instructor]), CoursesModule],
+  imports: [TypeOrmModule.forFeature([Instructor]), CoursesModule, AdminModule],
   controllers: [InstructorController],
   providers: [InstructorService, InstructorRepository],
 })

@@ -13,6 +13,7 @@ import { RejectTransaction } from '../providers/reject.transaction';
 import { OrdersService } from '../sevices/orders.service';
 import { PlanRepository } from '../repository/plan.repo';
 import { CreatePlanDto } from '../dtos/create.plan.dto';
+import { CourseReviewRepository } from '../repository/coures.review.repo';
 
 @Injectable()
 export class AdminService {
@@ -22,12 +23,14 @@ export class AdminService {
     @Inject()
     private readonly orderService: OrdersService,
     @Inject()
+    private readonly planRepository: PlanRepository,
+    @Inject()
+    private readonly courseReviewRepository: CourseReviewRepository,
+
+    @Inject()
     private readonly approveTransaction: ApproveTransaction,
     @Inject()
     private readonly rejectTransaction: RejectTransaction,
-
-    @Inject()
-    private readonly planRepository: PlanRepository,
   ) {}
 
   async createPlan(plan: CreatePlanDto, admin_id: number) {
@@ -50,10 +53,7 @@ export class AdminService {
 
     console.log('order', order);
 
-    await this.approveTransaction.approveOrder(
-      order,
-      adminId,
-    );
+    await this.approveTransaction.approveOrder(order, adminId);
     return order.account.email;
   }
 
@@ -66,5 +66,9 @@ export class AdminService {
 
     await this.rejectTransaction.rejectOrder(orderId, adminId);
     return order.account.email;
+  }
+
+  async pushCourseToReview(course_id: number) {
+    return this.courseReviewRepository.createCourseReview(course_id);
   }
 }

@@ -22,13 +22,14 @@ import { PlanRepository } from './repository/plan.repo';
 import { Plan_Account } from './entity/account.plan.entity';
 import { PlansService } from './sevices/plans.service';
 import { CourseReview } from './entity/courses/course.reviwe.entity';
+import { CourseReviewRepository } from './repository/coures.review.repo';
 
 @Module({
   controllers: [AdminController],
   providers: [
     AdminService,
     PlanRepository,
-
+    CourseReviewRepository,
     ApproveTransaction,
     RejectTransaction,
     OrdersService,
@@ -37,7 +38,13 @@ import { CourseReview } from './entity/courses/course.reviwe.entity';
     PlansService,
   ],
   imports: [
-    TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account,CourseReview]),
+    TypeOrmModule.forFeature([
+      Order,
+      OrderBacklog,
+      Plan,
+      Plan_Account,
+      CourseReview,
+    ]),
     EmailModule,
     PaginationModule,
   ],
