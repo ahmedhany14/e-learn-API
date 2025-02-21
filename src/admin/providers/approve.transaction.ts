@@ -12,7 +12,7 @@ export class ApproveTransaction {
 
   constructor(private readonly dataSource: DataSource) {}
 
-  async approveOrder(orderId: number, adminId: number, userAccountId: number) {
+  async approveOrder(user_order: Order, adminId: number) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -20,7 +20,7 @@ export class ApproveTransaction {
       // edit order as approved
 
       this.logger.log(`update order to approved`);
-      await queryRunner.manager.update('orders', orderId, {
+      await queryRunner.manager.update('orders', user_order.id, {
         is_approved: true,
         state: 'approved',
       });
@@ -29,24 +29,20 @@ export class ApproveTransaction {
       this.logger.log(`push to order backlog as approved`);
       await queryRunner.manager.insert('order_backlog', {
         state: 'approved',
-        order: orderId,
+        order: user_order.id,
         admin: adminId,
       });
       this.logger.log(`update account role to instructor`);
-      await queryRunner.manager.update('account', userAccountId, {
+      await queryRunner.manager.update('accounts', user_order.account.id, {
         role: 'instructor',
       });
 
       this.logger.log('insert into instructor table');
-
-      const order = (await queryRunner.manager.findOne('orders', {
-        where: { id: orderId },
-      })) as Order;
       await queryRunner.manager.insert('instructor', {
-        payment_info: order.payment_info,
-        stripe_info: order.stripe_info,
-        national_id: order.national_id,
-        account: userAccountId,
+        payment_info: user_order.payment_info,
+        stripe_info: user_order.stripe_info,
+        national_id: user_order.national_id,
+        account: user_order.account.id,
       });
 
       await queryRunner.commitTransaction();

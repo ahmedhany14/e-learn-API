@@ -188,7 +188,7 @@ export class AdminController {
     };
   }
 
-  @Patch('approve/:order_id')
+  @Patch('approve-upgrade-order/:order_id')
   async approve(
     @Param('order_id') order_id: number,
     @ExtractAccountData('id') id: number,
@@ -206,13 +206,13 @@ export class AdminController {
 
     const email = await this.adminService.approveOrder(order_id, id);
 
-    await this.email.sendApprovedEmail(order_id, email);
+    //await this.email.sendApprovedEmail(order_id, email);
     return {
       response: `Order with id: ${order_id} has been approved`,
     };
   }
 
-  @Patch('reject/:orderId')
+  @Patch('reject-upgrade-order/:orderId')
   async reject(
     @Param('orderId') orderId: number,
     @ExtractAccountData('id') id: number,
@@ -229,7 +229,7 @@ export class AdminController {
     this.logger.log(`Reject order with id: ${orderId}`);
 
     const email = await this.adminService.rejectOrder(orderId, id);
-    await this.email.sendRejectedEmail(orderId, email);
+    //await this.email.sendRejectedEmail(orderId, email);
 
     return { response: `Order with id: ${orderId} has been rejected` };
   }

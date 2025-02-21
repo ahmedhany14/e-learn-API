@@ -68,7 +68,7 @@ export class Account {
   @Column({
     type: 'boolean',
     nullable: false,
-    default: () => 'false',
+    default: () => 'true',
     comment: `user's account verification status, true if verified, false if not verified`,
   })
   is_verified: boolean;

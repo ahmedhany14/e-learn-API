@@ -35,7 +35,7 @@ export class AdminService {
   }
 
   async approveOrder(orderId: number, adminId: number) {
-    const order = await this.findOne(orderId);
+    const order = await this.orderService.getOneOrder(orderId);
 
     if (!order) {
       throw new ConflictException({
@@ -48,16 +48,17 @@ export class AdminService {
       throw new ConflictException({ message: 'Order already approved' });
     }
 
+    console.log('order', order);
+
     await this.approveTransaction.approveOrder(
-      orderId,
+      order,
       adminId,
-      order.account.id,
     );
     return order.account.email;
   }
 
   async rejectOrder(orderId: number, adminId: number) {
-    const order = await this.findOne(orderId);
+    const order = await this.orderService.getOneOrder(orderId);
 
     if (order.state === 'rejected') {
       throw new ConflictException({ message: 'Order already rejected' });
@@ -65,9 +66,5 @@ export class AdminService {
 
     await this.rejectTransaction.rejectOrder(orderId, adminId);
     return order.account.email;
-  }
-
-  async findOne(id: number): Promise<Order> {
-    return await this.orderService.getOneOrder(id);
   }
 }
