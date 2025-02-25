@@ -41,7 +41,7 @@ export class Account {
   @Column({
     type: 'varchar',
     length: 124,
-    nullable: false,
+    nullable: true,
     comment: "User's password",
     select: false,
   })

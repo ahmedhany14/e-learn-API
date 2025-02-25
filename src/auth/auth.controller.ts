@@ -15,6 +15,7 @@ import {
 
 // services and providers
 import { AuthService } from './service/auth.service';
+import { GoogleService } from './strategies/google.service';
 
 // dto and interfaces
 import { AccountLoginDto } from './dto/account.login.dto';
@@ -23,6 +24,7 @@ import { RefreshTokenDto } from './dto/refresh_token.dto';
 import { AccountResetPasswordDto } from './dto/account.reset-password.dto';
 import { ForgetDto } from './dto/forget.dto';
 import { ResetPasswordDto } from './dto/reset.password.dto';
+import { GoogleAuthDto } from './dto/google.signup.dto';
 
 // decorators and enums
 import { AUTH } from './decorators/auth.decorator';
@@ -36,13 +38,17 @@ import { ACCOUNT_SELECT } from '../account/decorators/account.select.decorator';
 // interfaces
 import { SafeResetAccountPassword } from '../account/interfaces/accounts.interface';
 import { ExtractAccountInterceptor } from '../account/interceptors/extract.account.interceptor';
+import { GooglePayload } from './interfaces/google.payload.interface';
 
 @UseInterceptors(ExtractAccountInterceptor)
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(@Inject() private readonly authService: AuthService) {}
+  constructor(
+    @Inject() private readonly authService: AuthService,
+    @Inject() private readonly googleService: GoogleService,
+  ) {}
 
   @AUTH(AuthEnum.NONE)
   @Post('sign-in')
@@ -58,6 +64,27 @@ export class AuthController {
     this.logger.log('sign up attempt');
 
     return { response: await this.authService.signUp(accountSignupDto) };
+  }
+
+  @Post('google-sign-up')
+  async googleSignUp(@Body() googleAuthDto: GoogleAuthDto) {
+    this.logger.log('google sign up attempt');
+
+    const payload = await this.googleService.verifyGoogleToken(googleAuthDto);
+
+    const account: GooglePayload = {
+      email: payload.email || '',
+      first_name: payload.given_name || '',
+      last_name: payload.family_name || '',
+      img_url: payload.picture || '',
+    };
+
+
+    const response = await this.googleService.googleSignUp(account);
+
+    return {
+      response,
+    };
   }
 
   @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
