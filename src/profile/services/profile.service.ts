@@ -16,6 +16,18 @@ export class ProfileService {
     private profileRepository: ProfileRepository,
   ) {}
 
+  async findByPhoneNumber(
+    phone_number: string,
+    select: string[] = [ProfileColumns.ID, ProfileColumns.PHONE_NUMBER],
+    relation: string[] = [ProfileRelations.ACCOUNT],
+  ): Promise<Profile> {
+    return await this.profileRepository.findByPhoneNumber(
+      phone_number,
+      select,
+      relation,
+    );
+  }
+
   async findById(
     id: number,
     select: string[] = [
@@ -54,26 +66,30 @@ export class ProfileService {
     accountId: number,
     updateProfileDto: UpdateProfileDto,
     select: string[] = [
+      ProfileColumns.ID,
       ProfileColumns.FIRST_NAME,
       ProfileColumns.LAST_NAME,
       ProfileColumns.BIO,
       ProfileColumns.PHONE_NUMBER,
     ],
-  ): Promise<Profile> {
+    relation = [ProfileRelations.ACCOUNT],
+  ): Promise<void> {
     let profile = await this.profileRepository.findByAccountId(
       accountId,
       select,
     );
-    profile = { ...profile, ...updateProfileDto };
 
-    return await this.profileRepository.updateProfile(profile);
+    profile = { ...profile, ...updateProfileDto } as Profile;
+    this.logger.log(`Profile updated: ${JSON.stringify(profile, null, 2)}`);
+
+    await this.profileRepository.updateProfile(profile);
   }
 
   async updateProfileImage(
     accountId: number,
     image: string,
     select: string[] = [ProfileColumns.PROFILE_IMAGE],
-  ): Promise<Profile> {
+  ): Promise<void> {
     let profile = await this.profileRepository.findByAccountId(
       accountId,
       select,

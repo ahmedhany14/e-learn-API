@@ -8,6 +8,7 @@ import {
 import { Profile } from '../entity/profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsSelect, Repository } from 'typeorm';
+import { ProfileRelations } from '../entity/profile.enum';
 
 @Injectable()
 export class ProfileRepository {
@@ -49,6 +50,8 @@ export class ProfileRepository {
         relations: relation,
       });
     } catch (error) {
+      console.log(error);
+
       throw new InternalServerErrorException({
         message: 'Un expected error occurred while fetching profile',
         details: "Couldn't fetch profile",
@@ -56,9 +59,28 @@ export class ProfileRepository {
     }
   }
 
-  async updateProfile(profile: Profile): Promise<Profile> {
+  async findByPhoneNumber(
+    phone_number: string,
+    select: string[],
+    relation: string[],
+  ): Promise<Profile> {
     try {
-      return await this.profileRepository.save(profile);
+      return await this.profileRepository.findOne({
+        where: { phone_number },
+        select: select as FindOptionsSelect<Profile>,
+        relations: relation,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Un expected error occurred while fetching profile',
+        details: "Couldn't fetch profile",
+      });
+    }
+  }
+
+  async updateProfile(profile: Profile): Promise<void> {
+    try {
+      await this.profileRepository.update(profile.id, profile);
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Un expected error occurred while updating profile',

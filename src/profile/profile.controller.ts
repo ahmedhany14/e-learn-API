@@ -5,8 +5,10 @@ import {
   Inject,
   Logger,
   NotFoundException,
+  Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ProfileService } from './services/profile.service';
 
@@ -23,6 +25,7 @@ import { UpdateProfileDto } from './dtos/update.profile.dto';
 // safety types
 import { SafeGetProfile } from './types/profile.typeSafety';
 import { query } from 'express';
+import { IsUniqueNumberGuard } from './guards/is.unique.number.guard';
 
 @Controller('profile')
 export class ProfileController {
@@ -68,20 +71,18 @@ export class ProfileController {
     };
   }
 
+  @UseGuards(IsUniqueNumberGuard)
   @ROLE(RoleEnum.ADMIN, RoleEnum.USER, RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Post()
+  @Patch()
   async updateProfileDate(
     @ExtractAccountData('id') accountId: number,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
-    this.logger.log('Updating profile');
-
+    this.logger.log('Updating profile', accountId);
+    await this.profileService.updateProfile(accountId, updateProfileDto);
     return {
-      response: await this.profileService.updateProfile(
-        accountId,
-        updateProfileDto,
-      ),
+      response: 'Profile updated successfully',
     };
   }
 }
