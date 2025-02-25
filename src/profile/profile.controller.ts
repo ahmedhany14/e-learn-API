@@ -5,8 +5,10 @@ import {
   Inject,
   Logger,
   NotFoundException,
+  Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ProfileService } from './services/profile.service';
 
@@ -16,12 +18,14 @@ import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
-
+import { ProfileColumns, ProfileRelations } from './entity/profile.enum';
 // dto
 import { UpdateProfileDto } from './dtos/update.profile.dto';
 
 // safety types
 import { SafeGetProfile } from './types/profile.typeSafety';
+import { query } from 'express';
+import { IsUniqueNumberGuard } from './guards/is.unique.number.guard';
 
 @Controller('profile')
 export class ProfileController {
@@ -34,29 +38,51 @@ export class ProfileController {
 
   @AUTH(AuthEnum.BEARER)
   @Get('')
-  async getProfile(@ExtractAccountData('id') accountId: number) {
+  async getProfile(
+    @ExtractAccountData('id') accountId: number,
+    @Query('acc') with_account: boolean,
+  ) {
     this.logger.log('Fetching profile');
-    const profile = await this.profileService.findByAccountId(accountId);
-    if (!profile) throw new NotFoundException('Profile not found');
+
+    const select = [
+      ProfileColumns.ID,
+      ProfileColumns.PROFILE_IMAGE,
+      ProfileColumns.FIRST_NAME,
+      ProfileColumns.LAST_NAME,
+      ProfileColumns.BIO,
+      ProfileColumns.PHONE_NUMBER,
+      ProfileColumns.CREATED_AT,
+      ProfileColumns.UPDATED_AT,
+    ];
+    const relation = [];
+
+    if (with_account) relation.push(ProfileRelations.ACCOUNT);
+
+    const profile = await this.profileService.findByAccountId(
+      accountId,
+      select,
+      relation,
+    );
+
     return {
-      response: new SafeGetProfile(profile),
+      response: {
+        profile,
+      },
     };
   }
 
+  @UseGuards(IsUniqueNumberGuard)
   @ROLE(RoleEnum.ADMIN, RoleEnum.USER, RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Post()
+  @Patch()
   async updateProfileDate(
     @ExtractAccountData('id') accountId: number,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
-    this.logger.log('Updating profile');
-
+    this.logger.log('Updating profile', accountId);
+    await this.profileService.updateProfile(accountId, updateProfileDto);
     return {
-      response: await this.profileService.updateProfile(
-        accountId,
-        updateProfileDto,
-      ),
+      response: 'Profile updated successfully',
     };
   }
 }

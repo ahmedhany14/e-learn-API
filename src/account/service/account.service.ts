@@ -49,6 +49,10 @@ export class AccountService {
     return await this.accountRepository.save(account);
   }
 
+  async updateEmail(id: number, email: string) {
+    return await this.accountRepository.updateEmail(id, email);
+  }
+
   async flipActiveState<T extends Partial<Account>>(account: T) {
     account.is_active = !account.is_active;
     return await this.accountRepository.save(account);
