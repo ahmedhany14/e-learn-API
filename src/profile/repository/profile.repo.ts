@@ -7,11 +7,7 @@ import {
 // entity and orm
 import { Profile } from '../entity/profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
-// dto
-import { UpdateProfileDto } from '../dtos/update.profile.dto';
-import * as console from 'node:console';
+import { FindOptionsSelect, Repository } from 'typeorm';
 
 @Injectable()
 export class ProfileRepository {
@@ -22,17 +18,16 @@ export class ProfileRepository {
     private profileRepository: Repository<Profile>,
   ) {}
 
-  async create(updateProfileDto: UpdateProfileDto, accountId: number) {
-    return this.profileRepository.create({
-      ...updateProfileDto,
-      account: { id: accountId },
-    });
-  }
-
-  async findById(id: number): Promise<Profile> {
+  async findById(
+    id: number,
+    select: string[] = [],
+    relation: string[] = [],
+  ): Promise<Profile> {
     try {
       return await this.profileRepository.findOne({
         where: { id },
+        select: select as FindOptionsSelect<Profile>,
+        relations: relation,
       });
     } catch (error) {
       throw new InternalServerErrorException({
@@ -42,11 +37,16 @@ export class ProfileRepository {
     }
   }
 
-  async findByAccountId(accountId: number): Promise<Profile> {
+  async findByAccountId(
+    accountId: number,
+    select: string[] = [],
+    relation: string[] = [],
+  ): Promise<Profile> {
     try {
-      console.log('account id', accountId);
       return await this.profileRepository.findOne({
         where: { account: { id: accountId } },
+        select: select as FindOptionsSelect<Profile>,
+        relations: relation,
       });
     } catch (error) {
       throw new InternalServerErrorException({
