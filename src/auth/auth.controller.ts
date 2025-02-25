@@ -66,10 +66,12 @@ export class AuthController {
     const url = await this.authService.signUp(accountSignupDto);
     //await this.email.sendActiveEmail(accountSignupDto.email, url);
 
-    return { response: {
-      message: 'Account created successfully',
-      url,
-    } };
+    return {
+      response: {
+        message: 'Account created successfully',
+        url,
+      },
+    };
   }
 
   @Post('google-sign-up')
@@ -123,8 +125,13 @@ export class AuthController {
   @Post('forgot-password')
   @AUTH(AuthEnum.NONE)
   async forgotPassword(@Body() forgetDto: ForgetDto) {
-    await this.authService.forgotPassword(forgetDto);
-    return { response: 'email sent' };
+    const reset_token = await this.authService.forgotPassword(forgetDto);
+    return {
+      response: {
+        message: 'email sent',
+        reset_token,
+      },
+    };
   }
 
   @Post('reset-password/:token')

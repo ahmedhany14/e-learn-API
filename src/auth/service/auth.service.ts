@@ -166,10 +166,9 @@ export class AuthService {
       this.configService.get<number>('jwt.reset_token_expires_in'),
     );
 
-    this.logger.log(
-      `"http://localhost:3000/auth/reset-password/${reset_token}`,
-    );
-    await this.email.sendResetPasswordEmail(account.email, reset_token);
+    //await this.email.sendResetPasswordEmail(account.email, reset_token);
+
+    return `http://localhost:3000/auth/reset-password/${reset_token}`;
   }
 
   async resetPasswordWithToken(
