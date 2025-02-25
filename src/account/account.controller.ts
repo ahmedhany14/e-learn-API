@@ -126,12 +126,14 @@ export class AccountController {
     @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
     account_id: number,
   ) {
-    const account = await this.accountService.findById(account_id, [
-      'id',
-      'is_active',
-      'email',
-      'role',
-    ]);
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.IS_ACTIVE,
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+    ];
+
+    const account = await this.accountService.findById(account_id, select);
     await this.accountService.activeAccount(account);
 
     const { accessToken, refreshToken } =
@@ -151,13 +153,13 @@ export class AccountController {
     @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
     account_id: number,
   ) {
-    const account = await this.accountService.findById(account_id, [
-      'id',
-      'is_active',
-      'email',
-      'role',
-    ]);
-
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.IS_ACTIVE,
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+    ];
+    const account = await this.accountService.findById(account_id, select);
 
     if (account.is_active) {
       throw new ConflictException({
