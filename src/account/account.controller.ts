@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
   UseInterceptors,
@@ -45,6 +46,7 @@ import {
   SafeDeleteAccount,
   SafeUpgradeToInstructor,
 } from './interfaces/accounts.interface';
+import { IsUniqueEmailGuard } from './guards/is.unique.email.guard';
 
 @UseInterceptors(ExtractAccountInterceptor)
 @Controller('account')
@@ -68,6 +70,19 @@ export class AccountController {
   async getAccount(@ExtractAccountData() account: SafeGetAccount) {
     this.logger.log('find account by email attempted');
     return { response: account };
+  }
+  
+  @UseGuards(IsUniqueEmailGuard)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('change-email')
+  async changeEmail(
+    @ExtractAccountData() account_id: number,
+    @Body('email') email: string,
+  ) {
+    this.logger.log('change email attempted');
+  
+    await this.accountService.updateEmail(account_id, email);
+    return { response: 'Email changed successfully' };
   }
 
   @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.IS_ACTIVE)

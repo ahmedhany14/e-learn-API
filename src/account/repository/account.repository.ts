@@ -46,6 +46,17 @@ export class AccountRepository {
     }
   }
 
+  async updateEmail(id: number, email: string): Promise<void> {
+    try {
+      await this.accountRepository.update(id, { email });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
+    }
+  }
+
   async save<T extends Partial<Account>>(account: T): Promise<Account> {
     try {
       return await this.accountRepository.save(account);
