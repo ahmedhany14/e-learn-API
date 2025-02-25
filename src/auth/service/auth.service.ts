@@ -45,28 +45,12 @@ export class AuthService {
     @Inject() private readonly redisService: AuthRedisService,
     @Inject() private readonly configService: ConfigService,
     @Inject() private readonly signupProvider: SignupProvider,
-    @Inject() private readonly accountRedisService: AccountRedisService,
-    @Inject(redisCon.KEY)
-    private readonly redisConfigurations: ConfigType<typeof redisCon>,
   ) {}
 
   async signUp(accountSignupDto: AccountSignupDto) {
     const { account } = await this.signupProvider.signup(accountSignupDto);
 
-    const randomToken = await this.tokenProvider.generate_active_token();
-
-
-    await this.accountRedisService.hashActiveToken(
-      randomToken,
-      account.id,
-      this.redisConfigurations.active_token_expiration,
-    );
-
-    const url =
-      'http://localhost:3000/account/active-account/' +
-      account.id +
-      '/' +
-      randomToken;
+    const { url } = await this.tokenProvider.generate_active_token(account.id);
 
     return url;
   }

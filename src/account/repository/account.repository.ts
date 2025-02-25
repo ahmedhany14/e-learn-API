@@ -74,19 +74,17 @@ export class AccountRepository {
     }
   }
 
-  async activeAccount(account_id: number): Promise<void> {
+  async activeAccount(account: Account): Promise<Account> {
     try {
-      await this.accountRepository.update(
-        { id: account_id },
-        { is_active: true },
-      );
+      account.is_active = true;
+      return await this.accountRepository.save(account);
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'An unexpected error occurred',
         details: error.message,
       });
     } finally {
-      this.logger.log(`Account with id ${account_id} has been activated`);
+      this.logger.log(`Account with id ${account.id} has been activated`);
     }
   }
 }

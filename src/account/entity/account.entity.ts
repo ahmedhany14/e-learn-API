@@ -60,7 +60,7 @@ export class Account {
   @Column({
     type: 'boolean',
     nullable: false,
-    default: () => 'true',
+    default: () => 'false',
     comment: `user's account status, true if active, false if inactive`,
   })
   is_active: boolean;

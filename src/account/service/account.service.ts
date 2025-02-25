@@ -50,8 +50,8 @@ export class AccountService {
     return await this.accountRepository.delete(account);
   }
 
-  async activeAccount(account_id: number) {
-    await this.accountRepository.activeAccount(account_id);
+  async activeAccount(account: Account): Promise<Account> {
+    return await this.accountRepository.activeAccount(account);
   }
 
   async upgradeToInstructor<T extends Partial<Account>>(
