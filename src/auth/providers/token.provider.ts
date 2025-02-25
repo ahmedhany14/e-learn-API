@@ -7,12 +7,16 @@ import * as crypto from 'crypto';
 
 // Configurations
 import { ConfigType } from '@nestjs/config';
+import redisCon from './../../common/config/redis.conf';
 
 // Database
 import { Account } from '../../account/entity/account.entity';
 
 // Interfaces
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
+
+// Services
+import { AccountRedisService } from 'src/account/service/account.redis.service';
 
 @Injectable()
 export class TokenProvider {
@@ -21,6 +25,9 @@ export class TokenProvider {
     private readonly jwtService: JwtService,
     @Inject(jwtConf.KEY)
     private readonly jwtConfigurations: ConfigType<typeof jwtConf>,
+    @Inject(redisCon.KEY)
+    private readonly redisConfigurations: ConfigType<typeof redisCon>,
+    @Inject() private readonly accountRedisService: AccountRedisService,
   ) {}
 
   private async signToken<T>(
@@ -96,9 +103,23 @@ export class TokenProvider {
     }
   }
 
-  async generate_active_token() {
+  async generate_active_token(account_id: number) {
     const randomToken = crypto.randomBytes(8).toString('hex');
+    const url =
+      'http://localhost:3000/account/active-account/' +
+      account_id +
+      '/' +
+      randomToken;
 
-    return randomToken;
+    await this.accountRedisService.hashActiveToken(
+      randomToken,
+      account_id,
+      this.redisConfigurations.active_token_expiration,
+    );
+
+    return {
+      url,
+      randomToken,
+    };
   }
 }

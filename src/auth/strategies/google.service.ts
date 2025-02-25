@@ -10,9 +10,8 @@ import {
 import { OAuth2Client } from 'google-auth-library';
 
 // Config
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigType } from '@nestjs/config';
 import googleConf from 'src/common/config/google.conf';
-import redisConf from 'src/common/config/redis.conf';
 
 // DTOs and Interfaces
 import { GoogleAuthDto } from '../dto/google.signup.dto';
@@ -22,7 +21,6 @@ import { GooglePayload } from '../interfaces/google.payload.interface';
 import { SignupProvider } from '../providers/transactions/signup.provider';
 import { AccountService } from '../../account/service/account.service';
 import { TokenProvider } from '../providers/token.provider';
-import { AccountRedisService } from 'src/account/service/account.redis.service';
 
 @Injectable()
 export class GoogleService implements OnModuleInit {
@@ -32,9 +30,6 @@ export class GoogleService implements OnModuleInit {
     @Inject(googleConf.KEY)
     private readonly googleConfigurations: ConfigType<typeof googleConf>,
 
-    @Inject(redisConf.KEY)
-    private readonly redisConfigurations: ConfigType<typeof redisConf>,
-
     @Inject()
     private readonly signupProvider: SignupProvider,
 
@@ -43,9 +38,6 @@ export class GoogleService implements OnModuleInit {
 
     @Inject()
     private readonly tokenProvider: TokenProvider,
-
-    @Inject()
-    private readonly accountRedisService: AccountRedisService,
   ) {}
   onModuleInit(): any {
     this.oauth2Client = new OAuth2Client({
@@ -83,18 +75,8 @@ export class GoogleService implements OnModuleInit {
 
     const { account: create_account } =
       await this.signupProvider.googleSignup(googlePayload);
-    const randomToken = await this.tokenProvider.generate_active_token();
-
-    const url =
-      'http://localhost:3000/account/active-account/' +
-      create_account.id +
-      '/' +
-      randomToken;
-
-    await this.accountRedisService.hashActiveToken(
-      randomToken,
+    const { url } = await this.tokenProvider.generate_active_token(
       create_account.id,
-      this.redisConfigurations.active_token_expiration,
     );
 
     return url;

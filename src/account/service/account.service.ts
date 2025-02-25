@@ -6,7 +6,7 @@ import { OrdersService } from '../../admin/sevices/orders.service';
 // Repository
 import { AccountRepository } from '../repository/account.repository';
 import { Account } from '../entity/account.entity';
-
+import { AccountEnum } from '../entity/account.enum';
 // DTO
 import { UpgradeToInstructorDto } from '../dtos/upgrade.to.instructor.dto';
 
@@ -21,14 +21,22 @@ export class AccountService {
 
   async findByEmail(
     email: string,
-    select: string[] = ['email', 'role', 'is_active'],
+    select: string[] = [
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+      AccountEnum.IS_ACTIVE,
+    ],
   ) {
     return await this.accountRepository.findByEmail(email, select);
   }
 
   async findById(
     id: number,
-    select: string[] = ['email', 'role', 'is_active'],
+    select: string[] = [
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+      AccountEnum.IS_ACTIVE,
+    ],
   ) {
     return await this.accountRepository.findById(id, select);
   }
@@ -50,8 +58,8 @@ export class AccountService {
     return await this.accountRepository.delete(account);
   }
 
-  async activeAccount(account_id: number) {
-    await this.accountRepository.activeAccount(account_id);
+  async activeAccount(account: Account): Promise<Account> {
+    return await this.accountRepository.activeAccount(account);
   }
 
   async upgradeToInstructor<T extends Partial<Account>>(

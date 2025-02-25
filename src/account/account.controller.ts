@@ -6,6 +6,7 @@ import {
   Get,
   Inject,
   Logger,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -20,7 +21,6 @@ import { UpgradeToInstructorDto } from './dtos/upgrade.to.instructor.dto';
 import { AccountService } from './service/account.service';
 import { TokenProvider } from '../auth/providers/token.provider';
 import { Email } from '../common/email/email';
-import { AccountRedisService } from './service/account.redis.service';
 
 // decorators for auth
 import { AUTH } from '../auth/decorators/auth.decorator';
@@ -46,10 +46,6 @@ import {
   SafeUpgradeToInstructor,
 } from './interfaces/accounts.interface';
 
-// Configurations
-import redisCon from './../common/config/redis.conf';
-import { ConfigType } from '@nestjs/config';
-
 @UseInterceptors(ExtractAccountInterceptor)
 @Controller('account')
 export class AccountController {
@@ -58,9 +54,6 @@ export class AccountController {
   constructor(
     @Inject() private readonly accountService: AccountService,
     @Inject() private readonly tokenProvider: TokenProvider,
-    @Inject(redisCon.KEY)
-    private readonly redisConfigurations: ConfigType<typeof redisCon>,
-    @Inject() private readonly accountRedisService: AccountRedisService,
     @Inject() private readonly email: Email,
   ) {}
 
@@ -133,8 +126,26 @@ export class AccountController {
     @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
     account_id: number,
   ) {
-    await this.accountService.activeAccount(account_id);
-    return { response: 'Account activated successfully' };
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.IS_ACTIVE,
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+    ];
+
+    const account = await this.accountService.findById(account_id, select);
+    await this.accountService.activeAccount(account);
+
+    const { accessToken, refreshToken } =
+      await this.tokenProvider.generateToken(account);
+
+    return {
+      response: {
+        message: 'Account activated successfully',
+        accessToken,
+        refreshToken,
+      },
+    };
   }
 
   @Get('reset-active-token/:account_id')
@@ -142,7 +153,14 @@ export class AccountController {
     @Param('account_id', ParseIntPipe, AccountIsExistingDecorator)
     account_id: number,
   ) {
-    const account = await this.accountService.findById(account_id);
+    const select = [
+      AccountEnum.ID,
+      AccountEnum.IS_ACTIVE,
+      AccountEnum.EMAIL,
+      AccountEnum.ROLE,
+    ];
+    const account = await this.accountService.findById(account_id, select);
+
     if (account.is_active) {
       throw new ConflictException({
         message: 'Account already active',
@@ -151,18 +169,7 @@ export class AccountController {
       });
     }
 
-    const randomToken = await this.tokenProvider.generate_active_token();
-    const url =
-      'http://localhost:3000/account/active-account/' +
-      account_id +
-      '/' +
-      randomToken;
-
-    await this.accountRedisService.hashActiveToken(
-      randomToken,
-      account_id,
-      this.redisConfigurations.active_token_expiration,
-    );
+    const { url } = await this.tokenProvider.generate_active_token(account.id);
 
     return {
       response: {
