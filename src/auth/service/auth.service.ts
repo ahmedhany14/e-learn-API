@@ -51,16 +51,10 @@ export class AuthService {
   ) {}
 
   async signUp(accountSignupDto: AccountSignupDto) {
-    this.logger.log('sign up attempt');
     const { account } = await this.signupProvider.signup(accountSignupDto);
 
     const randomToken = await this.tokenProvider.generate_active_token();
 
-    const url =
-      'http://localhost:3000/account/active-account/' +
-      account.id +
-      '/' +
-      randomToken;
 
     await this.accountRedisService.hashActiveToken(
       randomToken,
@@ -68,14 +62,13 @@ export class AuthService {
       this.redisConfigurations.active_token_expiration,
     );
 
-    //await this.email.sendWelcomeEmail(account.email, accessToken);
+    const url =
+      'http://localhost:3000/account/active-account/' +
+      account.id +
+      '/' +
+      randomToken;
 
-    return {
-      response: {
-        message: 'Account created successfully',
-        url,
-      },
-    };
+    return url;
   }
 
   async login(accountLoginDto: AccountLoginDto) {
