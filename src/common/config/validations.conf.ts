@@ -42,4 +42,8 @@ export default Joi.object({
   REDIS_ACTIVE_TOKEN_EXPIRATION: Joi.number().required().default(300),
   // storage configurations validation
   STORAGE_PATH: Joi.string().required(),
+
+  // google configurations validation
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_CLIENT_SECRET: Joi.string().required(),
 });

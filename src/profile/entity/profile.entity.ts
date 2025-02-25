@@ -26,7 +26,7 @@ export class Profile {
 
   @Column({
     type: 'varchar',
-    length: 32,
+    length: 128,
     nullable: true,
     comment: "User's profile image",
   })
