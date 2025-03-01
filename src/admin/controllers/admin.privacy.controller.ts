@@ -9,12 +9,14 @@ import { RoleEnum } from 'src/auth/enums/role.enum';
 
 // Services
 import { AdminPrivacyService } from '../sevices/admin.privacy.service';
+import { Email } from 'src/common/email/email';
 
 @Controller('admin')
 export class AdminPrivacyController {
 
     constructor(
-        @Inject() private readonly adminPrivacyService: AdminPrivacyService
+        @Inject() private readonly adminPrivacyService: AdminPrivacyService,
+        @Inject() private readonly email: Email
     ) {
     }
 
@@ -35,7 +37,11 @@ export class AdminPrivacyController {
             4) return a response to the client that the account has been banned 
         */
 
-        await this.adminPrivacyService.bannAccount(account_id);
+        const account = await this.adminPrivacyService.bannAccount(account_id);
+
+
+        // will be implemented later ......
+        //await this.email.sendBannEmail(account.email)
 
         return {
             response: 'Account has been banned successfully'

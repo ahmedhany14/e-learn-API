@@ -14,7 +14,7 @@ export class AdminPrivacyService {
     async bannAccount(
         account_id: number
     ) {
-        const account = await this.accountService.findById(account_id, [AccountEnum.ID, AccountEnum.HAS_BEEN_BANNED]);
+        const account = await this.accountService.findById(account_id, [AccountEnum.ID, AccountEnum.HAS_BEEN_BANNED, AccountEnum.EMAIL]);
         if (!account) {
             throw new NotFoundException({
                 message: "Account not found",
@@ -28,6 +28,6 @@ export class AdminPrivacyService {
 
         account.has_been_banned = true;
 
-        await this.accountService.save(account);
+        return await this.accountService.save(account);
     }
 }
