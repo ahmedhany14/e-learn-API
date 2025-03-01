@@ -30,4 +30,40 @@ export class AdminPrivacyService {
 
         return await this.accountService.save(account);
     }
+
+    async deactivateAccount(
+        account_id: number
+    ) {
+        const account = await this.accountService.findById(account_id, [AccountEnum.ID, AccountEnum.IS_ACTIVE, AccountEnum.EMAIL]);
+        if (!account) {
+            throw new NotFoundException({
+                message: "Account not found",
+            })
+        }
+        if (!account.is_active) {
+            throw new ConflictException({
+                message: "Account has already been deactivated before",
+            })
+        }
+        account.is_active = false;
+        await this.accountService.save(account);
+    }
+
+    async activateAccount(
+        account_id: number
+    ) {
+        const account = await this.accountService.findById(account_id, [AccountEnum.ID, AccountEnum.IS_ACTIVE, AccountEnum.EMAIL]);
+        if (!account) {
+            throw new NotFoundException({
+                message: "Account not found",
+            })
+        }
+        if (account.is_active) {
+            throw new ConflictException({
+                message: "Account has already been activated before",
+            })
+        }
+        account.is_active = true;
+        await this.accountService.save(account);
+    }
 }
