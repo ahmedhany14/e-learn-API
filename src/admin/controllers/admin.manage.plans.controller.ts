@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Logger, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Logger, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 
 
 // Auth and Role decorators
@@ -121,4 +121,19 @@ export class AdminManagePlansController {
         }
     }
 
+    
+    @Patch('flip-activation-plan/:plan_id')
+    async deActivePlan(
+        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @ExtractAccountData('id') admin_id: number,
+    ) {
+        const plan = await this.planService.flipActivationPlan(plan_id, admin_id);
+
+        return {
+            response: {
+                message: 'Plan deactivated successfully',
+                plan
+            }
+        }
+    }
 }

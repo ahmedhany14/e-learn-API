@@ -1,10 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
 
-// orm and entity
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Plan } from './entity/plan.entity';
-
 // repository
 import { PlanRepository } from './plan.repo';
 
@@ -51,6 +46,14 @@ export class PlansService {
             ...newPlan,
         }
         plan.updated_by.id = admin_id;
+
+        return await this.planRepository.save(plan);
+    }
+
+    async flipActivationPlan(plan_id: number, admin_id: number) {
+        let plan = await this.planRepository.getPlanById(plan_id);
+        plan.is_active = !plan.is_active;
+        plan.updated_by.id = admin_id
 
         return await this.planRepository.save(plan);
     }

@@ -38,6 +38,13 @@ export class Plan {
   plan_duration: number;
 
   @Column({
+    type: 'boolean',
+    nullable: false,
+    default: true,
+  })
+  is_active: boolean;
+
+  @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
