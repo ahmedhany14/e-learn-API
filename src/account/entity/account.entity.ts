@@ -12,8 +12,8 @@ import { Order } from '../../admin/entity/orders/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 import { OrderBacklog } from '../../admin/entity/orders/order.backlog.entity';
 import { Course } from '../../courses/entity/courses.entity';
-import { Plan } from '../../admin/entity/plan.entity';
-import { Plan_Account } from '../../admin/entity/account.plan.entity';
+import { Plan } from '../../plans/entity/plan.entity';
+import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
 import { Tags } from '../../tags/entity/tags.entity';
 

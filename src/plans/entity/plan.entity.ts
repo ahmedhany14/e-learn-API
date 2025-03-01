@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Course } from '../../courses/entity/courses.entity';
-import { Plan_Account } from './account.plan.entity';
+import { Plan_Account } from '../../account/entity/account.plan.entity';
 
 @Entity('plans')
 export class Plan {
