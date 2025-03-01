@@ -22,9 +22,10 @@ import { PlanRepository } from './repository/plan.repo';
 import { Plan_Account } from './entity/account.plan.entity';
 import { PlansService } from './sevices/plans.service';
 import { CourseReview } from './entity/courses/course.reviwe.entity';
+import { AdminPrivacyController } from './controllers/admin.privacy.controller';
 
 @Module({
-  controllers: [AdminController],
+  controllers: [AdminController, AdminPrivacyController],
   providers: [
     AdminService,
     PlanRepository,

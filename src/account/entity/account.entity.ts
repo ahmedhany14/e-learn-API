@@ -41,7 +41,7 @@ export class Account {
   @Column({
     type: 'varchar',
     length: 124,
-    nullable: false,
+    nullable: true,
     comment: "User's password",
     select: false,
   })
@@ -64,14 +64,23 @@ export class Account {
     comment: `user's account status, true if active, false if inactive`,
   })
   is_active: boolean;
+  /*
+    @Column({
+      type: 'boolean',
+      nullable: false,
+      default: () => 'false',
+      comment: `user's account verification status, true if verified, false if not verified`,
+    })
+    is_verified: boolean;
+  */
 
   @Column({
     type: 'boolean',
     nullable: false,
     default: () => 'false',
-    comment: `user's account verification status, true if verified, false if not verified`,
+    comment: 'User has been banned by the admin or not?',
   })
-  is_verified: boolean;
+  has_been_banned: boolean;
 
   @Column({
     type: 'timestamp with time zone',

@@ -95,12 +95,12 @@ export class AuthService {
     );
     if (!account) throw new NotFoundException('Account not found');
     if (!account.is_active) throw new GoneException('Account is not active');
-    if (account.is_verified === false) {
+    /*if (account.is_verified === false) {
       throw new NotFoundException({
         message: 'Account not found',
         details: 'Account is not verified',
       });
-    }
+    }*/
     if (
       !(await this.hashing.compare(accountLoginDto.password, account.password))
     )

@@ -53,7 +53,7 @@ export class AccessTokenGuard implements CanActivate {
     const account = await this.accountService.findById(payload.id, select);
     if (!account)  throw new NotFoundException('Account not found');
     if (!account.is_active) throw new GoneException('Account is not active');
-    if (!account.is_verified) throw new UnauthorizedException('Account is not verified');
+    //if (!account.is_verified) throw new UnauthorizedException('Account is not verified');
     request.account = account;
     request.accountId = account.id;
     return true;
