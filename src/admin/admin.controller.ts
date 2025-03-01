@@ -33,7 +33,6 @@ import { PaginationDto } from 'src/common/pagination/pagination.dto';
 import { OrderEnum } from 'src/admin/entity/orders/order.enum';
 import { OrderbacklogEnum } from 'src/admin/entity/orders/orderbacklog.enum';
 import { PlansPaginationDto } from './dtos/plans.pagination.dto';
-import { Plan } from './entity/plan.entity';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
