@@ -11,6 +11,8 @@ import { RoleEnum } from 'src/auth/enums/role.enum';
 import { AdminPrivacyService } from '../sevices/admin.privacy.service';
 import { Email } from 'src/common/email/email';
 
+@ROLE(RoleEnum.ADMIN)
+@AUTH(AuthEnum.BEARER)
 @Controller('admin')
 export class AdminPrivacyController {
 
@@ -22,9 +24,7 @@ export class AdminPrivacyController {
 
 
     // Ban
-    @ROLE(RoleEnum.ADMIN)
-    @AUTH(AuthEnum.BEARER)
-    @Patch('ban/:accout_id')
+    @Delete('ban/:accout_id')
     async banAccount(
         @Param('accout_id', ParseIntPipe) account_id: number
     ) {
@@ -48,10 +48,12 @@ export class AdminPrivacyController {
         }
 
     }
-    // Force de-active accounts
 
+    // Force de-active accounts
     @Delete('force-de-activate/:accout_id')
-    async deactivateAccount() {
+    async deactivateAccount(
+        @Param('accout_id', ParseIntPipe) account_id: number
+    ) {
         /*
             API end-point to deactivate an account temporarily
             Steps:
@@ -61,6 +63,13 @@ export class AdminPrivacyController {
 
         */
 
+        const account = await this.adminPrivacyService.deactivateAccount(
+            account_id
+        );
+
+        // will be implemented later ......
+        //await this.email.sendDeactivateEmail(account.email)
+
         return {
             response: 'Account has been deactivated successfully'
         }
@@ -69,7 +78,9 @@ export class AdminPrivacyController {
 
     // Force active accounts
     @Patch('force-activate/:accout_id')
-    async activateAccount() {
+    async activateAccount(
+        @Param('accout_id', ParseIntPipe) account_id: number
+    ) {
         /*
             API end-point to activate an account
             Steps:
@@ -77,6 +88,12 @@ export class AdminPrivacyController {
                 2) Call the admin service to activate the account
                 3) return a response to the client that the account has been activated successfully
         */
+        const account = await this.adminPrivacyService.activateAccount(
+            account_id
+        );
+
+        // will be implemented later ......
+        //await this.email.sendDeactivateEmail(account.email)
 
         return {
             response: 'Account has been activated successfully'
