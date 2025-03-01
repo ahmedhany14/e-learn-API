@@ -27,11 +27,10 @@ import redisCon from '../common/config/redis.conf';
   imports: [
     TypeOrmModule.forFeature([Account]),
     ConfigModule.forFeature(redisCon),
-
     forwardRef(() => AuthModule),
     forwardRef(() => AppModule),
-    AdminModule,
+    forwardRef(() => AdminModule),
     EmailModule,
   ],
 })
-export class AccountModule {}
+export class AccountModule { }

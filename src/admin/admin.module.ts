@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 
 // modules
@@ -23,6 +23,9 @@ import { Plan_Account } from './entity/account.plan.entity';
 import { PlansService } from './sevices/plans.service';
 import { CourseReview } from './entity/courses/course.reviwe.entity';
 import { AdminPrivacyController } from './controllers/admin.privacy.controller';
+import { AdminPrivacyService } from './sevices/admin.privacy.service';
+import { AccountService } from 'src/account/service/account.service';
+import { AccountModule } from 'src/account/account.module';
 
 @Module({
   controllers: [AdminController, AdminPrivacyController],
@@ -36,12 +39,15 @@ import { AdminPrivacyController } from './controllers/admin.privacy.controller';
     OrdersProvider,
     BacklogOrdersProvider,
     PlansService,
+    AdminPrivacyService,
   ],
   imports: [
-    TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account,CourseReview]),
+    TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account, CourseReview]),
+    forwardRef(() => AccountModule),
+
     EmailModule,
     PaginationModule,
   ],
   exports: [AdminService, OrdersService],
 })
-export class AdminModule {}
+export class AdminModule { }

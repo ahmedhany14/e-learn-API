@@ -1,14 +1,27 @@
-import { Controller, Delete, Param, ParseIntPipe, Patch } from '@nestjs/common';
+import { Controller, Delete, Inject, Param, ParseIntPipe, Patch } from '@nestjs/common';
+
+
+// Auth and Role
+import { AUTH } from 'src/auth/decorators/auth.decorator';
+import { ROLE } from 'src/auth/decorators/role.decorator';
+import { AuthEnum } from 'src/auth/enums/auth.enum';
+import { RoleEnum } from 'src/auth/enums/role.enum';
+
+// Services
+import { AdminPrivacyService } from '../sevices/admin.privacy.service';
 
 @Controller('admin')
 export class AdminPrivacyController {
 
-    constructor() {
-
+    constructor(
+        @Inject() private readonly adminPrivacyService: AdminPrivacyService
+    ) {
     }
 
 
     // Ban
+    @ROLE(RoleEnum.ADMIN)
+    @AUTH(AuthEnum.BEARER)
     @Patch('ban/:accout_id')
     async banAccount(
         @Param('accout_id', ParseIntPipe) account_id: number
@@ -21,6 +34,8 @@ export class AdminPrivacyController {
             3) send an email to the account owner that their account has been banned
             4) return a response to the client that the account has been banned 
         */
+
+        await this.adminPrivacyService.bannAccount(account_id);
 
         return {
             response: 'Account has been banned successfully'

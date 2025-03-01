@@ -86,7 +86,6 @@ export class AuthService {
       AccountEnum.EMAIL,
       AccountEnum.PASSWORD,
       AccountEnum.IS_ACTIVE,
-      AccountEnum.IS_VERIFIED,
     ];
 
     const account = await this.accountService.findByEmail(

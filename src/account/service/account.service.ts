@@ -17,7 +17,7 @@ export class AccountService {
     private readonly accountRepository: AccountRepository,
     @Inject()
     private readonly orderService: OrdersService,
-  ) {}
+  ) { }
 
   async findByEmail(
     email: string,
@@ -43,6 +43,10 @@ export class AccountService {
 
   async flipActiveState<T extends Partial<Account>>(account: T) {
     account.is_active = !account.is_active;
+    return await this.accountRepository.save(account);
+  }
+
+  async save<T extends Partial<Account>>(account: T) {
     return await this.accountRepository.save(account);
   }
 

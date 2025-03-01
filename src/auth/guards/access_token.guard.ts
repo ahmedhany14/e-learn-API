@@ -45,7 +45,6 @@ export class AccessTokenGuard implements CanActivate {
     const select = [
       AccountEnum.ID,
       AccountEnum.IS_ACTIVE,
-      AccountEnum.IS_VERIFIED,
       AccountEnum.EMAIL,
       AccountEnum.ROLE
     ]
