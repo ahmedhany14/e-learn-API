@@ -7,15 +7,15 @@ import {
 // orm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Plan } from '../entity/plan.entity';
-import { CreatePlanDto } from '../dtos/create.plan.dto';
+import { Plan } from './entity/plan.entity';
+import { CreatePlanDto } from './dtos/create.plan.dto';
 
 // dtos
 import { PaginationDto } from 'src/common/pagination/pagination.dto';
 
 // services
-import { PaginationService } from '../../common/pagination/pagination.service';
-import { PlansPaginationDto } from '../dtos/plans.pagination.dto';
+import { PaginationService } from '../common/pagination/pagination.service';
+import { PlansPaginationDto } from './dtos/plans.pagination.dto';
 
 @Injectable()
 export class PlanRepository {
@@ -24,7 +24,7 @@ export class PlanRepository {
     private readonly planRepository: Repository<Plan>,
     @Inject()
     private readonly paginationService: PaginationService,
-  ) {}
+  ) { }
 
   async createPlan(plan: CreatePlanDto, admin_id: number) {
     try {

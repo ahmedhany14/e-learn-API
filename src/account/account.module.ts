@@ -4,17 +4,19 @@ import { AccountController } from './account.controller';
 // Module
 import { AdminModule } from '../admin/admin.module';
 import { EmailModule } from '../common/email/email.module';
+import { AppModule } from '../app.module';
+import { AuthModule } from '../auth/auth.module';
 
 // Repository and Service
 import { AccountService } from './service/account.service';
 import { AccountRepository } from './repository/account.repository';
-import { AuthModule } from '../auth/auth.module';
+import { AccountRedisService } from './service/account.redis.service';
 
 // Entity and ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './entity/account.entity';
-import { AccountRedisService } from './service/account.redis.service';
-import { AppModule } from '../app.module';
+import { Plan_Account } from './entity/account.plan.entity';
+
 
 // Config
 import { ConfigModule } from '@nestjs/config';
@@ -25,7 +27,7 @@ import redisCon from '../common/config/redis.conf';
   exports: [AccountService],
   providers: [AccountService, AccountRepository, AccountRedisService],
   imports: [
-    TypeOrmModule.forFeature([Account]),
+    TypeOrmModule.forFeature([Account, Plan_Account]),
     ConfigModule.forFeature(redisCon),
     forwardRef(() => AuthModule),
     forwardRef(() => AppModule),
