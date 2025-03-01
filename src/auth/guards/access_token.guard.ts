@@ -13,14 +13,14 @@ import { TokenProvider } from '../providers/token.provider';
 import { AccountService } from '../../account/service/account.service';
 // dto and interfaces
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
-import {AccountEnum} from '../../account/entity/account.enum';
+import { AccountEnum } from '../../account/entity/account.enum';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
     @Inject() private readonly tokenProvider: TokenProvider,
     @Inject() private readonly accountService: AccountService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -32,7 +32,7 @@ export class AccessTokenGuard implements CanActivate {
       );
 
 
-    let payload : AccountPayloadInterface;
+    let payload: AccountPayloadInterface;
     try {
       payload = await this.tokenProvider.verifyToken<AccountPayloadInterface>(
         token,
@@ -46,13 +46,14 @@ export class AccessTokenGuard implements CanActivate {
       AccountEnum.ID,
       AccountEnum.IS_ACTIVE,
       AccountEnum.EMAIL,
-      AccountEnum.ROLE
+      AccountEnum.ROLE,
+      AccountEnum.HAS_BEEN_BANNED
     ]
 
     const account = await this.accountService.findById(payload.id, select);
-    if (!account)  throw new NotFoundException('Account not found');
+    if (!account) throw new NotFoundException('Account not found');
     if (!account.is_active) throw new GoneException('Account is not active');
-    //if (!account.is_verified) throw new UnauthorizedException('Account is not verified');
+    if (account.has_been_banned) throw new GoneException('Account has been banned');
     request.account = account;
     request.accountId = account.id;
     return true;
