@@ -11,6 +11,7 @@ import { PlanRepository } from './plan.repo';
 // dtos
 import { PlansPaginationDto } from './dtos/plans.pagination.dto';
 import { CreatePlanDto } from './dtos/create.plan.dto';
+import { UpdatePlanDto } from './dtos/update.plan.dto';
 
 @Injectable()
 export class PlansService {
@@ -22,6 +23,10 @@ export class PlansService {
 
     async createPlan(plan: CreatePlanDto, admin_id: number) {
         return await this.planRepository.createPlan(plan, admin_id);
+    }
+
+    async getPlanById(id: number) {
+        return await this.planRepository.getPlanById(id);
     }
 
     async getAllPlans(
@@ -38,7 +43,15 @@ export class PlansService {
         );
     }
 
-    async getPlanById(id: number) {
-        return await this.planRepository.getPlanById(id);
+    async updatePlan(plan_id: number, admin_id: number, newPlan: UpdatePlanDto) {
+        let plan = await this.planRepository.getPlanById(plan_id);
+
+        plan = {
+            ...plan,
+            ...newPlan,
+        }
+        plan.updated_by.id = admin_id;
+
+        return await this.planRepository.save(plan);
     }
 }
