@@ -12,13 +12,12 @@ import { ExtractAccountData } from 'src/common/decorators/request.extractData.de
 import { IsExistPlan } from '../../plans/pip_validators/is.exist.plan.decorator';
 
 // services
-import { PlansService } from 'src/plans/plans.service';
+import { PlansViaAdminService } from 'src/plans/service/plans.via.admin.service';
 
 // dtos
 import { CreatePlanDto } from 'src/plans/dtos/create.plan.dto';
 import { PlansPaginationDto } from 'src/plans/dtos/plans.pagination.dto';
 import { UpdatePlanDto } from 'src/plans/dtos/update.plan.dto';
-import { response } from 'express';
 
 
 @ROLE(RoleEnum.ADMIN)
@@ -29,7 +28,7 @@ export class AdminManagePlansController {
 
     constructor(
         @Inject()
-        private readonly planService: PlansService,
+        private readonly planService: PlansViaAdminService,
     ) { }
 
     @Post('new-plan')
@@ -121,7 +120,7 @@ export class AdminManagePlansController {
         }
     }
 
-    
+
     @Patch('flip-activation-plan/:plan_id')
     async deActivePlan(
         @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,

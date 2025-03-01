@@ -1,15 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
 
 // repository
-import { PlanRepository } from './plan.repo';
+import { PlanRepository } from '../plan.repo';
 
 // dtos
-import { PlansPaginationDto } from './dtos/plans.pagination.dto';
-import { CreatePlanDto } from './dtos/create.plan.dto';
-import { UpdatePlanDto } from './dtos/update.plan.dto';
+import { PlansPaginationDto } from '../dtos/plans.pagination.dto';
+import { CreatePlanDto } from '../dtos/create.plan.dto';
+import { UpdatePlanDto } from '../dtos/update.plan.dto';
 
 @Injectable()
-export class PlansService {
+export class PlansViaAdminService {
     constructor(
         @Inject()
         private readonly planRepository: PlanRepository,

@@ -30,11 +30,13 @@ import { PermissionGuard } from './auth/guards/permission.guard';
 import { TokenProvider } from './auth/providers/token.provider';
 import { Email } from './common/email/email';
 import { MigrationService } from './db/migrations.service';
+import { PlansViaAdminService } from './plans/service/plans.via.admin.service';
 
 // Modules
 import { ProfileModule } from './profile/profile.module';
 import { EmailModule } from './common/email/email.module';
 import { DbModule } from './db/db.module';
+import { PlansModule } from './plans/plans.module';
 import { AdminModule } from './admin/admin.module';
 import { AccountModule } from './account/account.module';
 
@@ -55,8 +57,6 @@ import { TagsModule } from './tags/tags.module';
 import Redis from 'ioredis';
 import redisCon from './common/config/redis.conf';
 import { AccountRedisService } from './account/service/account.redis.service';
-import { PlansModule } from './plans/plans.module';
-import { PlansService } from './plans/plans.service';
 
 const env = process.env.NODE_ENV;
 
@@ -166,7 +166,7 @@ const env = process.env.NODE_ENV;
       },
     },
     AccountRedisService,
-    PlansService,
+    PlansViaAdminService,
   ],
 
   exports: ['REDIS_CLIENT'],
