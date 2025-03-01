@@ -45,37 +45,14 @@ export class AuthService {
     @Inject() private readonly redisService: AuthRedisService,
     @Inject() private readonly configService: ConfigService,
     @Inject() private readonly signupProvider: SignupProvider,
-    @Inject() private readonly accountRedisService: AccountRedisService,
-    @Inject(redisCon.KEY)
-    private readonly redisConfigurations: ConfigType<typeof redisCon>,
   ) {}
 
   async signUp(accountSignupDto: AccountSignupDto) {
-    this.logger.log('sign up attempt');
     const { account } = await this.signupProvider.signup(accountSignupDto);
 
-    const randomToken = await this.tokenProvider.generate_active_token();
+    const { url } = await this.tokenProvider.generate_active_token(account.id);
 
-    const url =
-      'http://localhost:3000/account/active-account/' +
-      account.id +
-      '/' +
-      randomToken;
-
-    await this.accountRedisService.hashActiveToken(
-      randomToken,
-      account.id,
-      this.redisConfigurations.active_token_expiration,
-    );
-
-    //await this.email.sendWelcomeEmail(account.email, accessToken);
-
-    return {
-      response: {
-        message: 'Account created successfully',
-        url,
-      },
-    };
+    return url;
   }
 
   async login(accountLoginDto: AccountLoginDto) {
@@ -86,7 +63,6 @@ export class AuthService {
       AccountEnum.EMAIL,
       AccountEnum.PASSWORD,
       AccountEnum.IS_ACTIVE,
-      AccountEnum.IS_VERIFIED,
     ];
 
     const account = await this.accountService.findByEmail(
@@ -95,12 +71,12 @@ export class AuthService {
     );
     if (!account) throw new NotFoundException('Account not found');
     if (!account.is_active) throw new GoneException('Account is not active');
-    if (account.is_verified === false) {
+    /*if (account.is_verified === false) {
       throw new NotFoundException({
         message: 'Account not found',
         details: 'Account is not verified',
       });
-    }
+    }*/
     if (
       !(await this.hashing.compare(accountLoginDto.password, account.password))
     )
@@ -189,10 +165,9 @@ export class AuthService {
       this.configService.get<number>('jwt.reset_token_expires_in'),
     );
 
-    this.logger.log(
-      `"http://localhost:3000/auth/reset-password/${reset_token}`,
-    );
-    await this.email.sendResetPasswordEmail(account.email, reset_token);
+    //await this.email.sendResetPasswordEmail(account.email, reset_token);
+
+    return `http://localhost:3000/auth/reset-password/${reset_token}`;
   }
 
   async resetPasswordWithToken(

@@ -53,6 +53,8 @@ import { TagsModule } from './tags/tags.module';
 
 // Redis
 import Redis from 'ioredis';
+import redisCon from './common/config/redis.conf';
+import { AccountRedisService } from './account/service/account.redis.service';
 
 const env = process.env.NODE_ENV;
 
@@ -69,6 +71,8 @@ const env = process.env.NODE_ENV;
     // JWT
     ConfigModule.forFeature(jwtCong),
     JwtModule.registerAsync(jwtCong.asProvider()),
+    // Redis
+    ConfigModule.forFeature(redisCon),
 
     // ORM and Database
     TypeOrmModule.forRootAsync({
@@ -106,7 +110,7 @@ const env = process.env.NODE_ENV;
 
     PaginationModule,
 
-//    OrdersModule,
+    //    OrdersModule,
 
     CoursesModule,
 
@@ -157,6 +161,7 @@ const env = process.env.NODE_ENV;
         });
       },
     },
+    AccountRedisService,
   ],
 
   exports: ['REDIS_CLIENT'],
