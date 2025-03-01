@@ -69,10 +69,27 @@ export class PlanRepository {
 
   async getPlanById(id: number) {
     try {
-      return await this.planRepository.findOne({ where: { id } });
+      return await this.planRepository.findOne({
+        where: { id },
+        relations: {
+          admin_id: true,
+          updated_by: true,
+        }
+      });
     } catch (err) {
       throw new InternalServerErrorException({
         message: 'Error fetching plan',
+        details: err.message,
+      });
+    }
+  }
+
+  async save(plan: Plan) {
+    try {
+      return await this.planRepository.save(plan);
+    } catch (err) {
+      throw new InternalServerErrorException({
+        message: 'Error saving plan',
         details: err.message,
       });
     }
