@@ -64,14 +64,28 @@ export class Account {
     comment: `user's account status, true if active, false if inactive`,
   })
   is_active: boolean;
+  /*
+    @Column({
+      type: 'boolean',
+      nullable: false,
+      default: () => 'false',
+      comment: `user's account verification status, true if verified, false if not verified`,
+    })
+    is_verified: boolean;
+  */
 
   @Column({
     type: 'boolean',
     nullable: false,
+<<<<<<< HEAD
     default: () => 'true',
     comment: `user's account verification status, true if verified, false if not verified`,
+=======
+    default: () => 'false',
+    comment: 'User has been banned by the admin or not?',
+>>>>>>> feat/admin
   })
-  is_verified: boolean;
+  has_been_banned: boolean;
 
   @Column({
     type: 'timestamp with time zone',
