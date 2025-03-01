@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Videos } from './videos.entity';
-import { Plan } from '../../admin/entity/plan.entity';
+import { Plan } from '../../plans/entity/plan.entity';
 import { CourseTags } from '../../tags/entity/course.tags.entity';
 import { CourseReview } from 'src/admin/entity/courses/course.reviwe.entity';
 

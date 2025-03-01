@@ -6,8 +6,8 @@ import {
   JoinColumn,
   Column,
 } from 'typeorm';
-import { Account } from '../../account/entity/account.entity';
-import { Plan } from './plan.entity';
+import { Account } from './account.entity';
+import { Plan } from '../../plans/entity/plan.entity';
 
 @Entity()
 export class Plan_Account {
