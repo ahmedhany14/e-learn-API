@@ -77,13 +77,8 @@ export class Account {
   @Column({
     type: 'boolean',
     nullable: false,
-<<<<<<< HEAD
-    default: () => 'true',
-    comment: `user's account verification status, true if verified, false if not verified`,
-=======
     default: () => 'false',
     comment: 'User has been banned by the admin or not?',
->>>>>>> feat/admin
   })
   has_been_banned: boolean;
 

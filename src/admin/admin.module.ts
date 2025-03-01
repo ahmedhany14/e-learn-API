@@ -25,6 +25,7 @@ import { Plan_Account } from './entity/account.plan.entity';
 import { PlansService } from './sevices/plans.service';
 import { CourseReview } from './entity/courses/course.reviwe.entity';
 import { AdminPrivacyService } from './sevices/admin.privacy.service';
+import { AccountModule } from 'src/account/account.module';
 
 @Module({
   controllers: [AdminController, AdminPrivacyController],
@@ -42,6 +43,7 @@ import { AdminPrivacyService } from './sevices/admin.privacy.service';
   ],
   imports: [
     TypeOrmModule.forFeature([Order, OrderBacklog, Plan, Plan_Account, CourseReview]),
+    forwardRef(() => AccountModule),
     EmailModule,
     PaginationModule,
   ],
