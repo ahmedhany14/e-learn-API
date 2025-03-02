@@ -1,21 +1,50 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Inject, Query } from '@nestjs/common';
+
+// services
+import { AccountService } from 'src/account/service/account.service';
 
 @Controller('admin-dashboard')
 export class AdminSiteAnalysisController {
 
-    constructor() {
+    constructor(
+        @Inject()
+        private readonly accountService: AccountService,
 
-    }
+    ) { }
 
     // total active, de-activated, banned, ...etc students
     @Get('total-students')
     async getTotalStudents(
-        @Query('type') type: any
+        @Query('type') type: string
     ) {
         // fetch total students from the database with role = student
+        let filter = {}
+
+        switch (type) {
+            case 'active':
+                filter = {
+                    is_active: true
+                }
+                break;
+            case 'de-activated':
+                filter = {
+                    is_active: false
+                }
+                break;
+            case 'banned':
+                filter = {
+                    has_been_banned: true
+                }
+                break;
+            default:
+                filter = {}
+                break;
+        }
+
+        const total = await this.accountService.getTotalStudents(filter);
 
         return {
-            total: 0
+            response: total
         };
     }
 

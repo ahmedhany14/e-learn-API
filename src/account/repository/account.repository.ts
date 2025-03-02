@@ -16,7 +16,7 @@ export class AccountRepository {
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
-  ) {}
+  ) { }
 
   async findByEmail(email: string, select: string[]): Promise<Account> {
     try {
@@ -96,6 +96,19 @@ export class AccountRepository {
       });
     } finally {
       this.logger.log(`Account with id ${account.id} has been activated`);
+    }
+  }
+
+  async getTotalStudents(filter: any): Promise<number> {
+    try {
+      return await this.accountRepository.count({
+        where: { ...filter, role: 'user' },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: error.message,
+      });
     }
   }
 }
