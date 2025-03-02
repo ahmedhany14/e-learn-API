@@ -76,4 +76,12 @@ export class AccountService {
   ) {
     return this.orderService.createOrder(upgradeToInstructorDto, account);
   }
+
+  async getTotalStudents(filter: any) {
+    return await this.accountRepository.getTotalStudents(filter);
+  }
+
+  async getTotalInstructors(filter: any) {
+    return await this.accountRepository.getTotalInstructors(filter);
+  }
 }
