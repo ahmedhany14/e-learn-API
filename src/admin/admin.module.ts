@@ -26,10 +26,11 @@ import { OrderBacklog } from '../orders/entity/order.backlog.entity';
 import { RejectTransaction } from './providers/reject.transaction';
 import { CourseReview } from './entity/courses/course.reviwe.entity';
 import { AdminPrivacyService } from './sevices/admin.privacy.service';
+import { AdminSiteAnalysisController } from './controllers/admin.site-analysis.controller';
 
 
 @Module({
-  controllers: [AdminController, AdminPrivacyController, AdminManagePlansController],
+  controllers: [AdminController, AdminPrivacyController, AdminManagePlansController, AdminSiteAnalysisController],
   providers: [
     AdminService,
     CourseReviewRepository,
