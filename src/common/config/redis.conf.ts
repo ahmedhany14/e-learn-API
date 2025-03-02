@@ -7,5 +7,4 @@ export default registerAs('redis', () => ({
 
   // expiration time in seconds
   active_token_expiration: parseInt(process.env.REDIS_ACTIVE_TOKEN_EXPIRATION, 10) || 5 * 60, // 5 minutes
-
 }));

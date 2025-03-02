@@ -57,6 +57,8 @@ import { TagsModule } from './tags/tags.module';
 import Redis from 'ioredis';
 import redisCon from './common/config/redis.conf';
 import { AccountRedisService } from './account/service/account.redis.service';
+import { RedisModule } from './redis/redis.module';
+import { ConfigurationsModule } from './configurations/configurations.module';
 
 const env = process.env.NODE_ENV;
 
@@ -121,6 +123,10 @@ const env = process.env.NODE_ENV;
     TagsModule,
 
     PlansModule,
+
+    RedisModule,
+
+    ConfigurationsModule,
 
     // DbModule,
   ],
