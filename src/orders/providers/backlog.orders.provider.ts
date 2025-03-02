@@ -7,13 +7,13 @@ import {
 // entity and orm
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderBacklog } from '../../entity/orders/order.backlog.entity';
+import { OrderBacklog } from '../entity/order.backlog.entity';
 
 // dto
-import { PaginationDto } from '../../../common/pagination/pagination.dto';
+import { PaginationDto } from '../../common/pagination/pagination.dto';
 
 // providers
-import { PaginationService } from '../../../common/pagination/pagination.service';
+import { PaginationService } from '../../common/pagination/pagination.service';
 
 @Injectable()
 export class BacklogOrdersProvider {
@@ -22,7 +22,7 @@ export class BacklogOrdersProvider {
     private readonly orderBacklogRepository: Repository<OrderBacklog>,
     @Inject()
     private readonly paginationService: PaginationService,
-  ) {}
+  ) { }
 
   async getAllBacklog({
     select,

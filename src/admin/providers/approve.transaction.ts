@@ -4,13 +4,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { Order } from '../entity/orders/order.entity';
+import { Order } from '../../orders/entity/order.entity';
 
 @Injectable()
 export class ApproveTransaction {
   private readonly logger = new Logger(ApproveTransaction.name);
 
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(private readonly dataSource: DataSource) { }
 
   async approveOrder(user_order: Order, adminId: number) {
     const queryRunner = this.dataSource.createQueryRunner();

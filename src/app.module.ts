@@ -35,6 +35,10 @@ import { FileModule } from './file/file.module';
 import { TagsModule } from './tags/tags.module';
 import { RedisModule } from './redis/redis.module';
 import { ConfigService } from './configurations/config.service';
+import { ConfigurationsModule } from './configurations/configurations.module';
+import { JwtModule } from '@nestjs/jwt';
+import { OrdersModule } from './orders/orders.module';
+
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -42,8 +46,6 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
-import { ConfigurationsModule } from './configurations/configurations.module';
-import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
@@ -93,7 +95,9 @@ import { JwtModule } from '@nestjs/jwt';
 
     ConfigurationsModule,
 
-    JwtModule
+    JwtModule,
+
+    OrdersModule
     // DbModule,
   ],
   controllers: [AppController],

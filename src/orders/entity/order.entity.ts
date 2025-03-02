@@ -8,7 +8,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { Account } from '../../../account/entity/account.entity';
+import { Account } from '../../account/entity/account.entity';
 import { OrderBacklog } from './order.backlog.entity';
 
 @Entity('orders')
