@@ -4,21 +4,9 @@ import { AppService } from './app.service';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 // App Modules
-import { AuthModule } from './auth/auth.module';
-
-// Configurations for the application
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import appConfig from './common/config/app.conf';
-import databaseConf from './common/config/database.conf';
-import jwtCong from './common/config/jwt.cong';
-import emialConf from './common/config/emial.conf';
-import envValidation from './common/config/validations.conf';
 
 // ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-// JWT
-import { JwtModule } from '@nestjs/jwt';
 
 // Guards
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -39,7 +27,14 @@ import { DbModule } from './db/db.module';
 import { PlansModule } from './plans/plans.module';
 import { AdminModule } from './admin/admin.module';
 import { AccountModule } from './account/account.module';
-
+import { AuthModule } from './auth/auth.module';
+import { InstructorModule } from './instructor/instructor.module';
+import { PaginationModule } from './common/pagination/pagination.module';
+import { CoursesModule } from './courses/courses.module';
+import { FileModule } from './file/file.module';
+import { TagsModule } from './tags/tags.module';
+import { RedisModule } from './redis/redis.module';
+import { ConfigService } from './configurations/config.service';
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -47,56 +42,28 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
-import { InstructorModule } from './instructor/instructor.module';
-import { PaginationModule } from './common/pagination/pagination.module';
-import { CoursesModule } from './courses/courses.module';
-import { FileModule } from './file/file.module';
-import { TagsModule } from './tags/tags.module';
-
-// Redis
-import Redis from 'ioredis';
-import redisCon from './common/config/redis.conf';
-import { AccountRedisService } from './account/service/account.redis.service';
-import { RedisModule } from './redis/redis.module';
 import { ConfigurationsModule } from './configurations/configurations.module';
+import { JwtModule } from '@nestjs/jwt';
 
-const env = process.env.NODE_ENV;
 
 @Module({
   imports: [
-    // Configurations Parameters and Validation
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: `.${env}.env`,
-      load: [appConfig, databaseConf, emialConf],
-      validationSchema: envValidation,
-    }),
-
-    // JWT
-    ConfigModule.forFeature(jwtCong),
-    JwtModule.registerAsync(jwtCong.asProvider()),
-    // Redis
-    ConfigModule.forFeature(redisCon),
-
     // ORM and Database
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigurationsModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('database.host'),
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.database'),
-        synchronize: configService.get<boolean>('database.synchronize'),
-        autoLoadEntities: configService.get<boolean>(
-          'database.autoLoadEntities',
-        ),
+        host: configService.databaseConfig.host,
+        port: configService.databaseConfig.port,
+        username: configService.databaseConfig.username,
+        password: configService.databaseConfig.password,
+        database: configService.databaseConfig.database,
+        synchronize: configService.databaseConfig.synchronize,
+        autoLoadEntities: configService.databaseConfig.autoLoadEntities,
         namingStrategy: new SnakeNamingStrategy(),
         logger: 'advanced-console', // Use the advanced console logger
-        // For even more detailed logging:
-        logging: ['query'],
+        logging: ['query'], // Log the query
       }),
     }),
 
@@ -114,8 +81,6 @@ const env = process.env.NODE_ENV;
 
     PaginationModule,
 
-    //    OrdersModule,
-
     CoursesModule,
 
     FileModule,
@@ -128,6 +93,7 @@ const env = process.env.NODE_ENV;
 
     ConfigurationsModule,
 
+    JwtModule
     // DbModule,
   ],
   controllers: [AppController],
@@ -159,23 +125,8 @@ const env = process.env.NODE_ENV;
       useClass: HttpExceptionFilter,
     },
 
-    // redis
-    {
-      provide: 'REDIS_CLIENT',
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return new Redis({
-          host: configService.get('redis.host'),
-          port: configService.get('redis.port'),
-          password: configService.get('redis.password'),
-        });
-      },
-    },
-    AccountRedisService,
     PlansViaAdminService,
   ],
-
-  exports: ['REDIS_CLIENT'],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

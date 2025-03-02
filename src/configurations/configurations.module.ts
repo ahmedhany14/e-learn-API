@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import envValidation from './config.validations';
 import { ConfigService } from './config.service';
+import configuration from './configurations';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -10,7 +11,7 @@ const env = process.env.NODE_ENV || 'development';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: `.${env}.env`,
-            load: [],
+            load: [configuration],
             validationSchema: envValidation,
         }),
     ],

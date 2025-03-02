@@ -15,9 +15,9 @@ import { AccountService } from '../../account/service/account.service';
 import { Hashing } from '../interfaces/Hashing';
 import { SignupProvider } from '../providers/transactions/signup.provider';
 import { Email } from '../../common/email/email';
-import { AuthRedisService } from './auth.redis.service';
+import { AuthRedisService } from '../../redis/services/auth.redis.service';
 import { ConfigService, ConfigType } from '@nestjs/config';
-import { AccountRedisService } from '../../account/service/account.redis.service';
+import { AccountRedisService } from '../../redis/services/account.redis.service';
 
 // Dto and Interfaces
 import { RefreshTokenDto } from '../dto/refresh_token.dto';
@@ -30,8 +30,6 @@ import { ForgetDto } from '../dto/forget.dto';
 import { AccountEnum } from '../../account/entity/account.enum';
 import { Account } from '../../account/entity/account.entity';
 
-// Configurations
-import redisCon from '../../common/config/redis.conf';
 
 @Injectable()
 export class AuthService {
@@ -45,7 +43,7 @@ export class AuthService {
     @Inject() private readonly redisService: AuthRedisService,
     @Inject() private readonly configService: ConfigService,
     @Inject() private readonly signupProvider: SignupProvider,
-  ) {}
+  ) { }
 
   async signUp(accountSignupDto: AccountSignupDto) {
     const { account } = await this.signupProvider.signup(accountSignupDto);
