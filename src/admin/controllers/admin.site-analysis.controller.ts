@@ -3,6 +3,14 @@ import { Controller, Get, Inject, Query } from '@nestjs/common';
 // services
 import { AccountService } from 'src/account/service/account.service';
 
+// Auth and Role decorators
+import { AUTH } from 'src/auth/decorators/auth.decorator';
+import { ROLE } from 'src/auth/decorators/role.decorator';
+import { AuthEnum } from 'src/auth/enums/auth.enum';
+import { RoleEnum } from 'src/auth/enums/role.enum';
+
+@ROLE(RoleEnum.ADMIN)
+@AUTH(AuthEnum.BEARER)
 @Controller('admin-dashboard')
 export class AdminSiteAnalysisController {
 
@@ -51,12 +59,34 @@ export class AdminSiteAnalysisController {
     // total active, de-activated, banned, ...etc instructors
     @Get('total-instructors')
     async getTotalInstructors(
-        @Query('type') type: any
+        @Query('type') type: string
     ) {
         // fetch total instructors from the database with role = instructor
+        let filter = {}
+        switch (type) {
+            case 'active':
+                filter = {
+                    is_active: true
+                }
+                break;
+            case 'de-activated':
+                filter = {
+                    is_active: false
+                }
+                break;
+            case 'banned':
+                filter = {
+                    has_been_banned: true
+                }
+                break;
+            default:
+                filter = {}
+                break;
+        }
 
+        const total = await this.accountService.getTotalInstructors(filter);
         return {
-            total: 0
+            response: total
         };
     }
 

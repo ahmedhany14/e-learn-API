@@ -111,4 +111,23 @@ export class AccountRepository {
       });
     }
   }
+
+  async getTotalInstructors(filter: any): Promise<number> {
+    try {
+
+      return await this.accountRepository
+        .createQueryBuilder('account')
+        .innerJoinAndSelect('account.instructor', 'instructor')
+        .select('account.is_active' as string)
+        .addSelect('account.has_been_banned' as string)
+        .addSelect('account.role' as string)
+        .where({ ...filter, role: 'instructor' })
+        .getCount();
+    } catch (err) {
+      throw new InternalServerErrorException({
+        message: 'An unexpected error occurred',
+        details: err.message,
+      });
+    }
+  }
 }

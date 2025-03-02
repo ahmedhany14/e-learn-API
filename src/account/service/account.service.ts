@@ -80,4 +80,8 @@ export class AccountService {
   async getTotalStudents(filter: any) {
     return await this.accountRepository.getTotalStudents(filter);
   }
+
+  async getTotalInstructors(filter: any) {
+    return await this.accountRepository.getTotalInstructors(filter);
+  }
 }
