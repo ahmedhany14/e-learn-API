@@ -10,26 +10,26 @@ import {
 } from '@nestjs/common';
 
 //decorators and enums
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { ROLE } from '../auth/decorators/role.decorator';
-import { RoleEnum } from '../auth/enums/role.enum';
-import { AuthEnum } from '../auth/enums/auth.enum';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { AUTH } from '../../auth/decorators/auth.decorator';
+import { ROLE } from '../../auth/decorators/role.decorator';
+import { RoleEnum } from '../../auth/enums/role.enum';
+import { AuthEnum } from '../../auth/enums/auth.enum';
+import { ExtractAccountData } from '../../common/decorators/request.extractData.decorator';
 
 //services
-import { AdminService } from './sevices/admin.service';
-import { Email } from '../common/email/email';
-import { OrdersService } from '../orders/orders.service';
+import { AdminService } from '../sevices/admin.service';
+import { Email } from '../../common/email/email';
+import { OrdersService } from '../../orders/orders.service';
 
 //dtos
-import { GetOrderDto } from './dtos/get.order.dto';
+import { GetOrderDto } from '../dtos/get.order.dto';
 import { PaginationDto } from 'src/common/pagination/pagination.dto';
 import { OrderEnum } from 'src/orders/entity/order.enum';
 import { OrderbacklogEnum } from 'src/orders/entity/orderbacklog.enum';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
-@Controller('admin-dashboard')
+@Controller('admin')
 export class AdminController {
   private readonly logger = new Logger(AdminController.name);
 
@@ -42,11 +42,6 @@ export class AdminController {
     private readonly email: Email,
   ) { }
 
-
-  /*
-                                   ORDER ENDPOINTS
-    ---------------------------------------------------------------------------------
-  */
 
   @Get('submitted-orders')
   async getOrders(@Query() paginationDto: PaginationDto) {
@@ -132,7 +127,6 @@ export class AdminController {
   ) {
     /*
       API Endpoint to reject an order
-
       steps:
         get the order id from the request
         get admin id from the request
@@ -146,11 +140,6 @@ export class AdminController {
 
     return { response: `Order with id: ${orderId} has been rejected` };
   }
-
-  /*
-                                    Reviewed Orders ENDPOINTS
-      --------------------------------------------------------------------------------- 
-  */
 
   @Get('reviewed-orders')
   async getReviewedOrders(@Query() paginationDto: PaginationDto) {

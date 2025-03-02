@@ -3,7 +3,7 @@ import { forwardRef, Module } from '@nestjs/common';
 // controllers
 import { AdminManagePlansController } from './controllers/admin.manage.plans.controller';
 import { AdminPrivacyController } from './controllers/admin.privacy.controller';
-import { AdminController } from './admin.controller';
+import { AdminController } from './controllers/admin.manage.orders.controller';
 
 // modules
 import { EmailModule } from '../common/email/email.module';
