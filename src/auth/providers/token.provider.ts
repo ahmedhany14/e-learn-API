@@ -2,12 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 // JWT and Crypto
 import { JwtService } from '@nestjs/jwt';
-import jwtConf from '../../common/config/jwt.cong';
 import * as crypto from 'crypto';
-
-// Configurations
-import { ConfigType } from '@nestjs/config';
-import redisCon from './../../common/config/redis.conf';
 
 // Database
 import { Account } from '../../account/entity/account.entity';
@@ -16,19 +11,18 @@ import { Account } from '../../account/entity/account.entity';
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
 
 // Services
-import { AccountRedisService } from 'src/account/service/account.redis.service';
+import { AccountRedisService } from 'src/redis/services/account.redis.service';
+import { ConfigService } from 'src/configurations/config.service';
 
 @Injectable()
 export class TokenProvider {
   constructor(
     @Inject()
     private readonly jwtService: JwtService,
-    @Inject(jwtConf.KEY)
-    private readonly jwtConfigurations: ConfigType<typeof jwtConf>,
-    @Inject(redisCon.KEY)
-    private readonly redisConfigurations: ConfigType<typeof redisCon>,
     @Inject() private readonly accountRedisService: AccountRedisService,
-  ) {}
+
+    @Inject() private readonly configService: ConfigService,
+  ) { }
 
   private async signToken<T>(
     userId: number,
@@ -45,8 +39,8 @@ export class TokenProvider {
       // 2. Options
       {
         secret: secret,
-        audience: this.jwtConfigurations.tokenAudience,
-        issuer: this.jwtConfigurations.tokenIssuer,
+        audience: this.configService.jwtConfig.tokenAudience,
+        issuer: this.configService.jwtConfig.tokenIssuer,
         expiresIn: expiresIn,
       },
     );
@@ -56,8 +50,8 @@ export class TokenProvider {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<AccountPayloadInterface>>(
         account.id,
-        this.jwtConfigurations.secret,
-        this.jwtConfigurations.expiresIn,
+        this.configService.jwtConfig.secret,
+        this.configService.jwtConfig.expiresIn,
         {
           email: account.email,
           role: account.role,
@@ -65,8 +59,8 @@ export class TokenProvider {
       ),
       this.signToken(
         account.id,
-        this.jwtConfigurations.refreshSecret,
-        this.jwtConfigurations.refreshExpiresIn,
+        this.configService.jwtConfig.refreshSecret,
+        this.configService.jwtConfig.refreshExpiresIn,
         {},
       ),
     ]);
@@ -76,8 +70,8 @@ export class TokenProvider {
   public async generateResetToken(account: Account) {
     return await this.signToken<Partial<AccountPayloadInterface>>(
       account.id,
-      this.jwtConfigurations.reset_token_secret,
-      this.jwtConfigurations.reset_token_expires_in,
+      this.configService.jwtConfig.reset_token_secret,
+      this.configService.jwtConfig.reset_token_expires_in,
       {
         email: account.email,
       },
@@ -86,14 +80,14 @@ export class TokenProvider {
 
   public async verifyToken<T>(token: string, type: string) {
     let secret: string;
-    if (type === 'reset') secret = this.jwtConfigurations.reset_token_secret;
-    else if (type === 'access') secret = this.jwtConfigurations.secret;
-    else secret = this.jwtConfigurations.refreshSecret;
+    if (type === 'reset') secret = this.configService.jwtConfig.reset_token_secret;
+    else if (type === 'access') secret = this.configService.jwtConfig.secret;
+    else secret = this.configService.jwtConfig.refreshSecret;
     try {
       return (await this.jwtService.verifyAsync(token, {
         secret,
-        audience: this.jwtConfigurations.tokenAudience,
-        issuer: this.jwtConfigurations.tokenIssuer,
+        audience: this.configService.jwtConfig.tokenAudience,
+        issuer: this.configService.jwtConfig.tokenIssuer,
       })) as T;
     } catch (e) {
       throw new UnauthorizedException({
@@ -114,7 +108,7 @@ export class TokenProvider {
     await this.accountRedisService.hashActiveToken(
       randomToken,
       account_id,
-      this.redisConfigurations.active_token_expiration,
+      this.configService.redisConfig.active_token_expiration,
     );
 
     return {

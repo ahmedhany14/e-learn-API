@@ -2,16 +2,12 @@ import {
   Injectable,
   OnModuleInit,
   Inject,
-  BadRequestException,
   Logger,
 } from '@nestjs/common';
 
 // Google Auth
 import { OAuth2Client } from 'google-auth-library';
 
-// Config
-import { ConfigType } from '@nestjs/config';
-import googleConf from 'src/common/config/google.conf';
 
 // DTOs and Interfaces
 import { GoogleAuthDto } from '../dto/google.signup.dto';
@@ -21,15 +17,13 @@ import { GooglePayload } from '../interfaces/google.payload.interface';
 import { SignupProvider } from '../providers/transactions/signup.provider';
 import { AccountService } from '../../account/service/account.service';
 import { TokenProvider } from '../providers/token.provider';
+import { ConfigService } from 'src/configurations/config.service';
 
 @Injectable()
 export class GoogleService implements OnModuleInit {
   private oauth2Client: OAuth2Client;
   private readonly logger = new Logger(GoogleService.name);
   constructor(
-    @Inject(googleConf.KEY)
-    private readonly googleConfigurations: ConfigType<typeof googleConf>,
-
     @Inject()
     private readonly signupProvider: SignupProvider,
 
@@ -38,11 +32,14 @@ export class GoogleService implements OnModuleInit {
 
     @Inject()
     private readonly tokenProvider: TokenProvider,
-  ) {}
+
+    @Inject()
+    private readonly configService: ConfigService
+  ) { }
   onModuleInit(): any {
     this.oauth2Client = new OAuth2Client({
-      clientId: this.googleConfigurations.googleClientId,
-      clientSecret: this.googleConfigurations.googleClientSecret,
+      clientId: this.configService.googleConfig.googleClientId,
+      clientSecret: this.configService.googleConfig.googleClientSecret,
     });
   }
 

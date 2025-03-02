@@ -7,6 +7,7 @@ import { AccountModule } from '../account/account.module';
 import { ProfileModule } from '../profile/profile.module';
 import { EmailModule } from '../common/email/email.module';
 import { AppModule } from '../app.module';
+import { ConfigurationsModule } from '../configurations/configurations.module';
 
 // Services and Providers
 import { TokenProvider } from './providers/token.provider';
@@ -14,39 +15,26 @@ import { AuthService } from './service/auth.service';
 import { BcryptProvider } from './providers/bcrypt.provider';
 import { Hashing } from './interfaces/Hashing';
 import { SignupProvider } from './providers/transactions/signup.provider';
-import { AuthRedisService } from './service/auth.redis.service';
-import { AccountRedisService } from '../account/service/account.redis.service';
+import { AccountRedisService } from '../redis/services/account.redis.service';
 import { GoogleService } from './strategies/google.service';
-
-// JWT
-import jwtCong from '../common/config/jwt.cong';
-import { JwtModule } from '@nestjs/jwt';
-
-// Redis
-import redisCon from '../common/config/redis.conf';
-
-// google
-import googleConf from 'src/common/config/google.conf';
 
 // ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from '../profile/entity/profile.entity';
 import { Account } from '../account/entity/account.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
-    // JWT
-    ConfigModule.forFeature(jwtCong),
-    JwtModule.registerAsync(jwtCong.asProvider()),
-    // Redis
-    ConfigModule.forFeature(redisCon),
-    // google
-    ConfigModule.forFeature(googleConf),
-    forwardRef(() => AccountModule),
     TypeOrmModule.forFeature([Account, Profile]),
+    forwardRef(() => AccountModule),
+    forwardRef(() => AppModule),
+    JwtModule,
+    ConfigurationsModule,
     ProfileModule,
     EmailModule,
-    forwardRef(() => AppModule),
+    RedisModule
   ],
 
   controllers: [AuthController],
@@ -59,11 +47,10 @@ import { Account } from '../account/entity/account.entity';
       useClass: BcryptProvider,
     },
     SignupProvider,
-    AuthRedisService,
     AccountRedisService,
     GoogleService,
   ],
 
   exports: [AuthService, Hashing, TokenProvider],
 })
-export class AuthModule {}
+export class AuthModule { }
