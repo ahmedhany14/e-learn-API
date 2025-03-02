@@ -7,17 +7,17 @@ import {
 } from '@nestjs/common';
 
 // dto
-import { PaginationDto } from '../../../common/pagination/pagination.dto';
+import { PaginationDto } from '../../common/pagination/pagination.dto';
 
 // entity and orm
-import { Order } from './../../entity/orders/order.entity';
+import { Order } from '../entity/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // providers
-import { PaginationService } from '../../../common/pagination/pagination.service';
-import { UpgradeToInstructorDto } from '../../../account/dtos/upgrade.to.instructor.dto';
-import { Account } from '../../../account/entity/account.entity';
+import { PaginationService } from '../../common/pagination/pagination.service';
+import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
+import { Account } from '../../account/entity/account.entity';
 
 @Injectable()
 export class OrdersProvider {
@@ -28,7 +28,7 @@ export class OrdersProvider {
     private readonly orderRepository: Repository<Order>,
     @Inject()
     private readonly paginationService: PaginationService,
-  ) {}
+  ) { }
 
   async getAllOrders({
     select,
@@ -98,7 +98,7 @@ export class OrdersProvider {
         details: 'This account already has an order',
       });
     }
-    if(existingOrder && existingOrder.state === 'approved') {
+    if (existingOrder && existingOrder.state === 'approved') {
       throw new ConflictException({
         message: 'Order already exists',
         details: 'This account already has an approved order',
@@ -112,7 +112,7 @@ export class OrdersProvider {
       account: account,
     });
 
-  console.log(newOrder);
+    console.log(newOrder);
 
     return await this.orderRepository.save(newOrder);
   }

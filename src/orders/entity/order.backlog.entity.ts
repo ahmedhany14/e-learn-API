@@ -8,7 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Order } from './order.entity';
-import { Account } from '../../../account/entity/account.entity';
+import { Account } from '../../account/entity/account.entity';
 
 @Entity()
 @Unique(['order', 'admin'])

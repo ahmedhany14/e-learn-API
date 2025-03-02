@@ -8,9 +8,9 @@ import {
 } from 'typeorm';
 
 import { Profile } from '../../profile/entity/profile.entity';
-import { Order } from '../../admin/entity/orders/order.entity';
+import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
-import { OrderBacklog } from '../../admin/entity/orders/order.backlog.entity';
+import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Course } from '../../courses/entity/courses.entity';
 import { Plan } from '../../plans/entity/plan.entity';
 import { Plan_Account } from './account.plan.entity';

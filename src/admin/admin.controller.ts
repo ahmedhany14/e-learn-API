@@ -19,13 +19,13 @@ import { ExtractAccountData } from '../common/decorators/request.extractData.dec
 //services
 import { AdminService } from './sevices/admin.service';
 import { Email } from '../common/email/email';
-import { OrdersService } from './sevices/orders.service';
+import { OrdersService } from '../orders/orders.service';
 
 //dtos
 import { GetOrderDto } from './dtos/get.order.dto';
 import { PaginationDto } from 'src/common/pagination/pagination.dto';
-import { OrderEnum } from 'src/admin/entity/orders/order.enum';
-import { OrderbacklogEnum } from 'src/admin/entity/orders/orderbacklog.enum';
+import { OrderEnum } from 'src/orders/entity/order.enum';
+import { OrderbacklogEnum } from 'src/orders/entity/orderbacklog.enum';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)

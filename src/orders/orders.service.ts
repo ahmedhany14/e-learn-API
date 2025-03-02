@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 // providers
-import { OrdersProvider } from '../providers/orders/orders.provider';
-import { BacklogOrdersProvider } from '../providers/orders/backlog.orders.provider';
+import { OrdersProvider } from './providers/orders.provider';
+import { BacklogOrdersProvider } from './providers/backlog.orders.provider';
 
 // dto
-import { UpgradeToInstructorDto } from '../../account/dtos/upgrade.to.instructor.dto';
-import { PaginationDto } from '../../common/pagination/pagination.dto';
+import { UpgradeToInstructorDto } from '../account/dtos/upgrade.to.instructor.dto';
+import { PaginationDto } from '../common/pagination/pagination.dto';
 
 // entity and orm
-import { Account } from '../../account/entity/account.entity';
+import { Account } from '../account/entity/account.entity';
 
 @Injectable()
 export class OrdersService {
@@ -18,7 +18,7 @@ export class OrdersService {
     private readonly ordersProvider: OrdersProvider,
     @Inject()
     private readonly backlogOrdersProvider: BacklogOrdersProvider,
-  ) {}
+  ) { }
 
   async getAllOrders({
     select,

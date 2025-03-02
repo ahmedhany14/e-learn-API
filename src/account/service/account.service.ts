@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 // Service
-import { OrdersService } from '../../admin/sevices/orders.service';
+import { OrdersService } from '../../orders/orders.service';
 
 // Repository
 import { AccountRepository } from '../repository/account.repository';
