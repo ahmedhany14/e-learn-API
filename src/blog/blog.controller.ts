@@ -38,7 +38,7 @@ export class BlogController {
         const blog = await this.blogService.createBlog(createBlogDto, author_id);
         return {
             response: {
-                message: 'Blog created', 
+                message: 'Blog created',
                 blog
             }
         };
@@ -71,13 +71,8 @@ export class BlogController {
         @Param('author_id', ParseIntPipe) author_id: number,
         @Query('page', ParseIntPipe) page: number,
     ) {
-        const blogs = await this.blogService.getBlogs(author_id, page);
-        return {
-            response: {
-
-                message: 'Blogs fetched', blogs
-            }
-        };
+        const full_data = await this.blogService.getBlogs(author_id, page);
+        return full_data;
     }
 
 

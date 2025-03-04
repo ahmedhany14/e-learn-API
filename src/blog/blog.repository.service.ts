@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { BlogDocument, Blog } from './entity/blog.entity';
 import { CreateBlogDto } from './dtos/create.blog.dto';
 import { UpdateBlogDto } from './dtos/update.blog.dto';
+import { response } from 'express';
 
 @Injectable()
 export class BlogRepositoryService {
@@ -72,7 +73,25 @@ export class BlogRepositoryService {
 
     async getBlogs(author_id: number, page = 1) {
         try {
-            return await this.blogModel.find().where('author_id').equals(author_id).skip((page - 1) * 10).limit(10);
+            const data = await this.blogModel.find().where('author_id').equals(author_id).skip((page - 1) * 10).limit(10);
+            const totalBlogs = await this.blogModel.find().where('author_id').equals(author_id).countDocuments();
+            const totalPages = Math.round(totalBlogs / 10);
+            const hasMore = page < totalPages;
+            return {
+                response: data,
+                meta: {
+                    total: totalBlogs,
+                    page,
+                    limit: 10,
+                    totalPages,
+                    hasMore,
+                    firstPage: `/get-blogs?page=1`,
+                    lastPage: `/get-blogs?page=${totalPages}`,
+                    previous: page > 1 ? `/get-blogs?page=${page - 1}` : null,
+                    next: hasMore ? `/get-blogs?page=${page + 1}` : null,
+                    current: `/get-blogs?page=${page}`
+                }
+            }
         } catch (err) {
             throw new InternalServerErrorException('Error fetching blogs');
         }
