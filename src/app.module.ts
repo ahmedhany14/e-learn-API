@@ -38,6 +38,7 @@ import { ConfigService } from './configurations/config.service';
 import { ConfigurationsModule } from './configurations/configurations.module';
 import { JwtModule } from '@nestjs/jwt';
 import { OrdersModule } from './orders/orders.module';
+import { BlogModule } from './blog/blog.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -46,6 +47,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
 
 
 @Module({
@@ -68,6 +70,15 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
         logging: ['query'], // Log the query
       }),
     }),
+
+    MongooseModule.forRootAsync({
+      imports: [ConfigurationsModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.databaseConfig.url
+      })
+    }),
+
 
     AuthModule,
 
@@ -97,7 +108,10 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
 
     JwtModule,
 
-    OrdersModule
+    OrdersModule,
+
+    BlogModule
+
     // DbModule,
   ],
   controllers: [AppController],

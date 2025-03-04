@@ -13,6 +13,9 @@ export interface DatabaseConfig {
     database: string;
     synchronize: boolean;
     autoLoadEntities: boolean;
+
+    // For MongoDB
+    url: string;
 }
 
 export interface EmailConfig {
