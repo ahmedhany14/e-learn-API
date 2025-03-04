@@ -15,6 +15,9 @@ export default (): Config => ({
         database: process.env.DATABASE_NAME,
         synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
         autoLoadEntities: process.env.DATABASE_AUTO_LOAD_ENTITIES === 'true',
+
+        // For MongoDB
+        url: process.env.MONGODB_URL,
     },
     email: {
         mailHost: process.env.MAIL_HOST,

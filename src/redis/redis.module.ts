@@ -4,7 +4,7 @@ import Redis from 'ioredis';
 import { ConfigurationsModule } from 'src/configurations/configurations.module';
 import { AuthRedisService } from './services/auth.redis.service';
 import { AccountRedisService } from './services/account.redis.service';
-
+import { BlogRedisCachingService } from './services/blog.redis.caching.service';
 @Module({
     imports: [ConfigurationsModule],
     providers: [
@@ -20,10 +20,11 @@ import { AccountRedisService } from './services/account.redis.service';
             },
         },
         AuthRedisService,
-        AccountRedisService
+        AccountRedisService,
+        BlogRedisCachingService
     ],
 
-    exports: ['REDIS_CLIENT', AuthRedisService, AccountRedisService],
+    exports: ['REDIS_CLIENT', AuthRedisService, AccountRedisService, BlogRedisCachingService],
 
 })
 export class RedisModule { }

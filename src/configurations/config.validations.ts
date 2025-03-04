@@ -17,6 +17,9 @@ export default Joi.object({
     DATABASE_SYNCHRONIZE: Joi.boolean().required(),
     DATABASE_AUTO_LOAD_ENTITIES: Joi.boolean().required(),
 
+    // mongodb configurations validation
+    MONGODB_URL: Joi.string().required(),
+
     // jwt configurations validation
     JWT_SECRET: Joi.string().required(),
     JWT_REFRESH_SECRET: Joi.string().required(),
