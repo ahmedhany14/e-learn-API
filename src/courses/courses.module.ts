@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 
 // orm and entities
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Course } from './entity/courses.entity';
-import { Videos } from './entity/videos.entity';
-
+import { MongooseModule } from '@nestjs/mongoose';
+import { Course, CourseSchema } from './entities/course.entity';
+import { CourseVideos, CourseVideosSchema } from './entities/course.videos.entity';
 // controllers
 import { CoursesController } from './courses.controller';
 
@@ -14,9 +13,21 @@ import { CourseRepo } from './repository/course.repo';
 import { PaginationModule } from 'src/common/pagination/pagination.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Course, Videos]), PaginationModule],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Course.name,
+        schema: CourseSchema,
+      },
+      {
+        name: CourseVideos.name,
+        schema: CourseVideosSchema,
+      },
+    ])
+
+    , PaginationModule],
   controllers: [CoursesController],
   providers: [CourseService, CourseRepo],
   exports: [CourseService],
 })
-export class CoursesModule {}
+export class CoursesModule { }

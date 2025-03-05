@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-export type TagsDocument = Tags & Document;
+export type CourseDocument = CourseVideos & Document;
+
 
 @Schema({
     timestamps: true,
@@ -13,29 +14,33 @@ export type TagsDocument = Tags & Document;
         },
     },
 })
-export class Tags extends Document {
+export class CourseVideos extends Document {
 
     @Prop({
         type: mongoose.Schema.Types.String,
         required: true,
+        minlength: 5,
+        maxlength: 32,
     })
-    category: string;
-
-    @Prop({
-        type: mongoose.Schema.Types.String,
-        required: true,
-    })
-    subcategory: string;
-
-    @Prop({
-        type: mongoose.Schema.Types.String,
-        required: true,
-    })
-    tag: string;
+    title: string;
 
     @Prop({
         type: mongoose.Schema.Types.Number,
         required: true,
     })
-    tag_creator: number
+    section: number;
+
+    @Prop({
+        type: mongoose.Schema.Types.Number
+    })
+    duration: number;
+
+    @Prop({
+        type: mongoose.Schema.Types.String,
+        required: true,
+    })
+    video_url: string;
 }
+
+
+export const CourseVideosSchema = SchemaFactory.createForClass(CourseVideos);

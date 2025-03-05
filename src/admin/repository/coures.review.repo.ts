@@ -26,7 +26,7 @@ export class CourseReviewRepository {
     this.logger.log(`transaction started`);
     try {
       const courseReview = queryRunner.manager.create(CourseReview, {
-        course: { id: course_id },
+        // course: { id: course_id },
       });
       this.logger.log(`course review created`);
 

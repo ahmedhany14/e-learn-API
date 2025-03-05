@@ -1,4 +1,3 @@
-import { Course } from 'src/courses/entity/courses.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -24,11 +23,11 @@ export class CourseReview {
 
   // relation with course, which course will be reviewed, one to one relation
 
-  @OneToOne(() => Course, (course) => course.course_review, {
+  /*@OneToOne(() => Course, (course) => course.course_review, {
     eager: true,
     onDelete: 'CASCADE',
     nullable: false,
   })
   @JoinColumn()
-  course: Course;
+  course: Course;*/
 }

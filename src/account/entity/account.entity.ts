@@ -11,7 +11,6 @@ import { Profile } from '../../profile/entity/profile.entity';
 import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
-import { Course } from '../../courses/entity/courses.entity';
 import { Plan } from '../../plans/entity/plan.entity';
 import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
@@ -126,12 +125,6 @@ export class Account {
     lazy: true,
   })
   backlog: Promise<OrderBacklog[]>;
-
-  // each instructor can have multiple courses
-  @OneToMany(() => Course, (course) => course.instructor, {
-    lazy: true,
-  })
-  courses: Promise<Course[]>;
 
   // each admin can create multiple plans
   @OneToMany(() => Plan, (plan) => plan.admin_id, {
