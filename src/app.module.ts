@@ -48,6 +48,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CommentsModule } from './blog-system/comments/comments.module';
 
 
 @Module({
@@ -109,7 +110,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
     OrdersModule,
 
-    BlogModule
+    BlogModule,
+
+    CommentsModule
 
     // DbModule,
   ],
