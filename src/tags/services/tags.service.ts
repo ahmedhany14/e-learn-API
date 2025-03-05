@@ -21,27 +21,16 @@ export class TagsService {
   async deleteTagById(id: number) {
     return await this.tagsRepo.deleteTagById(id);
   }
+
   async getOneTageByThree(getByThree: GetByThree) {
     return await this.tagsRepo.getOneTageByThree(getByThree);
   }
-
 
   async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
     return await this.tagsRepo.createNewTage(createTagDto, admin_id);
   }
 
-  async getAllCategories() {
-    await this.tagsRepo.getAllCategories();
-  }
-
-  async getAllSubcategories() {
-    await this.tagsRepo.getAllSubcategories();
-  }
-
   async getAllTags() {
     await this.tagsRepo.getAllTags();
-  }
-  async getTagsWithDetails() {
-    await this.tagsRepo.getTagsWithDetails();
   }
 }

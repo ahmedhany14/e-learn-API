@@ -1,13 +1,13 @@
 import {
   Body,
+  ConflictException,
   Controller,
+  Delete,
   Get,
   Inject,
-  Post,
-  ConflictException,
-  Delete,
   Param,
   ParseIntPipe,
+  Post,
 } from '@nestjs/common';
 
 // decorators and enums from auth
@@ -88,36 +88,6 @@ export class TagsController {
     return {
       response: {
         message: 'Tag deleted successfully',
-      },
-    };
-  }
-
-  @Get('categories')
-  async getCategories() {
-    const categories = await this.tagsService.getAllCategories();
-    return {
-      response: {
-        categories,
-      },
-    };
-  }
-
-  @Get('subcategories')
-  async getSubcategories() {
-    const subcategories = await this.tagsService.getAllSubcategories();
-    return {
-      response: {
-        subcategories,
-      },
-    };
-  }
-
-  @Get('all-tags')
-  async getAllTags() {
-    const tags = await this.tagsService.getAllTags();
-    return {
-      response: {
-        tags,
       },
     };
   }
