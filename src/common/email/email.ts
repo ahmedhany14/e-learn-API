@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { MailerService } from '@nestjs-modules/mailer';
-import { ConfigService } from '@nestjs/config';
 
 import { Profile } from '../../profile/entity/profile.entity';
+import { ConfigService } from '../../configurations/config.service';
 
 @Injectable()
 export class Email {
@@ -21,7 +21,7 @@ export class Email {
 
     await this.mailerService
       .sendMail({
-        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
         to: email,
         subject: 'Welcome to our platform',
         text: `
@@ -76,7 +76,7 @@ export class Email {
 
     await this.mailerService
       .sendMail({
-        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
         to: email,
         subject: 'Reset your password',
         template: './reset-password',
@@ -133,7 +133,7 @@ export class Email {
 
     await this.mailerService
       .sendMail({
-        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
         to: email,
         subject: 'Order Confirmation',
         template: './order-confirmation',
@@ -172,7 +172,7 @@ export class Email {
 
     await this.mailerService
       .sendMail({
-        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
         to: email,
         subject: 'Order Approved',
         template: './order-approved',
@@ -211,7 +211,7 @@ export class Email {
 
     await this.mailerService
       .sendMail({
-        from: `"Onboarding Team" <${this.configService.get('email.mailUser')}>`,
+        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
         to: email,
         subject: 'Order Rejected',
         template: './order-rejected',

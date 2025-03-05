@@ -67,7 +67,6 @@ import { MongooseModule } from '@nestjs/mongoose';
         autoLoadEntities: configService.databaseConfig.autoLoadEntities,
         namingStrategy: new SnakeNamingStrategy(),
         logger: 'advanced-console', // Use the advanced console logger
-        logging: ['query'], // Log the query
       }),
     }),
 
