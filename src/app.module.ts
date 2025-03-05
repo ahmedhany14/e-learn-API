@@ -38,7 +38,7 @@ import { ConfigService } from './configurations/config.service';
 import { ConfigurationsModule } from './configurations/configurations.module';
 import { JwtModule } from '@nestjs/jwt';
 import { OrdersModule } from './orders/orders.module';
-import { BlogModule } from './blog/blog.module';
+import { BlogModule } from './blog-system/blog/blog.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
