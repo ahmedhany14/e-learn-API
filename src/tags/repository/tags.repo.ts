@@ -20,6 +20,7 @@ export class TagsRepository {
     try {
       return await this.tagsRepository.findOne({
         where: { id },
+        relations: ['tag_creator'],
       });
     } catch (error) {
       throw new InternalServerErrorException({
@@ -66,35 +67,9 @@ export class TagsRepository {
     }
   }
 
-  async getAllCategories() {
-    try {
-      return await this.tagsRepository.find({
-        select: ['category'],
-      });
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while fetching categories',
-      });
-    }
-  }
-
-  async getAllSubcategories() {
-    try {
-      return await this.tagsRepository.find({
-        select: ['subcategory'],
-      });
-    } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Error while fetching subcategories',
-      });
-    }
-  }
-
   async getAllTags() {
     try {
-      return await this.tagsRepository.find({
-        select: ['tag'],
-      });
+      return await this.tagsRepository.find();
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while fetching tags',
@@ -102,16 +77,12 @@ export class TagsRepository {
     }
   }
 
-  async getTagsWithDetails() {
+  async save(tag: Tags) {
     try {
-      return await this.tagsRepository.find({
-        relations: {
-          tag_creator: true,
-        },
-      });
+      return await this.tagsRepository.save(tag);
     } catch (error) {
       throw new InternalServerErrorException({
-        message: 'Error while fetching tags',
+        message: 'Error while updating tag',
       });
     }
   }
