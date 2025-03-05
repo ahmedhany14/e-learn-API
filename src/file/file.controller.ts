@@ -53,7 +53,7 @@ export class FileController {
         details:
           'you are trying to upload image for a course that does not exist',
       });
-    if (course.instructor.id !== account_id)
+    if (course.instructor !== account_id)
       throw new UnauthorizedException({
         message: 'Unauthorized',
         details: 'You are not the instructor of this course',
