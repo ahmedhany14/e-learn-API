@@ -20,6 +20,7 @@ export class TagsRepository {
     try {
       return await this.tagsRepository.findOne({
         where: { id },
+        relations: ['tag_creator'],
       });
     } catch (error) {
       throw new InternalServerErrorException({
@@ -68,12 +69,20 @@ export class TagsRepository {
 
   async getAllTags() {
     try {
-      return await this.tagsRepository.find({
-        select: ['tag'],
-      });
+      return await this.tagsRepository.find();
     } catch (error) {
       throw new InternalServerErrorException({
         message: 'Error while fetching tags',
+      });
+    }
+  }
+
+  async save(tag: Tags) {
+    try {
+      return await this.tagsRepository.save(tag);
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while updating tag',
       });
     }
   }

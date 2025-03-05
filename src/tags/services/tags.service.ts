@@ -6,6 +6,8 @@ import { CreateTagDto } from '../dtos/create.tag.dto';
 // services and repository
 import { TagsRepository } from '../repository/tags.repo';
 import { GetByThree } from '../interfaces/tags.interfases';
+import { Tags } from '../entity/tags.entity';
+import { UpdateTagDto } from '../dtos/update.tag.dto';
 
 @Injectable()
 export class TagsService {
@@ -13,6 +15,10 @@ export class TagsService {
     @Inject()
     private readonly tagsRepo: TagsRepository,
   ) {}
+
+  async getAllTags() {
+    return await this.tagsRepo.getAllTags();
+  }
 
   async getTagById(id: number) {
     return await this.tagsRepo.getTagById(id);
@@ -30,7 +36,12 @@ export class TagsService {
     return await this.tagsRepo.createNewTage(createTagDto, admin_id);
   }
 
-  async getAllTags() {
-    await this.tagsRepo.getAllTags();
+  async updateTagById(tag: Tags, updateTagDto: UpdateTagDto) {
+    tag = {
+      ...tag,
+      ...updateTagDto,
+    };
+
+    return await this.tagsRepo.save(tag);
   }
 }

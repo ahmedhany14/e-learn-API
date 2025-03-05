@@ -5,8 +5,10 @@ import {
   Delete,
   Get,
   Inject,
+  NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 
@@ -15,10 +17,11 @@ import { AUTH } from '../auth/decorators/auth.decorator';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
+import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 
 // dto
 import { CreateTagDto } from './dtos/create.tag.dto';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { UpdateTagDto } from './dtos/update.tag.dto';
 
 // services
 import { TagsService } from './services/tags.service';
@@ -32,7 +35,18 @@ export class TagsController {
 
   @ROLE(RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
-  @Get('all-tags-with-details')
+  @Get('one-tag/:tag_id')
+  async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
+    return {
+      response: {
+        tag: await this.tagsService.getTagById(tag_id),
+      },
+    };
+  }
+
+  @ROLE(RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
+  @Get('all-tags')
   async getAllTagsWithDetails() {
     const tags = await this.tagsService.getAllTags();
     return {
@@ -73,17 +87,43 @@ export class TagsController {
 
   @ROLE(RoleEnum.ADMIN)
   @AUTH(AuthEnum.BEARER)
-  @Delete('tag/:tagId')
-  async deleteTag(@Param('tagId', ParseIntPipe) tagId: number) {
-    const tag = await this.tagsService.getTagById(tagId);
+  @Patch('edit-tag/:tag_id')
+  async editTag(
+    @Param('tag_id', ParseIntPipe) tag_id: number,
+    @ExtractAccountData('id') admin_id: number,
+    @Body() updateTagDto: UpdateTagDto,
+  ) {
+    const tag = await this.tagsService.getTagById(tag_id);
     if (!tag) {
-      throw new ConflictException({
+      throw new NotFoundException({
         message: 'Tag not found',
-        details: `Tag with id: ${tagId} not found`,
+        details: `Tag with id: ${tag_id} not found`,
       });
     }
 
-    await this.tagsService.deleteTagById(tagId);
+    const updatedTag = await this.tagsService.updateTagById(tag, updateTagDto);
+
+    return {
+      response: {
+        message: 'Tag updated successfully',
+        tag: updatedTag,
+      },
+    };
+  }
+
+  @ROLE(RoleEnum.ADMIN)
+  @AUTH(AuthEnum.BEARER)
+  @Delete('tag/:tag_id')
+  async deleteTag(@Param('tag_id', ParseIntPipe) tag_id: number) {
+    const tag = await this.tagsService.getTagById(tag_id);
+    if (!tag) {
+      throw new ConflictException({
+        message: 'Tag not found',
+        details: `Tag with id: ${tag_id} not found`,
+      });
+    }
+
+    await this.tagsService.deleteTagById(tag_id);
 
     return {
       response: {
