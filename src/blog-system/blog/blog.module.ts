@@ -7,16 +7,17 @@ import { BlogRepositoryService } from './blog.repository.service';
 import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            {
-                name: Blog.name,
-                schema: BlogSchema,
-            },
-        ]),
-        RedisModule
-    ],
-    controllers: [BlogController],
-    providers: [BlogService, BlogRepositoryService],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Blog.name,
+        schema: BlogSchema,
+      },
+    ]),
+    RedisModule,
+  ],
+  controllers: [BlogController],
+  providers: [BlogService, BlogRepositoryService],
+  exports: [BlogService],
 })
-export class BlogModule { }
+export class BlogModule {}

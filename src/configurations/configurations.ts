@@ -20,10 +20,10 @@ export default (): Config => ({
         url: process.env.MONGODB_URL,
     },
     email: {
-        mailHost: process.env.MAIL_HOST,
-        mailPort: parseInt(process.env.MAIL_PORT, 10),
-        mailUser: process.env.MAIL_USER,
-        mailPassword: process.env.MAIL_PASSWORD,
+        mailHost: process.env.MAILER_HOST,
+        mailPort: parseInt(process.env.MAILER_PORT, 10),
+        mailUser: process.env.MAILER_USER,
+        mailPassword: process.env.MAILER_PASSWORD,
     },
     google: {
         googleClientId: process.env.GOOGLE_CLIENT_ID,

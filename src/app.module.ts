@@ -38,7 +38,7 @@ import { ConfigService } from './configurations/config.service';
 import { ConfigurationsModule } from './configurations/configurations.module';
 import { JwtModule } from '@nestjs/jwt';
 import { OrdersModule } from './orders/orders.module';
-import { BlogModule } from './blog/blog.module';
+import { BlogModule } from './blog-system/blog/blog.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -48,6 +48,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CommentsModule } from './blog-system/comments/comments.module';
 
 
 @Module({
@@ -67,7 +68,6 @@ import { MongooseModule } from '@nestjs/mongoose';
         autoLoadEntities: configService.databaseConfig.autoLoadEntities,
         namingStrategy: new SnakeNamingStrategy(),
         logger: 'advanced-console', // Use the advanced console logger
-        logging: ['query'], // Log the query
       }),
     }),
 
@@ -110,7 +110,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
     OrdersModule,
 
-    BlogModule
+    BlogModule,
+
+    CommentsModule
 
     // DbModule,
   ],

@@ -8,26 +8,32 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { Email } from './email';
 
 // config
-import { ConfigService } from '@nestjs/config';
+import { ConfigService } from '../../configurations/config.service';
+import { ConfigurationsModule } from '../../configurations/configurations.module';
 
 import { join } from 'path';
 import { EmailController } from './email.controller';
+import * as console from 'node:console';
 
 @Module({
   imports: [
+    ConfigurationsModule,
     MailerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+	    imports: [ConfigurationsModule],
+	    inject: [ConfigService],
+      useFactory: (configService: ConfigService) => (
+				{
+
         transport: {
-          host: configService.get<string>('email.mailHost'),
-          port: configService.get<number>('email.mailPort'),
+          host: configService.emailConfig.mailHost,
+          port: configService.emailConfig.mailPort,
           secure: false,
           auth: {
-            user: configService.get(<string>'email.mailUser'),
-            pass: configService.get<string>('email.mailPassword'),
+            user: configService.emailConfig.mailUser,
+            pass: configService.emailConfig.mailPassword,
           },
           defaults: {
-            from: `"No Reply" <${configService.get<string>('email.mailUser')}>`,
+            from: `"No Reply" <${configService.emailConfig.mailUser}>`,
           },
           template: {
             dir: join(__dirname, 'templates'),
@@ -38,8 +44,8 @@ import { EmailController } from './email.controller';
               strict: false,
             },
           },
-          debug: true,
-          logger: true,
+          // debug: true,
+          // logger: true,
           connectionTimeout: 5000,
           greetingTimeout: 5000,
         },

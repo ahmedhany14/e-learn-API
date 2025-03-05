@@ -6,13 +6,13 @@ import { CreateBlogDto } from './dtos/create.blog.dto';
 
 // Services
 import { BlogService } from './blog.service';
-import { BlogRedisCachingService } from '../redis/services/blog.redis.caching.service';
+import { BlogRedisCachingService } from '../../redis/services/blog.redis.caching.service';
 
 // Pipes
 import { ObjectIdValidationPipe } from './validators/object.id.validation.pipe';
 
 // Authorization and Roles
-import { AUTH } from '../auth/decorators/auth.decorator';
+import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
 
