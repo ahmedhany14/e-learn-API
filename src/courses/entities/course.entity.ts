@@ -19,6 +19,7 @@ export class Course extends Document {
 
     @Prop({
         type: mongoose.Schema.Types.String,
+        default: "default.jpg",
         required: false,
         minlength: 5,
         maxlength: 256,

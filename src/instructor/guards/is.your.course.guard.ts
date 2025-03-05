@@ -26,12 +26,12 @@ export class IsYourCourseGuard implements CanActivate {
         `Course with ID ${course_id} does not exist.`,
       );
 
-    if (course.instructor.id !== instructor_id)
+    if (course.instructor !== instructor_id)
       throw new ForbiddenException(
         `You are not authorized to access this resource`,
       );
 
-    if (course.status !== 'draft') {
+    if (course.state !== 'draft') {
       throw new ConflictException({
         message: 'Course is not in draft',
         details: `Course with id: ${course_id} is not in draft state, you can only update courses in draft state`,

@@ -14,7 +14,6 @@ import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Plan } from '../../plans/entity/plan.entity';
 import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
-import { Tags } from '../../tags/entity/tags.entity';
 
 @Entity({
   name: 'accounts',
@@ -137,9 +136,4 @@ export class Account {
     lazy: true,
   })
   plans_updated: Promise<Plan[]>;
-
-  @OneToMany(() => Tags, (tags) => tags.tag_creator, {
-    lazy: true,
-  })
-  tags: Promise<Tags[]>;
 }

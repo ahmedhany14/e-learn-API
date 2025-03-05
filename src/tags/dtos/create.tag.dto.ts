@@ -15,4 +15,8 @@ export class CreateTagDto {
   @IsNotEmpty()
   @MaxLength(32)
   tag: string;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 }

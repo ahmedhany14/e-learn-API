@@ -30,8 +30,15 @@ export class Tags extends Document {
     @Prop({
         type: mongoose.Schema.Types.String,
         required: true,
+        unique: true,
     })
     tag: string;
+
+    @Prop({
+        type: mongoose.Schema.Types.String,
+        required: true,
+    })
+    description: string;
 
     @Prop({
         type: mongoose.Schema.Types.Number,
@@ -39,3 +46,5 @@ export class Tags extends Document {
     })
     tag_creator: number
 }
+
+export const TagsSchema = SchemaFactory.createForClass(Tags);

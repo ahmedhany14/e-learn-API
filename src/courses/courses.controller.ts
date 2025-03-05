@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Post } from '@nestjs/common';
 
 // decorators for auth
 import { AUTH } from '../auth/decorators/auth.decorator';
@@ -10,66 +10,56 @@ import { RoleEnum } from '../auth/enums/role.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 
 // dto
-import { CreateCourseDto } from './dto/create.course.dto';
-
 // services
 import { CourseService } from './service/course.service';
 
 @Controller('courses')
 export class CoursesController {
-  constructor(private courseService: CourseService) {}
+    constructor(private courseService: CourseService) { }
 
-  @Get('all-instructor-courses/:instructor_id')
-  async getAllCourses() {
-    /*
-    not implemented yet
-     */
-    return 'All Courses';
-  }
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Post('new-course')
+    async createCourse(@ExtractAccountData('id') account_id: number) {
+        /*
+            API Endpoint to create a new course
+            Steps:
+                1) get the instructor id from request
+                2) create a new course using the instructor id
+                3) return a success message
+        */
 
-  @Get('course/:id')
-  async getCourses() {
-    /*
-    not implemented yet
-     */
-    return 'Course';
-  }
+        const course = await this.courseService.createCourse(account_id);
 
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Post('new-course')
-  async createCourse(
-    @Body() createCourseDto: CreateCourseDto,
-    @ExtractAccountData('id') account_id: number,
-  ) {
-    /*
-        API Endpoint to create a new course
-        Steps:
-          1) get the instructor id from the request
-          2) create a new course
-          3) return a success message
-    */
+        return {
+            response: {
+                message: 'Course created successfully',
+                course,
+            },
+        };
+    }
 
-    const course = await this.courseService.createCourse(
-      createCourseDto,
-      account_id,
-    );
+    @Get('all-instructor-courses/:instructor_id')
+    async getAllCourses() {
+        /*
+        not implemented yet
+         */
+        return 'All Courses';
+    }
 
-    return {
-      response: {
-        message: 'Course created successfully',
-        course,
-      },
-    };
-  }
+    @Get('course/:id')
+    async getCourses() {
+        /*
+            not implemented yet
+        */
+        return 'Course';
+    }
 
-  async updateCourse() {}
-
-  @Delete('course/:id')
-  async deleteCourse() {
-    /*
-    not implemented yet
-     */
-    return 'Course deleted';
-  }
+    @Delete('course/:id')
+    async deleteCourse() {
+        /*
+            not implemented yet
+        */
+        return 'Course deleted';
+    }
 }

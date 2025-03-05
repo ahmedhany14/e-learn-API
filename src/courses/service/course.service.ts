@@ -9,8 +9,8 @@ export class CourseService {
     private readonly courserRepo: CourseRepo,
   ) {}
 
-  async createCourse(createCourseDto: any, account_id: number) {
-    return await this.courserRepo.createCourse(createCourseDto, account_id);
+  async createCourse(account_id: number) {
+    return await this.courserRepo.createCourse(account_id);
   }
 
   async getCourse(id: number) {
@@ -21,11 +21,7 @@ export class CourseService {
     return await this.courserRepo.updateImageName(course_id, image_name);
   }
 
-  async getMyCourses(
-    filter: any,
-    select: string[],
-    queryDto: QueryDto,
-  ) {
+  async getMyCourses(filter: any, select: string[], queryDto: QueryDto) {
     return await this.courserRepo.getMyCourses(filter, select, queryDto);
   }
 }
