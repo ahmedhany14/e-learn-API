@@ -123,25 +123,25 @@ export class InstructorController {
     };
   }
 
-/*  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Patch('edit-payments')
-  async updatePayments(
-    @ExtractAccountData('id') account_id: number,
-    @Body() updatePaymentsDto: UpdatePaymentsDto,
-  ) {
-    if (Object.keys(updatePaymentsDto).length === 0) {
+  /*  @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('edit-payments')
+    async updatePayments(
+      @ExtractAccountData('id') account_id: number,
+      @Body() updatePaymentsDto: UpdatePaymentsDto,
+    ) {
+      if (Object.keys(updatePaymentsDto).length === 0) {
+        return {
+          response: 'No data provided to update',
+        };
+      }
+  
+      await this.instructorService.updatePayments(account_id, updatePaymentsDto);
+  
       return {
-        response: 'No data provided to update',
+        response: 'Payments updated successfully',
       };
-    }
-
-    await this.instructorService.updatePayments(account_id, updatePaymentsDto);
-
-    return {
-      response: 'Payments updated successfully',
-    };
-  }*/
+    }*/
 
   @Get('push-course-to-review/:course_id')
   @UseGuards(IsYourCourseGuard)
