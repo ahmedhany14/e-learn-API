@@ -9,8 +9,8 @@ export class SectionsService {
     ) { }
 
 
-    async createSection(title: string, course_id: string) {
-        return await this.SectionsRepo.createSection(title, course_id);
+    async createSection(title: string, order: number, course_id: string) {
+        return await this.SectionsRepo.createSection(title, order, course_id);
     }
 
 }

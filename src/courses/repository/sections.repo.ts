@@ -12,10 +12,11 @@ export class SectionsRepo {
     ) { }
 
 
-    async createSection(title: string, course_id: string) {
+    async createSection(title: string, order: number, course_id: string) {
         try {
             const section = new this.sectionsModel({
                 title,
+                order,
                 course_id,
             });
 

@@ -28,15 +28,17 @@ export class InstructorManageSectionsController {
         @Param('course_id', ObjectIdValidationPipe) course_id: string,
         @Body() addCourseSectionsDto: AddCourseSectionsDto,
     ) {
+        const course = await this.courseService.getCourse(course_id);
+        const newOrder = course.course_sections.length + 1;
 
-        const section = await this.sectionService.createSection(addCourseSectionsDto.title, course_id);
+        const section = await this.sectionService.createSection(addCourseSectionsDto.title, newOrder, course_id);
 
-        const course = await this.courseService.addSectionsToCourse(course_id, section);
+        const course_with_section = await this.courseService.addSectionsToCourse(course_id, section);
         return {
             response: {
                 message: 'Sections added successfully',
-                course,
-                section
+                section,
+                course_with_section
             },
         };
     }
