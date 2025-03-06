@@ -21,7 +21,7 @@ export class CourseService {
     return await this.courserRepo.updateImageName(course_id, image_name);
   }
 
-  async getMyCourses(filter: any, select: string[], queryDto: QueryDto) {
-    return await this.courserRepo.getMyCourses(filter, select, queryDto);
+  async getMyCourses(filter: any, queryDto: QueryDto) {
+    return await this.courserRepo.getMyCourses(filter, queryDto);
   }
 }

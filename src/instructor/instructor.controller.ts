@@ -71,41 +71,6 @@ export class InstructorController {
   }
 
 
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Get('my-payments')
-  async getPayments(@ExtractAccountData('id') account_id: number) {
-    this.logger.log(`Getting payments for account_id: ${account_id}`);
-
-    const payments = new SafePaymentInfo(
-      await this.instructorService.getPayments(account_id),
-    );
-
-    return {
-      response: payments,
-    };
-  }
-
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Patch('edit-payments')
-  async updatePayments(
-    @ExtractAccountData('id') account_id: number,
-    @Body() updatePaymentsDto: UpdatePaymentsDto,
-  ) {
-    if (Object.keys(updatePaymentsDto).length === 0) {
-      return {
-        response: 'No data provided to update',
-      };
-    }
-
-    await this.instructorService.updatePayments(account_id, updatePaymentsDto);
-
-    return {
-      response: 'Payments updated successfully',
-    };
-  }
-
   @Get('my-courses')
   @AUTH(AuthEnum.BEARER)
   @AUTH(AuthEnum.BEARER)
@@ -124,24 +89,59 @@ export class InstructorController {
     );
 
     const filter = {
-      instructor: { id: account_id },
-      status: queryDto.status,
+      instructor: account_id,
+      state: queryDto.state,
     };
 
-    const select = ['id', 'image_url', 'price', 'instructor'];
-    const courses = await this.instructorService.getMyCourses(
+    const my_courses = await this.courseService.getMyCourses(
       filter,
-      select,
       queryDto,
-    );
+    )
+
 
     return {
       response: {
         message: 'Courses fetched successfully',
-        data: courses,
+        data: my_courses,
       },
     };
   }
+
+
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Get('my-payments')
+  async getPayments(@ExtractAccountData('id') account_id: number) {
+    this.logger.log(`Getting payments for account_id: ${account_id}`);
+
+    const payments = new SafePaymentInfo(
+      await this.instructorService.getPayments(account_id),
+    );
+
+    return {
+      response: payments,
+    };
+  }
+
+/*  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('edit-payments')
+  async updatePayments(
+    @ExtractAccountData('id') account_id: number,
+    @Body() updatePaymentsDto: UpdatePaymentsDto,
+  ) {
+    if (Object.keys(updatePaymentsDto).length === 0) {
+      return {
+        response: 'No data provided to update',
+      };
+    }
+
+    await this.instructorService.updatePayments(account_id, updatePaymentsDto);
+
+    return {
+      response: 'Payments updated successfully',
+    };
+  }*/
 
   @Get('push-course-to-review/:course_id')
   @UseGuards(IsYourCourseGuard)
