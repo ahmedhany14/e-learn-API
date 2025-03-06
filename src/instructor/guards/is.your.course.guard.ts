@@ -6,19 +6,23 @@ import {
   ForbiddenException,
   ConflictException,
 } from '@nestjs/common';
+import { isValidObjectId } from 'mongoose';
 import { CourseService } from 'src/courses/service/course.service';
 import * as request from 'supertest';
 
 @Injectable()
 export class IsYourCourseGuard implements CanActivate {
-  constructor(private readonly courseService: CourseService) {}
+  constructor(private readonly courseService: CourseService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const instructor_id = request.accountId;
     const course_id = request.params.course_id;
-
+    if (!isValidObjectId(course_id)) {
+      throw new NotFoundException(`Invalid course id`);
+    }
+    console.log('course_id', course_id);
     const course = await this.courseService.getCourse(course_id);
 
     if (!course)

@@ -37,6 +37,8 @@ import { IsYourCourseGuard } from './guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
 import { CourseService } from 'src/courses/service/course.service';
 import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
+import { UpdateCourseDto } from './dtos/update.course.dto';
+import { AddCourseSectionsDto } from './dtos/add.course.sections.dto';
 
 @Controller('instructor')
 export class InstructorController {
@@ -110,25 +112,14 @@ export class InstructorController {
     };
   }
 
+
+  @UseGuards(IsYourCourseGuard)
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Get('course/:id')
-  async getCourse(@Param('id', ObjectIdValidationPipe) course_id: string, @ExtractAccountData('id') account_id: number) {
+  @Get('course/:course_id')
+  async getCourse(@Param('course_id', ObjectIdValidationPipe) course_id: string, @ExtractAccountData('id') account_id: number) {
     const course = await this.courseService.getCourse(course_id);
 
-    if (!course) {
-      throw new NotFoundException({
-        message: 'Course not found',
-        details: 'You are trying to fetch a course that does not exist',
-      });
-    }
-
-    if (course.instructor !== account_id) {
-      throw new UnauthorizedException({
-        message: 'Unauthorized',
-        details: 'You are not the instructor of this course',
-      });
-    }
     return {
       response: {
         message: 'Course fetched successfully',
@@ -136,6 +127,47 @@ export class InstructorController {
       },
     };
   }
+
+
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('update-course-data/:course_id')
+  async updateCourseData(
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @ExtractAccountData('id') instructot_id: number,
+    @Body() updateCourseDataDto: UpdateCourseDto,
+  ) {
+    const course = await this.courseService.updateCourseData(
+      course_id,
+      updateCourseDataDto);
+
+    return {
+      response: {
+        message: 'Course updated successfully',
+        data: course,
+      },
+    };
+  }
+
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('add-sections/:course_id')
+  async addSections(
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @Body() addCourseSectionsDto: AddCourseSectionsDto,
+  ) {
+    const course = await this.courseService.addSections(course_id, addCourseSectionsDto);
+
+    return {
+      response: {
+        message: 'Sections added successfully',
+        data: course,
+      },
+    };
+  }
+
 
 
   @ROLE(RoleEnum.INSTRUCTOR)

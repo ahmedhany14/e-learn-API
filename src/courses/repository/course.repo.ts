@@ -12,6 +12,8 @@ import { InjectModel } from '@nestjs/mongoose';
 
 // dto
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
+import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
+import { AddCourseSectionsDto } from 'src/instructor/dtos/add.course.sections.dto';
 
 // services
 
@@ -84,5 +86,42 @@ export class CourseRepo {
                 current: `?page=${queryDto.page}&limit=${queryDto.limit}`,
             }
         };
+    }
+
+
+    async updateCourseData(
+        course_id: string,
+        updateCourseDto: UpdateCourseDto
+    ) {
+        try {
+            return await this
+                .coursesModel.findByIdAndUpdate(course_id, {
+                    $set: {
+                        ...updateCourseDto,
+                    },
+                }, { new: true });
+        }
+        catch (error) {
+            throw new InternalServerErrorException(
+                'Error while updating course data',
+            );
+        }
+    }
+
+    async addSections(
+        course_id: string,
+        addCourseSectionsDto: AddCourseSectionsDto
+    ) {
+        try {
+            return await this.coursesModel.findByIdAndUpdate(course_id, {
+                $push: {
+                    course_sections: { $each: addCourseSectionsDto.sections || [] }
+                }
+            }, { new: true });
+        } catch (error) {
+            throw new InternalServerErrorException(
+                'Error while adding sections',
+            );
+        }
     }
 }

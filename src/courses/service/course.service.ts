@@ -1,6 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+
+// repository and providers
 import { CourseRepo } from '../repository/course.repo';
+
+// dto
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
+import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
+import { AddCourseSectionsDto } from 'src/instructor/dtos/add.course.sections.dto';
 
 @Injectable()
 export class CourseService {
@@ -23,5 +29,25 @@ export class CourseService {
 
   async getMyCourses(filter: any, queryDto: QueryDto) {
     return await this.courserRepo.getMyCourses(filter, queryDto);
+  }
+
+  async updateCourseData(
+    course_id: string,
+    updateCourseDto: UpdateCourseDto
+  ) {
+    return await this.courserRepo.updateCourseData(
+      course_id,
+      updateCourseDto
+    );
+  }
+
+  async addSections(
+    course_id: string,
+    addCourseSectionsDto: AddCourseSectionsDto
+  ) {
+    return await this.courserRepo.addSections(
+      course_id,
+      addCourseSectionsDto
+    );
   }
 }
