@@ -13,7 +13,7 @@ export class CourseService {
     return await this.courserRepo.createCourse(account_id);
   }
 
-  async getCourse(id: number) {
+  async getCourse(id: string) {
     return await this.courserRepo.getCourse(id);
   }
 

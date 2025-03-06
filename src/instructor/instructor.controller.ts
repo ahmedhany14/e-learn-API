@@ -5,11 +5,13 @@ import {
   Get,
   Inject,
   Logger,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 
@@ -34,6 +36,7 @@ import { QueryDto } from './dtos/my.courses.query.dto';
 import { IsYourCourseGuard } from './guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
 import { CourseService } from 'src/courses/service/course.service';
+import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
 
 @Controller('instructor')
 export class InstructorController {
@@ -71,9 +74,9 @@ export class InstructorController {
   }
 
 
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
   @Get('my-courses')
-  @AUTH(AuthEnum.BEARER)
-  @AUTH(AuthEnum.BEARER)
   async getMyCourses(
     @Query() queryDto: QueryDto,
     @ExtractAccountData('id') account_id: number,
@@ -103,6 +106,33 @@ export class InstructorController {
       response: {
         message: 'Courses fetched successfully',
         data: my_courses,
+      },
+    };
+  }
+
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Get('course/:id')
+  async getCourse(@Param('id', ObjectIdValidationPipe) course_id: string, @ExtractAccountData('id') account_id: number) {
+    const course = await this.courseService.getCourse(course_id);
+
+    if (!course) {
+      throw new NotFoundException({
+        message: 'Course not found',
+        details: 'You are trying to fetch a course that does not exist',
+      });
+    }
+
+    if (course.instructor !== account_id) {
+      throw new UnauthorizedException({
+        message: 'Unauthorized',
+        details: 'You are not the instructor of this course',
+      });
+    }
+    return {
+      response: {
+        message: 'Course fetched successfully',
+        data: course,
       },
     };
   }

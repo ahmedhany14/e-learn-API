@@ -25,6 +25,7 @@ import { RoleEnum } from '../auth/enums/role.enum';
 // decorators
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { ProfileService } from '../profile/services/profile.service';
+import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
 
 @Controller('file')
 export class FileController {
@@ -43,10 +44,10 @@ export class FileController {
   @UseInterceptors(FileInterceptor('course-image'))
   async uploadCourseImage(
     @UploadedFile() file: Express.Multer.File,
-    @Param('course_id') course_id: string,
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
     @ExtractAccountData('id') account_id: number,
   ) {
-    const course = await this.courseService.getCourse(parseInt(course_id));
+    const course = await this.courseService.getCourse(course_id);
     if (!course)
       throw new NotFoundException({
         message: 'Course not found',

@@ -37,9 +37,9 @@ export class CourseRepo {
         }
     }
 
-    async getCourse(id: number) {
+    async getCourse(id: string) {
         try {
-            return await this.coursesModel.findOne({ id });
+            return await this.coursesModel.findOne({ _id: id });
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException('Error while fetching course');
