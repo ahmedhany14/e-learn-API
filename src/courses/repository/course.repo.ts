@@ -115,7 +115,7 @@ export class CourseRepo {
         try {
             return await this.coursesModel.findByIdAndUpdate(course_id, {
                 $push: {
-                    course_sections: { $each: addCourseSectionsDto.sections || [] }
+                    course_sections: addCourseSectionsDto.section,
                 }
             }, { new: true });
         } catch (error) {

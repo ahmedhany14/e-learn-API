@@ -5,7 +5,6 @@ import {
 
 
 export class AddCourseSectionsDto {
-    @IsArray()
-    @IsString({ each: true })
-    sections: string[];
+    @IsString()
+    section: string;
 }

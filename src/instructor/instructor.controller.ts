@@ -39,6 +39,7 @@ import { CourseService } from 'src/courses/service/course.service';
 import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
 import { UpdateCourseDto } from './dtos/update.course.dto';
 import { AddCourseSectionsDto } from './dtos/add.course.sections.dto';
+import { AddVideoDto } from './dtos/add.video.dto';
 
 @Controller('instructor')
 export class InstructorController {
@@ -153,7 +154,7 @@ export class InstructorController {
   @UseGuards(IsYourCourseGuard)
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
-  @Patch('add-sections/:course_id')
+  @Patch('add-section/:course_id')
   async addSections(
     @Param('course_id', ObjectIdValidationPipe) course_id: string,
     @Body() addCourseSectionsDto: AddCourseSectionsDto,
@@ -168,7 +169,23 @@ export class InstructorController {
     };
   }
 
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('add-video/:course_id')
+  async addVideo(
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @Body() addVideoDto: AddVideoDto,
+  ) {
+    //const course = await this.courseService.addVideo(course_id, addVideoDto);
 
+    return {
+      response: {
+        message: 'Video added successfully',
+        //  data: course,
+      },
+    };
+  }
 
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
