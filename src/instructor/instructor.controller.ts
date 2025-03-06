@@ -31,9 +31,9 @@ import { SafePaymentInfo } from './types/instructor.types';
 // dto
 import { UpdatePaymentsDto } from './dtos/update.payments.dto';
 import { QueryDto } from './dtos/my.courses.query.dto';
-import { query, response } from 'express';
 import { IsYourCourseGuard } from './guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
+import { CourseService } from 'src/courses/service/course.service';
 
 @Controller('instructor')
 export class InstructorController {
@@ -42,7 +42,34 @@ export class InstructorController {
   constructor(
     @Inject()
     private readonly instructorService: InstructorService,
-  ) {}
+
+    @Inject()
+    private readonly courseService: CourseService
+  ) { }
+
+
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Post('new-course')
+  async createCourse(@ExtractAccountData('id') account_id: number) {
+    /*
+        API Endpoint to create a new course
+        Steps:
+            1) get the instructor id from request
+            2) create a new course using the instructor id
+            3) return a success message
+    */
+
+    const course = await this.courseService.createCourse(account_id);
+
+    return {
+      response: {
+        message: 'Course created successfully',
+        course,
+      },
+    };
+  }
+
 
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)

@@ -17,28 +17,6 @@ import { CourseService } from './service/course.service';
 export class CoursesController {
     constructor(private courseService: CourseService) { }
 
-    @ROLE(RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
-    @Post('new-course')
-    async createCourse(@ExtractAccountData('id') account_id: number) {
-        /*
-            API Endpoint to create a new course
-            Steps:
-                1) get the instructor id from request
-                2) create a new course using the instructor id
-                3) return a success message
-        */
-
-        const course = await this.courseService.createCourse(account_id);
-
-        return {
-            response: {
-                message: 'Course created successfully',
-                course,
-            },
-        };
-    }
-
     @Get('all-instructor-courses/:instructor_id')
     async getAllCourses() {
         /*
