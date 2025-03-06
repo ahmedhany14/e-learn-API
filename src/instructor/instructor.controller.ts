@@ -40,6 +40,7 @@ import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.i
 import { UpdateCourseDto } from './dtos/update.course.dto';
 import { AddCourseSectionsDto } from './dtos/add.course.sections.dto';
 import { AddVideoDto } from './dtos/add.video.dto';
+import { SectionsService } from 'src/courses/service/sections.service';
 
 @Controller('instructor')
 export class InstructorController {
@@ -50,124 +51,11 @@ export class InstructorController {
     private readonly instructorService: InstructorService,
 
     @Inject()
-    private readonly courseService: CourseService
+    private readonly courseService: CourseService,
+
+    @Inject()
+    private readonly sectionService: SectionsService
   ) { }
-
-
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Post('new-course')
-  async createCourse(@ExtractAccountData('id') account_id: number) {
-    /*
-        API Endpoint to create a new course
-        Steps:
-            1) get the instructor id from request
-            2) create a new course using the instructor id
-            3) return a success message
-    */
-
-    const course = await this.courseService.createCourse(account_id);
-
-    return {
-      response: {
-        message: 'Course created successfully',
-        course,
-      },
-    };
-  }
-
-
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Get('my-courses')
-  async getMyCourses(
-    @Query() queryDto: QueryDto,
-    @ExtractAccountData('id') account_id: number,
-  ) {
-    /*
-      API Endpoint: to get courses for the instructor
-      - The endpoint is protected and only accessible to the instructor
-      - The instructor can filter the courses by status, and use pagination to fetch data
-    */
-
-    this.logger.log(
-      `Getting courses for the instuctor account_id: ${account_id}`,
-    );
-
-    const filter = {
-      instructor: account_id,
-      state: queryDto.state,
-    };
-
-    const my_courses = await this.courseService.getMyCourses(
-      filter,
-      queryDto,
-    )
-
-
-    return {
-      response: {
-        message: 'Courses fetched successfully',
-        data: my_courses,
-      },
-    };
-  }
-
-
-  @UseGuards(IsYourCourseGuard)
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Get('course/:course_id')
-  async getCourse(@Param('course_id', ObjectIdValidationPipe) course_id: string, @ExtractAccountData('id') account_id: number) {
-    const course = await this.courseService.getCourse(course_id);
-
-    return {
-      response: {
-        message: 'Course fetched successfully',
-        data: course,
-      },
-    };
-  }
-
-
-  @UseGuards(IsYourCourseGuard)
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Patch('update-course-data/:course_id')
-  async updateCourseData(
-    @Param('course_id', ObjectIdValidationPipe) course_id: string,
-    @ExtractAccountData('id') instructot_id: number,
-    @Body() updateCourseDataDto: UpdateCourseDto,
-  ) {
-    const course = await this.courseService.updateCourseData(
-      course_id,
-      updateCourseDataDto);
-
-    return {
-      response: {
-        message: 'Course updated successfully',
-        data: course,
-      },
-    };
-  }
-
-  @UseGuards(IsYourCourseGuard)
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Patch('add-section/:course_id')
-  async addSections(
-    @Param('course_id', ObjectIdValidationPipe) course_id: string,
-    @Body() addCourseSectionsDto: AddCourseSectionsDto,
-  ) {
-    const course = await this.courseService.addSections(course_id, addCourseSectionsDto);
-
-    return {
-      response: {
-        message: 'Sections added successfully',
-        data: course,
-      },
-    };
-  }
 
   @UseGuards(IsYourCourseGuard)
   @ROLE(RoleEnum.INSTRUCTOR)

@@ -7,13 +7,14 @@ import { CourseRepo } from '../repository/course.repo';
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
 import { AddCourseSectionsDto } from 'src/instructor/dtos/add.course.sections.dto';
+import { SectionDocument } from '../entities/sections.entity';
 
 @Injectable()
 export class CourseService {
   constructor(
     @Inject()
     private readonly courserRepo: CourseRepo,
-  ) {}
+  ) { }
 
   async createCourse(account_id: number) {
     return await this.courserRepo.createCourse(account_id);
@@ -41,13 +42,7 @@ export class CourseService {
     );
   }
 
-  async addSections(
-    course_id: string,
-    addCourseSectionsDto: AddCourseSectionsDto
-  ) {
-    return await this.courserRepo.addSections(
-      course_id,
-      addCourseSectionsDto
-    );
+  async addSectionsToCourse(course_id: string, section: SectionDocument) {
+    return await this.courserRepo.addSectionsToCourse(course_id, section);
   }
 }

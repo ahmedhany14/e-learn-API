@@ -3,7 +3,8 @@ import { Module } from '@nestjs/common';
 // orm and entities
 import { MongooseModule } from '@nestjs/mongoose';
 import { Course, CourseSchema } from './entities/course.entity';
-import { CourseVideos, CourseVideosSchema } from './entities/course.videos.entity';
+import { Section, SectionSchema } from './entities/sections.entity';
+import { Videos, VideosSchema } from './entities/videos.entity';
 // controllers
 import { CoursesController } from './courses.controller';
 
@@ -11,6 +12,8 @@ import { CoursesController } from './courses.controller';
 import { CourseService } from './service/course.service';
 import { CourseRepo } from './repository/course.repo';
 import { PaginationModule } from 'src/common/pagination/pagination.module';
+import { SectionsService } from './service/sections.service';
+import { SectionsRepo } from './repository/sections.repo';
 
 @Module({
   imports: [
@@ -20,14 +23,18 @@ import { PaginationModule } from 'src/common/pagination/pagination.module';
         schema: CourseSchema,
       },
       {
-        name: CourseVideos.name,
-        schema: CourseVideosSchema,
+        name: Section.name,
+        schema: SectionSchema
+      },
+      {
+        name: Videos.name,
+        schema: VideosSchema
       },
     ])
 
     , PaginationModule],
   controllers: [CoursesController],
-  providers: [CourseService, CourseRepo],
-  exports: [CourseService],
+  providers: [CourseService, CourseRepo, SectionsService, SectionsRepo],
+  exports: [CourseService, SectionsService],
 })
 export class CoursesModule { }

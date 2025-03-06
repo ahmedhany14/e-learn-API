@@ -71,12 +71,6 @@ export class Course extends Document {
     price: number;
 
     @Prop({
-        type: mongoose.Schema.Types.Array,
-    })
-    course_sections: string[];
-
-
-    @Prop({
         type: mongoose.Schema.Types.Number,
         default: 0
     })
@@ -96,13 +90,8 @@ export class Course extends Document {
     })
     instructor: number;
 
-
-    @Prop({
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'CourseVideos'
-    })
-    videos: string[];
-
+    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Section' })
+    course_sections: string[];
 
     @Prop({
         type: [mongoose.Schema.Types.ObjectId],
