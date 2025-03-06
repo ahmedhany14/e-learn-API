@@ -40,10 +40,6 @@ export class InstructorService {
     );
   }
 
-  async getMyCourses(filter: any, selec: string[], queryDto: QueryDto) {
-    return await this.courseService.getMyCourses(filter, selec, queryDto);
-  }
-
   async pushCourseForReview(course_id: number) {
     return await this.adminService.pushCourseToReview(course_id);
   }

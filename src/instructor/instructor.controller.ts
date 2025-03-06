@@ -5,11 +5,13 @@ import {
   Get,
   Inject,
   Logger,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 
@@ -31,9 +33,13 @@ import { SafePaymentInfo } from './types/instructor.types';
 // dto
 import { UpdatePaymentsDto } from './dtos/update.payments.dto';
 import { QueryDto } from './dtos/my.courses.query.dto';
-import { query, response } from 'express';
 import { IsYourCourseGuard } from './guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
+import { CourseService } from 'src/courses/service/course.service';
+import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
+import { UpdateCourseDto } from './dtos/update.course.dto';
+import { AddCourseSectionsDto } from './dtos/add.course.sections.dto';
+import { AddVideoDto } from './dtos/add.video.dto';
 
 @Controller('instructor')
 export class InstructorController {
@@ -42,7 +48,144 @@ export class InstructorController {
   constructor(
     @Inject()
     private readonly instructorService: InstructorService,
-  ) {}
+
+    @Inject()
+    private readonly courseService: CourseService
+  ) { }
+
+
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Post('new-course')
+  async createCourse(@ExtractAccountData('id') account_id: number) {
+    /*
+        API Endpoint to create a new course
+        Steps:
+            1) get the instructor id from request
+            2) create a new course using the instructor id
+            3) return a success message
+    */
+
+    const course = await this.courseService.createCourse(account_id);
+
+    return {
+      response: {
+        message: 'Course created successfully',
+        course,
+      },
+    };
+  }
+
+
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Get('my-courses')
+  async getMyCourses(
+    @Query() queryDto: QueryDto,
+    @ExtractAccountData('id') account_id: number,
+  ) {
+    /*
+      API Endpoint: to get courses for the instructor
+      - The endpoint is protected and only accessible to the instructor
+      - The instructor can filter the courses by status, and use pagination to fetch data
+    */
+
+    this.logger.log(
+      `Getting courses for the instuctor account_id: ${account_id}`,
+    );
+
+    const filter = {
+      instructor: account_id,
+      state: queryDto.state,
+    };
+
+    const my_courses = await this.courseService.getMyCourses(
+      filter,
+      queryDto,
+    )
+
+
+    return {
+      response: {
+        message: 'Courses fetched successfully',
+        data: my_courses,
+      },
+    };
+  }
+
+
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Get('course/:course_id')
+  async getCourse(@Param('course_id', ObjectIdValidationPipe) course_id: string, @ExtractAccountData('id') account_id: number) {
+    const course = await this.courseService.getCourse(course_id);
+
+    return {
+      response: {
+        message: 'Course fetched successfully',
+        data: course,
+      },
+    };
+  }
+
+
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('update-course-data/:course_id')
+  async updateCourseData(
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @ExtractAccountData('id') instructot_id: number,
+    @Body() updateCourseDataDto: UpdateCourseDto,
+  ) {
+    const course = await this.courseService.updateCourseData(
+      course_id,
+      updateCourseDataDto);
+
+    return {
+      response: {
+        message: 'Course updated successfully',
+        data: course,
+      },
+    };
+  }
+
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('add-section/:course_id')
+  async addSections(
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @Body() addCourseSectionsDto: AddCourseSectionsDto,
+  ) {
+    const course = await this.courseService.addSections(course_id, addCourseSectionsDto);
+
+    return {
+      response: {
+        message: 'Sections added successfully',
+        data: course,
+      },
+    };
+  }
+
+  @UseGuards(IsYourCourseGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Patch('add-video/:course_id')
+  async addVideo(
+    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @Body() addVideoDto: AddVideoDto,
+  ) {
+    //const course = await this.courseService.addVideo(course_id, addVideoDto);
+
+    return {
+      response: {
+        message: 'Video added successfully',
+        //  data: course,
+      },
+    };
+  }
 
   @ROLE(RoleEnum.INSTRUCTOR)
   @AUTH(AuthEnum.BEARER)
@@ -59,62 +202,25 @@ export class InstructorController {
     };
   }
 
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Patch('edit-payments')
-  async updatePayments(
-    @ExtractAccountData('id') account_id: number,
-    @Body() updatePaymentsDto: UpdatePaymentsDto,
-  ) {
-    if (Object.keys(updatePaymentsDto).length === 0) {
+  /*  @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('edit-payments')
+    async updatePayments(
+      @ExtractAccountData('id') account_id: number,
+      @Body() updatePaymentsDto: UpdatePaymentsDto,
+    ) {
+      if (Object.keys(updatePaymentsDto).length === 0) {
+        return {
+          response: 'No data provided to update',
+        };
+      }
+  
+      await this.instructorService.updatePayments(account_id, updatePaymentsDto);
+  
       return {
-        response: 'No data provided to update',
+        response: 'Payments updated successfully',
       };
-    }
-
-    await this.instructorService.updatePayments(account_id, updatePaymentsDto);
-
-    return {
-      response: 'Payments updated successfully',
-    };
-  }
-
-  @Get('my-courses')
-  @AUTH(AuthEnum.BEARER)
-  @AUTH(AuthEnum.BEARER)
-  async getMyCourses(
-    @Query() queryDto: QueryDto,
-    @ExtractAccountData('id') account_id: number,
-  ) {
-    /*
-      API Endpoint: to get courses for the instructor
-      - The endpoint is protected and only accessible to the instructor
-      - The instructor can filter the courses by status, and use pagination to fetch data
-    */
-
-    this.logger.log(
-      `Getting courses for the instuctor account_id: ${account_id}`,
-    );
-
-    const filter = {
-      instructor: { id: account_id },
-      status: queryDto.status,
-    };
-
-    const select = ['id', 'image_url', 'price', 'instructor'];
-    const courses = await this.instructorService.getMyCourses(
-      filter,
-      select,
-      queryDto,
-    );
-
-    return {
-      response: {
-        message: 'Courses fetched successfully',
-        data: courses,
-      },
-    };
-  }
+    }*/
 
   @Get('push-course-to-review/:course_id')
   @UseGuards(IsYourCourseGuard)

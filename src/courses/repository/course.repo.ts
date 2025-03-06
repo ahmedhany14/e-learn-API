@@ -4,17 +4,18 @@ import {
     InternalServerErrorException,
     Logger,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 
 // orm and entity
 import { Course, CourseDocument } from '../entities/course.entity';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 // dto
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
+import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
+import { AddCourseSectionsDto } from 'src/instructor/dtos/add.course.sections.dto';
 
 // services
-import { PaginationService } from 'src/common/pagination/pagination.service';
-import { Model } from 'mongoose';
 
 @Injectable()
 export class CourseRepo {
@@ -23,8 +24,6 @@ export class CourseRepo {
     constructor(
         @InjectModel(Course.name)
         private readonly coursesModel: Model<CourseDocument>,
-        @Inject()
-        private readonly paginationService: PaginationService,
     ) { }
 
     async createCourse(account_id: number) {
@@ -40,9 +39,9 @@ export class CourseRepo {
         }
     }
 
-    async getCourse(id: number) {
+    async getCourse(id: string) {
         try {
-            return await this.coursesModel.findOne({ id });
+            return await this.coursesModel.findOne({ _id: id });
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException('Error while fetching course');
@@ -62,16 +61,67 @@ export class CourseRepo {
         }
     }
 
-    async getMyCourses(filter: any, select: string[], queryDto: QueryDto) {
-        return 'Hello';
-        /*await this.paginationService.paginate(
-              this.courseRepository,
-              queryDto.page,
-              queryDto.limit,
-              ['instructor'],
-              filter,
-              select,
-              'http://localhost:3000/instructor/my-course',
-            );*/
+    async getMyCourses(filter: any, queryDto: QueryDto) {
+        const data = await this.coursesModel.find()
+            .where(filter)
+            .skip(((queryDto.page ?? 1) - 1) * queryDto.limit)
+            .limit(queryDto.limit)
+
+        const totalCourses = await this.coursesModel.find().where(filter).countDocuments();
+        const totalPages = Math.ceil(totalCourses * 1.0 / queryDto.limit);
+        const hasMore = queryDto.page < totalPages;
+
+        return {
+            response: data,
+            meta: {
+                total: totalCourses,
+                page: queryDto.page,
+                limit: queryDto.limit,
+                totalPages,
+                hasMore,
+                firstPage: `?page=1&limit=${queryDto.limit}`,
+                lastPage: `?page=${totalPages}&limit=${queryDto.limit}`,
+                previous: queryDto.page > 1 ? `?page=${queryDto.page - 1}&limit=${queryDto.limit}` : null,
+                next: hasMore ? `?page=${queryDto.page + 1}&limit=${queryDto.limit}` : null,
+                current: `?page=${queryDto.page}&limit=${queryDto.limit}`,
+            }
+        };
+    }
+
+
+    async updateCourseData(
+        course_id: string,
+        updateCourseDto: UpdateCourseDto
+    ) {
+        try {
+            return await this
+                .coursesModel.findByIdAndUpdate(course_id, {
+                    $set: {
+                        ...updateCourseDto,
+                    },
+                }, { new: true });
+        }
+        catch (error) {
+            throw new InternalServerErrorException(
+                'Error while updating course data',
+            );
+        }
+    }
+
+    async addSections(
+        course_id: string,
+        addCourseSectionsDto: AddCourseSectionsDto
+    ) {
+        try {
+            return await this.coursesModel.findByIdAndUpdate(course_id, {
+                $push: {
+                    course_sections: addCourseSectionsDto.section,
+                }
+            }, { new: true });
+        } catch (error) {
+            throw new InternalServerErrorException(
+                'Error while adding sections',
+            );
+        }
     }
 }
