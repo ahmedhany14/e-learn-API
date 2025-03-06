@@ -14,6 +14,8 @@ import { CourseRepo } from './repository/course.repo';
 import { PaginationModule } from 'src/common/pagination/pagination.module';
 import { SectionsService } from './service/sections.service';
 import { SectionsRepo } from './repository/sections.repo';
+import { VideosService } from './service/videos.service';
+import { VideosRepo } from './repository/videos.repo';
 
 @Module({
   imports: [
@@ -24,17 +26,24 @@ import { SectionsRepo } from './repository/sections.repo';
       },
       {
         name: Section.name,
-        schema: SectionSchema
+        schema: SectionSchema,
       },
       {
         name: Videos.name,
-        schema: VideosSchema
+        schema: VideosSchema,
       },
-    ])
-
-    , PaginationModule],
+    ]),
+    PaginationModule,
+  ],
   controllers: [CoursesController],
-  providers: [CourseService, CourseRepo, SectionsService, SectionsRepo],
-  exports: [CourseService, SectionsService],
+  providers: [
+    CourseService,
+    CourseRepo,
+    SectionsService,
+    SectionsRepo,
+    VideosService,
+    VideosRepo,
+  ],
+  exports: [CourseService, SectionsService, VideosService],
 })
-export class CoursesModule { }
+export class CoursesModule {}

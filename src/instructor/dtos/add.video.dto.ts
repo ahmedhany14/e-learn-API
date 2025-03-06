@@ -1,34 +1,27 @@
 import {
-    IsNotEmpty,
-    IsNumber,
-    IsPositive,
-    IsString,
-    IsUrl,
-    IsUUID,
-    MaxLength,
-    MinLength,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  IsUrl,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class AddVideoDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(32)
+  @MinLength(5)
+  title: string;
 
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(32)
-    @MinLength(5)
-    title: string;
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  duration: number;
 
-    @IsNotEmpty()
-    @IsNumber()
-    @IsPositive()
-    section: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @IsPositive()
-    duration: number;
-
-    @IsNotEmpty()
-    @IsString()
-    @IsUrl()
-    video_url: string;
+  @IsNotEmpty()
+  @IsString()
+  @IsUrl()
+  video_url: string;
 }
