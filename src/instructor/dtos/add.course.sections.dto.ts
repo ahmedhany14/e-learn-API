@@ -6,5 +6,5 @@ import {
 
 export class AddCourseSectionsDto {
     @IsString()
-    section: string;
+    title: string;
 }

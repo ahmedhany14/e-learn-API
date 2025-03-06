@@ -14,6 +14,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
 import { AddCourseSectionsDto } from 'src/instructor/dtos/add.course.sections.dto';
+import { SectionDocument } from '../entities/sections.entity';
 
 // services
 
@@ -66,6 +67,7 @@ export class CourseRepo {
             .where(filter)
             .skip(((queryDto.page ?? 1) - 1) * queryDto.limit)
             .limit(queryDto.limit)
+            .populate('course_sections');
 
         const totalCourses = await this.coursesModel.find().where(filter).countDocuments();
         const totalPages = Math.ceil(totalCourses * 1.0 / queryDto.limit);
@@ -108,19 +110,17 @@ export class CourseRepo {
         }
     }
 
-    async addSections(
-        course_id: string,
-        addCourseSectionsDto: AddCourseSectionsDto
-    ) {
+    async addSectionsToCourse(course_id: string, section: SectionDocument): Promise<CourseDocument> {
         try {
             return await this.coursesModel.findByIdAndUpdate(course_id, {
                 $push: {
-                    course_sections: addCourseSectionsDto.section,
-                }
-            }, { new: true });
+                    course_sections: section,
+                },
+            });
+
         } catch (error) {
             throw new InternalServerErrorException(
-                'Error while adding sections',
+                'Error while adding sections to course',
             );
         }
     }
