@@ -131,4 +131,18 @@ export class CourseRepo {
       );
     }
   }
+
+  async removeSectionFromCourse(course_id: string, section_id: string) {
+    try {
+      return await this.coursesModel.findByIdAndUpdate(course_id, {
+        $pull: {
+          course_sections: section_id,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while removing section from course',
+      );
+    }
+  }
 }

@@ -22,6 +22,24 @@ export class SectionsRepo {
     }
   }
 
+  async getCourseSections(course_id: string): Promise<SectionDocument[]> {
+    try {
+      return await this.sectionsModel
+        .find(
+          { course_id },
+          {
+            order: 1,
+          },
+        )
+        .sort({ order: 1 });
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: `Error while getting sections for course with id ${course_id}`,
+        details: error.message,
+      });
+    }
+  }
+
   async createSection(
     title: string,
     order: number,
@@ -56,6 +74,31 @@ export class SectionsRepo {
     } catch (error) {
       throw new InternalServerErrorException({
         message: `Error while editing section with id ${section_id}`,
+        details: error.message,
+      });
+    }
+  }
+
+  async deleteSection(section_id: string) {
+    try {
+      await this.sectionsModel.findByIdAndDelete(section_id);
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: `Error while deleting section with id ${section_id}`,
+        details: error.message,
+      });
+    }
+  }
+
+  async reorderAfterDeleteSections(sections: SectionDocument[]) {
+    try {
+      for (let i = 0; i < sections.length; i++) {
+        sections[i].order = i + 1;
+        await sections[i].save();
+      }
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: 'Error while reordering sections',
         details: error.message,
       });
     }

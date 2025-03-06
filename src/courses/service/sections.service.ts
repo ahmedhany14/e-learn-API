@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { SectionsRepo } from '../repository/sections.repo';
 import { EditSectionDto } from '../../instructor/dtos/edit.section.dto';
+import { SectionDocument } from '../entities/sections.entity';
 
 @Injectable()
 export class SectionsService {
@@ -19,5 +20,19 @@ export class SectionsService {
 
   async editSection(section_id: string, editSectionDto: EditSectionDto) {
     return await this.SectionsRepo.editSection(section_id, editSectionDto);
+  }
+
+  async deleteSection(section_id: string) {
+    await this.SectionsRepo.deleteSection(section_id);
+  }
+
+  async getCourseSections(course_id: string) {
+    return await this.SectionsRepo.getCourseSections(course_id);
+  }
+
+  async reorderAfterDeleteSections(course_id: string) {
+    const sections: SectionDocument[] = await this.getCourseSections(course_id);
+
+    await this.SectionsRepo.reorderAfterDeleteSections(sections);
   }
 }

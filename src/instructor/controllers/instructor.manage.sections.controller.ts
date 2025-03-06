@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Inject,
@@ -79,14 +80,53 @@ export class InstructorManageSectionsController {
     };
   }
 
+  @UseGuards(IsYourSectionGuard)
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
   @Delete('delete-section/:section_id')
   async deleteSection(
     @Param('section_id', ObjectIdValidationPipe) section_id: string,
-  ) {}
+  ) {
+    const section = await this.sectionService.findSectionById(section_id);
 
-  @Patch('reorder-sections/:course_id')
-  async reorderSections(
-    @Param('course_id', ObjectIdValidationPipe) course_id: string,
-    //@Body() reorderSectionsDto: ReorderSectionsDto,
-  ) {}
+    if (section.videos_id.length) {
+      throw new ConflictException({
+        message: 'Section has videos',
+        details: 'Move videos to another sections or delete them',
+      });
+    }
+
+    const course = await this.courseService.getCourse(section.course_id);
+
+    await this.courseService.removeSectionFromCourse(
+      course._id as string,
+      section_id,
+    );
+    await this.sectionService.deleteSection(section_id);
+
+    // Reorder sections
+    await this.sectionService.reorderAfterDeleteSections(course._id as string);
+
+    return {
+      response: {
+        message: 'Section deleted successfully',
+      },
+    };
+  }
+
+  // @Patch('reorder-sections/:course_id')
+  // async reorderSections(
+  //   @Param('course_id', ObjectIdValidationPipe) course_id: string,
+  //   @Body() reorderSectionsDto: ReOrderSectionsDto,
+  // ) {
+  //   const course = await this.courseService.getCourse(course_id);
+  //
+  //   if (reorderSectionsDto.new_order > course.course_sections.length) {
+  //     throw new ConflictException({
+  //       message: 'Invalid new order',
+  //       details: 'New order is greater than number of sections',
+  //     });
+  //   }
+  //   const sections = await this.sectionService.getCourseSections(course_id);
+  // }
 }
