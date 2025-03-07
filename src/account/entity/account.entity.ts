@@ -14,7 +14,7 @@ import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Plan } from '../../plans/entity/plan.entity';
 import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
-import { Course } from '../../courses/entities copy/course.entity';
+import { Course } from '../../courses/entities/course.entity';
 
 
 @Entity({

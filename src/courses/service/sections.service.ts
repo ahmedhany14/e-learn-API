@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
+
+// repository and providers
 import { SectionsRepo } from '../repository/sections.repo';
+
+// dto
 import { EditSectionDto } from '../../instructor/dtos/edit.section.dto';
-import { SectionDocument } from '../entities/sections.entity';
 
 @Injectable()
 export class SectionsService {

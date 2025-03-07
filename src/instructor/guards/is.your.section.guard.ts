@@ -29,17 +29,14 @@ export class IsYourSectionGuard implements CanActivate {
         details: `Section with id ${section_id} not found`,
       });
     }
-
-    const course = await this.courseService.getCourse(section.course.id);
-
-    if (!course) {
+    if (!section.course) {
       throw new NotFoundException({
         message: 'Course not found',
         details: `Course with id ${section.course.id} not found`,
       });
     }
 
-    if (course.instructor.id !== instructor_id) {
+    if (section.course.instructor.id !== instructor_id) {
       throw new UnauthorizedException({
         message: 'Unauthorized',
         details: `You are not authorized to access this section`,

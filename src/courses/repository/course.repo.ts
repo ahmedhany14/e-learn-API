@@ -12,11 +12,10 @@ import { InjectModel } from '@nestjs/mongoose';
 */
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Course } from '../entities copy/course.entity';
+import { Course } from '../entities/course.entity';
 // dto
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
-import { SectionDocument } from '../entities/sections.entity';
 
 // services
 

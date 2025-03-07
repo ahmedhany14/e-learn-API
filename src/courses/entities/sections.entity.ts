@@ -1,21 +1,44 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import {
+    Entity
+    , Column
+    , PrimaryGeneratedColumn
+    , JoinColumn
+    , ManyToOne,
+    OneToMany
+} from 'typeorm';
+import { Course } from './course.entity';
+import { Videos } from './videos.entity';
 
-export type SectionDocument = Section & Document;
 
-@Schema()
+@Entity()
 export class Section {
-  @Prop({ required: true })
-  title: string;
 
-  @Prop({ default: 1 })
-  order: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Videos' })
-  videos_id: string[];
+    @Column({
+        type: "varchar",
+        length: 256,
+    })
+    title: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true })
-  course_id: string;
+    @Column({ type: "varchar", unique: true })
+    order: string;
+
+    @ManyToOne(() => Course, course => course.sections, {
+        eager: true,
+    })
+    @JoinColumn({
+        name: "course_id",
+        referencedColumnName: "id"
+    })
+    course: Course;
+
+    @OneToMany(() => Videos, video => video.section, {
+        lazy: true,
+        cascade: true,
+        onDelete: "CASCADE",
+    })
+    videos: Promise<Videos[]>;
 }
 
-export const SectionSchema = SchemaFactory.createForClass(Section);

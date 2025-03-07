@@ -9,7 +9,7 @@ import { AddVideoDto } from '../../instructor/dtos/add.video.dto';
 // orm and entities
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Videos } from '../entities copy/videos.entity';
+import { Videos } from '../entities/videos.entity';
 @Injectable()
 export class VideosRepo {
   private readonly logger = new Logger(VideosRepo.name);

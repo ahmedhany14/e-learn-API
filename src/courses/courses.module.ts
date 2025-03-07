@@ -21,26 +21,11 @@ import { VideosRepo } from './repository/videos.repo';
 
 // entities and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Course } from './entities copy/course.entity';
-import { Section } from './entities copy/sections.entity';
-import { Videos } from './entities copy/videos.entity';
+import { Course } from './entities/course.entity';
+import { Section } from './entities/sections.entity';
+import { Videos } from './entities/videos.entity';
 @Module({
   imports: [
-    /*MongooseModule.forFeature([
-      {
-        name: Course.name,
-        schema: CourseSchema,
-      },
-      {
-        name: Section.name,
-        schema: SectionSchema,
-      },
-      {
-        name: Videos.name,
-        schema: VideosSchema,
-      },
-    ]),*/
-
     TypeOrmModule.forFeature([Course, Section, Videos]),
     PaginationModule,
   ],
@@ -55,4 +40,4 @@ import { Videos } from './entities copy/videos.entity';
   ],
   exports: [CourseService, SectionsService, VideosService],
 })
-export class CoursesModule {}
+export class CoursesModule { }

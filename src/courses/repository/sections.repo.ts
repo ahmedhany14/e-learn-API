@@ -4,7 +4,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Section } from '../entities copy/sections.entity';
+import { Section } from '../entities/sections.entity';
 import { EditSectionDto } from 'src/instructor/dtos/edit.section.dto';
 
 @Injectable()

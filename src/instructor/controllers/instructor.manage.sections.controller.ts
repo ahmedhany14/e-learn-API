@@ -58,10 +58,11 @@ export class InstructorManageSectionsController {
         let newOrder: string;
 
         if (sections.length === 0) {
-            newOrder = 'a'
+            newOrder = await generateKeyBetween(null, null);
         } else {
             const lastOrder = sections[sections.length - 1].order;
-            newOrder = generateKeyBetween(lastOrder, null);
+            console.log('lastOrder', lastOrder);
+            newOrder = await generateKeyBetween(lastOrder, null);
         }
 
         console.log('newOrder', newOrder);
