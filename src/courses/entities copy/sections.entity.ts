@@ -33,13 +33,13 @@ export class Section {
         name: "course_id",
         referencedColumnName: "id"
     })
-    course: number;
+    course: Course;
 
     @OneToMany(() => Videos, video => video.section, {
+        lazy: true,
         cascade: true,
         onDelete: "CASCADE",
     })
-    videos: number;
-
+    videos: Promise<Videos[]>;
 }
 
