@@ -14,12 +14,12 @@ export class IsYourSectionGuard implements CanActivate {
   constructor(
     private readonly sectionsService: SectionsService,
     private readonly courseService: CourseService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const section_id = request.params.section_id;
-    const instructor_id = request.accountId;
+    const section_id: number = parseInt(request.params.section_id);
+    const instructor_id: number = request.accountId;
 
     const section = await this.sectionsService.findSectionById(section_id);
 
@@ -30,16 +30,16 @@ export class IsYourSectionGuard implements CanActivate {
       });
     }
 
-    const course = await this.courseService.getCourse(section.course_id);
+    const course = await this.courseService.getCourse(section.course.id);
 
     if (!course) {
       throw new NotFoundException({
         message: 'Course not found',
-        details: `Course with id ${section.course_id} not found`,
+        details: `Course with id ${section.course.id} not found`,
       });
     }
 
-    if (course.instructor !== instructor_id) {
+    if (course.instructor.id !== instructor_id) {
       throw new UnauthorizedException({
         message: 'Unauthorized',
         details: `You are not authorized to access this section`,

@@ -9,12 +9,12 @@ export class VideosService {
   constructor(
     @Inject()
     private readonly videosRepo: VideosRepo,
-  ) {}
+  ) { }
 
   async addVideoToSection(
     addVideoToSectionDto: AddVideoDto,
-    section_id: string,
-    order: number,
+    section_id: number,
+    order: string,
   ) {
     return await this.videosRepo.addVideoToSection(
       addVideoToSectionDto,

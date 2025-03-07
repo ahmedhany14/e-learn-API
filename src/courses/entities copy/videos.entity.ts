@@ -37,5 +37,5 @@ export class Videos {
         name: "section_id",
         referencedColumnName: "id"
     })
-    section: number;
+    section: Section;
 }
