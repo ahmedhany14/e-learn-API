@@ -1,31 +1,40 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import {
+    Entity
+    , Column
+    , PrimaryGeneratedColumn
+    , JoinColumn
+    , ManyToOne
+} from 'typeorm';
+import { Section } from './sections.entity';
 
-export type VideosDocument = Videos & Document;
 
-@Schema()
+@Entity()
 export class Videos {
-  @Prop({ required: true })
-  title: string;
 
-  @Prop()
-  duration: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Prop({
-    required: true,
-    unique: true,
-  })
-  video_url: string;
+    @Column({
+        type: "varchar",
+        length: 256,
+    })
+    title: string;
 
-  @Prop({ default: 1 })
-  order: number;
+    @Column({
+        type: 'varchar',
+        length: 256,
+    })
+    video_url: string;
 
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Section',
-  })
-  section: mongoose.Schema.Types.ObjectId;
+    @Column({ type: "varchar", unique: true })
+    order: string
+
+    @ManyToOne(() => Section, section => section.videos, {
+        eager: true,
+    })
+    @JoinColumn({
+        name: "section_id",
+        referencedColumnName: "id"
+    })
+    section: Section;
 }
-
-export const VideosSchema = SchemaFactory.createForClass(Videos);

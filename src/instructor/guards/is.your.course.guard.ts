@@ -17,11 +17,9 @@ export class IsYourCourseGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const instructor_id = request.accountId;
-    const course_id = request.params.course_id;
-    if (!isValidObjectId(course_id)) {
-      throw new NotFoundException(`Invalid course id`);
-    }
+    const instructor_id: number = request.accountId;
+    const course_id: number = parseInt(request.params.course_id);
+
     console.log('course_id', course_id);
     const course = await this.courseService.getCourse(course_id);
 
@@ -30,7 +28,7 @@ export class IsYourCourseGuard implements CanActivate {
         `Course with ID ${course_id} does not exist.`,
       );
 
-    if (course.instructor !== instructor_id)
+    if (course.instructor.id !== instructor_id)
       throw new ForbiddenException(
         `You are not authorized to access this resource`,
       );

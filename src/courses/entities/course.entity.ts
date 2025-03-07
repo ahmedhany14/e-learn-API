@@ -1,105 +1,108 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-
+import {
+    Entity
+    , Column
+    , PrimaryGeneratedColumn
+    , OneToOne
+    , JoinColumn,
+    ManyToOne,
+    OneToMany
+} from 'typeorm';
 import { CourseStatusEnum } from '../enums/course.status.enum';
+import { Account } from 'src/account/entity/account.entity';
+import { Section } from './sections.entity';
 
-export type CourseDocument = Course & Document;
 
-@Schema({
-    timestamps: true,
-    toJSON: {
-        transform: function (_doc, ret) {
-            ret.id = ret._id;
-            delete ret._id;
-            delete ret.__v;
-        },
-    },
-})
-export class Course extends Document {
+@Entity()
+export class Course {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
+    @Column({
+        type: "varchar",
         default: "default.jpg",
-        required: false,
-        minlength: 5,
-        maxlength: 256,
+        nullable: true,
+        length: 256,
     })
     image_url: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
+    @Column({
+        type: "varchar",
         default: "No Title Provided",
-        required: true,
-        minlength: 5,
-        maxlength: 100,
+        length: 124,
     })
     title: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
+    @Column({
+        type: "varchar",
         default: "No Description Provided",
-        required: true,
+        comment: "will be saved as a txt file not in the database",
     })
     description: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
+    @Column({
+        type: "varchar",
         default: "No Requirements Provided",
-        required: true,
+        comment: "will be saved as a txt file not in the database",
     })
     requirements: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
+    @Column({
+        type: "varchar",
         default: "No What You Learn Provided",
-        required: true,
+        comment: "will be saved as a txt file not in the database",
     })
     what_you_learn: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
+    @Column({
+        type: "enum",
         default: "draft",
         enum: CourseStatusEnum,
-        required: true,
     })
-    state: string;
+    state: CourseStatusEnum;
 
-    @Prop({
-        type: mongoose.Schema.Types.Number,
+    @Column({
+        type: "decimal",
         default: 0,
+        precision: 10,
+        scale: 2,
     })
     price: number;
 
-    @Prop({
-        type: mongoose.Schema.Types.Number,
-        default: 0
+    @Column({
+        type: "int",
+        default: 0,
     })
     views: number;
 
-
-    @Prop({
-        type: mongoose.Schema.Types.Number,
-        default: 0
+    @Column({
+        type: "decimal",
+        default: 0,
+        precision: 10,
+        scale: 2,
     })
     rate: number;
 
-
-    @Prop({
-        type: mongoose.Schema.Types.Number,
-        required: true,
+    @ManyToOne(() => Account, (account) => account.courses, {
+        eager: true,
+        cascade: true,
+        onDelete: "CASCADE",
     })
-    instructor: number;
-
-    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Section' })
-    course_sections: string[];
-
-    @Prop({
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Tags'
+    @JoinColumn({
+        name: "instructor_id",
+        referencedColumnName: "id",
     })
-    tags: string[];
+    instructor: Course;
 
-    //plans: string[];
+    // one course can have many sections
+
+    @OneToMany(() => Section, (section) => section.course, {
+        lazy: true,
+        cascade: true,
+        onDelete: "CASCADE",
+    })
+    sections: Promise<Section[]>;
+
+    // plans (later)
+
+    // tags (later)
 }
-
-export const CourseSchema = SchemaFactory.createForClass(Course);

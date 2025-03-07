@@ -6,21 +6,20 @@ import { CourseRepo } from '../repository/course.repo';
 // dto
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
-import { SectionDocument } from '../entities/sections.entity';
 
 @Injectable()
 export class CourseService {
   constructor(
     @Inject()
     private readonly courserRepo: CourseRepo,
-  ) {}
+  ) { }
 
   async createCourse(account_id: number) {
     return await this.courserRepo.createCourse(account_id);
   }
 
-  async getCourse(id: string) {
-    return await this.courserRepo.getCourse(id);
+  async getCourse(id: number) {
+    return await this.courserRepo.findOneById(id);
   }
 
   async updateImageName(course_id: number, image_name: string) {
@@ -31,10 +30,11 @@ export class CourseService {
     return await this.courserRepo.getMyCourses(filter, queryDto);
   }
 
-  async updateCourseData(course_id: string, updateCourseDto: UpdateCourseDto) {
+  async updateCourseData(course_id: number, updateCourseDto: UpdateCourseDto) {
     return await this.courserRepo.updateCourseData(course_id, updateCourseDto);
   }
 
+  /*
   async addSectionsToCourse(course_id: string, section: SectionDocument) {
     return await this.courserRepo.addSectionsToCourse(course_id, section);
   }
@@ -45,4 +45,5 @@ export class CourseService {
       section_id,
     );
   }
+  */
 }

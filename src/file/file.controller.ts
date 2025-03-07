@@ -4,6 +4,7 @@ import {
   Inject,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   UnauthorizedException,
   UploadedFile,
@@ -44,7 +45,7 @@ export class FileController {
   @UseInterceptors(FileInterceptor('course-image'))
   async uploadCourseImage(
     @UploadedFile() file: Express.Multer.File,
-    @Param('course_id', ObjectIdValidationPipe) course_id: string,
+    @Param('course_id', ParseIntPipe) course_id: number,
     @ExtractAccountData('id') account_id: number,
   ) {
     const course = await this.courseService.getCourse(course_id);
@@ -54,7 +55,7 @@ export class FileController {
         details:
           'you are trying to upload image for a course that does not exist',
       });
-    if (course.instructor !== account_id)
+    if (course.instructor.id !== account_id)
       throw new UnauthorizedException({
         message: 'Unauthorized',
         details: 'You are not the instructor of this course',
@@ -62,10 +63,10 @@ export class FileController {
     const filename = await this.fileService.resizeAndOptimize(
       file,
       'course',
-      parseInt(course_id),
+      course_id,
     );
 
-    await this.courseService.updateImageName(parseInt(course_id), filename);
+    await this.courseService.updateImageName(course_id, filename);
 
     return {
       response: {
