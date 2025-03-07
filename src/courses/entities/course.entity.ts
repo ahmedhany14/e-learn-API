@@ -21,6 +21,7 @@ export class Course {
         type: "varchar",
         default: "default.jpg",
         nullable: true,
+        unique: true,
         length: 256,
     })
     image_url: string;
@@ -97,8 +98,6 @@ export class Course {
 
     @OneToMany(() => Section, (section) => section.course, {
         lazy: true,
-        cascade: true,
-        onDelete: "CASCADE",
     })
     sections: Promise<Section[]>;
 

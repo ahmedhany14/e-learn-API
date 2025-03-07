@@ -31,6 +31,8 @@ export class Videos {
 
     @ManyToOne(() => Section, section => section.videos, {
         eager: true,
+        cascade: true,
+        onDelete: "CASCADE",
     })
     @JoinColumn({
         name: "section_id",

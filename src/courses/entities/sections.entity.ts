@@ -27,6 +27,7 @@ export class Section {
 
     @ManyToOne(() => Course, course => course.sections, {
         eager: true,
+        onDelete: "CASCADE",
     })
     @JoinColumn({
         name: "course_id",
@@ -36,8 +37,6 @@ export class Section {
 
     @OneToMany(() => Videos, video => video.section, {
         lazy: true,
-        cascade: true,
-        onDelete: "CASCADE",
     })
     videos: Promise<Videos[]>;
 }
