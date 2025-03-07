@@ -5,10 +5,14 @@ import {
 } from '@nestjs/common';
 
 // orm and entity
+/*
 import { Course, CourseDocument } from '../entities/course.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-
+*/
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Course } from '../entities copy/course.entity';
 // dto
 import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
@@ -21,57 +25,72 @@ export class CourseRepo {
   private readonly logger = new Logger(CourseRepo.name);
 
   constructor(
-    @InjectModel(Course.name)
-    private readonly coursesModel: Model<CourseDocument>,
-  ) {}
 
-  async createCourse(account_id: number) {
+    @InjectRepository(Course)
+    private readonly courseRepository: Repository<Course>,
+
+  ) { }
+
+  async createCourse(account_id: number): Promise<Course> {
     try {
-      const course = new this.coursesModel({
-        instructor: account_id,
+      const course = this.courseRepository.create({
+        instructor: { id: account_id },
       });
 
-      return await course.save();
+      return await this.courseRepository.save(course);
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException('Error while creating course');
+      throw new InternalServerErrorException({
+        message: 'Error while creating course',
+        details: error.message,
+      });
     }
   }
 
-  async getCourse(id: string): Promise<CourseDocument> {
+  async findOneById(id: number): Promise<Course> {
     try {
-      return await this.coursesModel.findOne({ _id: id });
+      return await this.courseRepository.findOne({
+        where: { id },
+      });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException('Error while fetching course');
+      throw new InternalServerErrorException({
+        message: 'Error while fetching course',
+        details: error.message,
+      });
     }
   }
 
-  async updateImageName(course_id: number, image_name: string) {
+  async updateImageName(course_id: number, image_name: string): Promise<string> {
     try {
-      await this.coursesModel.findByIdAndUpdate(course_id, {
-        image_url: image_name,
+      const course = await this.courseRepository.findOne({
+        where: { id: course_id },
       });
+
+      course.image_url = image_name;
+
+      await this.courseRepository.save(course);
       return image_name;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error while updating course image',
-      );
+      throw new InternalServerErrorException({
+        message: 'Error while updating image name',
+        details: error.message,
+      });
     }
   }
 
   async getMyCourses(filter: any, queryDto: QueryDto) {
-    const data = await this.coursesModel
-      .find()
-      .where(filter)
-      .skip(((queryDto.page ?? 1) - 1) * queryDto.limit)
-      .limit(queryDto.limit)
-      .populate('course_sections');
+    const data = await this.courseRepository.find({
+      where: filter,
+      skip: ((queryDto.page ?? 1) - 1) * queryDto.limit,
+      take: queryDto.limit,
+      relations: ['sections'],
+    });
 
-    const totalCourses = await this.coursesModel
-      .find()
-      .where(filter)
-      .countDocuments();
+
+    const totalCourses = await this.courseRepository.count({
+      where: filter,
+    });
+
     const totalPages = Math.ceil((totalCourses * 1.0) / queryDto.limit);
     const hasMore = queryDto.page < totalPages;
 
@@ -97,24 +116,24 @@ export class CourseRepo {
     };
   }
 
-  async updateCourseData(course_id: string, updateCourseDto: UpdateCourseDto) {
+  async updateCourseData(course_id: number, updateCourseDto: UpdateCourseDto): Promise<Course> {
     try {
-      return await this.coursesModel.findByIdAndUpdate(
-        course_id,
-        {
-          $set: {
-            ...updateCourseDto,
-          },
-        },
-        { new: true },
-      );
+      let course = await this.courseRepository.findOne({
+        where: { id: course_id },
+      });
+      course =
+      {
+        ...course,
+        ...updateCourseDto
+      }
+      return await this.courseRepository.save(course);
     } catch (error) {
       throw new InternalServerErrorException(
         'Error while updating course data',
       );
     }
   }
-
+  /*
   async addSectionsToCourse(
     course_id: string,
     section: SectionDocument,
@@ -144,5 +163,5 @@ export class CourseRepo {
         'Error while removing section from course',
       );
     }
-  }
+  }*/
 }

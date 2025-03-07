@@ -7,7 +7,7 @@ import {
     OneToMany
 } from 'typeorm';
 import { Course } from './course.entity';
-import { Video } from './videos.entity';
+import { Videos } from './videos.entity';
 
 
 @Entity()
@@ -35,7 +35,7 @@ export class Section {
     })
     course: number;
 
-    @OneToMany(() => Video, video => video.section, {
+    @OneToMany(() => Videos, video => video.section, {
         cascade: true,
         onDelete: "CASCADE",
     })

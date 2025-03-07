@@ -9,7 +9,7 @@ import { Section } from './sections.entity';
 
 
 @Entity()
-export class Video {
+export class Videos {
 
     @PrimaryGeneratedColumn()
     id: number;

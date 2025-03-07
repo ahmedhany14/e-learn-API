@@ -91,7 +91,7 @@ export class Course {
         name: "instructor_id",
         referencedColumnName: "id",
     })
-    instructor: string;
+    instructor: Course;
 
     // one course can have many sections
 

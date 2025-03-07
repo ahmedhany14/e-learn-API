@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Logger, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 
 // auth and role decorators
 import { AUTH } from '../../auth/decorators/auth.decorator';
@@ -86,7 +86,10 @@ export class InstructorManageCoursesController {
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
     @Get('course/:course_id')
-    async getCourse(@Param('course_id', ObjectIdValidationPipe) course_id: string, @ExtractAccountData('id') account_id: number) {
+    async getCourse(
+        @Param('course_id', ParseIntPipe) course_id: number,
+        @ExtractAccountData('id') account_id: number
+    ) {
         this.logger.log(`Getting course with course_id: ${course_id}`);
 
         const course = await this.courseService.getCourse(course_id);
@@ -105,7 +108,7 @@ export class InstructorManageCoursesController {
     @AUTH(AuthEnum.BEARER)
     @Patch('update-course-data/:course_id')
     async updateCourseData(
-        @Param('course_id', ObjectIdValidationPipe) course_id: string,
+        @Param('course_id', ParseIntPipe) course_id: number,
         @Body() updateCourseDataDto: UpdateCourseDto,
     ) {
         this.logger.log(`Updating course metadata for course_id: ${course_id}`);

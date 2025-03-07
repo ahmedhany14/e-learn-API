@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 
 // orm and entities
+/*
 import { MongooseModule } from '@nestjs/mongoose';
 import { Course, CourseSchema } from './entities/course.entity';
 import { Section, SectionSchema } from './entities/sections.entity';
 import { Videos, VideosSchema } from './entities/videos.entity';
+*/
 // controllers
 import { CoursesController } from './courses.controller';
 
@@ -17,9 +19,14 @@ import { SectionsRepo } from './repository/sections.repo';
 import { VideosService } from './service/videos.service';
 import { VideosRepo } from './repository/videos.repo';
 
+// entities and orm
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Course } from './entities copy/course.entity';
+import { Section } from './entities copy/sections.entity';
+import { Videos } from './entities copy/videos.entity';
 @Module({
   imports: [
-    MongooseModule.forFeature([
+    /*MongooseModule.forFeature([
       {
         name: Course.name,
         schema: CourseSchema,
@@ -32,7 +39,9 @@ import { VideosRepo } from './repository/videos.repo';
         name: Videos.name,
         schema: VideosSchema,
       },
-    ]),
+    ]),*/
+
+    TypeOrmModule.forFeature([Course, Section, Videos]),
     PaginationModule,
   ],
   controllers: [CoursesController],
