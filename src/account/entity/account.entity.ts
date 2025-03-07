@@ -14,6 +14,8 @@ import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Plan } from '../../plans/entity/plan.entity';
 import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
+import { Course } from '../../courses/entities copy/course.entity';
+
 
 @Entity({
   name: 'accounts',
@@ -114,6 +116,13 @@ export class Account {
     lazy: true,
   })
   instructor: Promise<Instructor>;
+
+  // each instructor can have multiple courses
+
+  @OneToMany(() => Course, (course) => course.instructor, {
+    lazy: true,
+  })
+  courses: Promise<Course[]>;
 
   // each user can have one order to be instructor
   @OneToMany(() => Order, (order) => order.account, { lazy: true })
