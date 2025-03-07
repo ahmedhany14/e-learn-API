@@ -33,4 +33,7 @@ export class SectionsService {
     return await this.SectionsRepo.getCourseSections(course_id);
   }
 
+  async updateOrder(section_id: number, new_order: string) {
+    return await this.SectionsRepo.updateOrder(section_id, new_order);
+  }
 }

@@ -49,6 +49,7 @@
     "express-rate-limit": "^7.5.0",
     "express-timeout-handler": "^2.2.2",
     "fractional-indexing": "^3.2.0",
+    "fractional-indexing-jittered": "^1.0.0",
     "google-auth-library": "^9.15.1",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.2",

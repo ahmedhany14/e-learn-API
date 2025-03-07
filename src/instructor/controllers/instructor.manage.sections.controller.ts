@@ -11,7 +11,12 @@ import {
     UseGuards,
 } from '@nestjs/common';
 
-import { generateKeyBetween } from "fractional-indexing";
+
+import {
+    generateJitteredKeyBetween,
+    generateKeyBetween
+} from 'fractional-indexing-jittered';
+import { IndexGenerator } from 'fractional-indexing-jittered';
 
 // services
 import { SectionsService } from 'src/courses/service/sections.service';
@@ -30,10 +35,12 @@ import { ROLE } from 'src/auth/decorators/role.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
+import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
 
 @Controller('instructor-sections')
 export class InstructorManageSectionsController {
     private readonly logger = new Logger(InstructorManageSectionsController.name);
+    private readonly indexGenerator = new IndexGenerator([]);
 
     constructor(
         @Inject()
@@ -42,6 +49,11 @@ export class InstructorManageSectionsController {
         private readonly courseService: CourseService,
     ) { }
 
+
+    private UpDateGenerator(sections) {
+        const sectionOrders = sections.map((section) => section.order);
+        this.indexGenerator.updateList(sectionOrders);
+    }
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -55,14 +67,15 @@ export class InstructorManageSectionsController {
         const course = await this.courseService.getCourse(course_id);
         const sections = await course.sections;
 
+        this.UpDateGenerator(sections);
+
         let newOrder: string;
 
         if (sections.length === 0) {
-            newOrder = await generateKeyBetween(null, null);
+            newOrder = this.indexGenerator.keyStart();
         } else {
-            const lastOrder = sections[sections.length - 1].order;
-            console.log('lastOrder', lastOrder);
-            newOrder = await generateKeyBetween(lastOrder, null);
+            console.log('sections', sections[sections.length - 1].order);
+            newOrder = this.indexGenerator.keyEnd();
         }
 
         console.log('newOrder', newOrder);
@@ -133,4 +146,59 @@ export class InstructorManageSectionsController {
             },
         };
     }
+
+    @UseGuards(IsYourSectionGuard)
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('move-section/:course_id/:section_id')
+    async moveSection(
+        @Param('section_id', ParseIntPipe) section_id: number,
+        @Param('course_id', ParseIntPipe) course_id: number,
+        @Body() reOrderSectionsDto: ReOrderSectionsDto,
+    ) {
+
+        const all_sections = await this.sectionService.getCourseSections(course_id);
+
+        if (reOrderSectionsDto.new_order < 1 || reOrderSectionsDto.new_order > all_sections.length) {
+            throw new ConflictException({
+                message: 'Invalid new order',
+                details: 'New order is out of range',
+            });
+        }
+
+        if (reOrderSectionsDto.new_order !== all_sections.findIndex(section => section.id === section_id) + 1) {
+            this.logger.log(`moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`);
+            let newOrder: string;
+            this.UpDateGenerator(all_sections);
+            if (reOrderSectionsDto.new_order === 1) {
+                newOrder = generateKeyBetween(
+                    'a0',
+                    all_sections[reOrderSectionsDto.new_order - 1].order,
+                )
+
+            } else if (reOrderSectionsDto.new_order === all_sections.length) {
+                newOrder = generateKeyBetween(
+                    all_sections[reOrderSectionsDto.new_order - 1].order,
+                    null
+                );
+            } else {
+                newOrder = generateJitteredKeyBetween(
+                    all_sections[reOrderSectionsDto.new_order - 1].order,
+                    all_sections[reOrderSectionsDto.new_order].order
+                );
+            }
+
+            console.log('newOrder', newOrder);
+
+            await this.sectionService.updateOrder(section_id, newOrder);
+        }
+
+
+        return {
+            response: {
+                message: 'Section moved successfully',
+            },
+        };
+    }
+
 }

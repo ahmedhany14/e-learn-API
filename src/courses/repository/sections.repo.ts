@@ -108,4 +108,22 @@ export class SectionsRepo {
             });
         }
     }
+
+    async updateOrder(section_id: number, new_order: string): Promise<Section> {
+        try {
+            let section = await this.findSectionById(section_id);
+
+            section = {
+                ...section,
+                order: new_order,
+            }
+
+            return await this.sectionRepository.save(section);
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: `Error while updating order for section with id ${section_id}`,
+                details: error.message,
+            });
+        }
+    }
 }
