@@ -1,10 +1,10 @@
 import {
+  Check,
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  Check,
-  OneToOne,
   OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Profile } from '../../profile/entity/profile.entity';
@@ -16,13 +16,12 @@ import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
 import { Course } from '../../courses/entities/course.entity';
 
-
 @Entity({
   name: 'accounts',
-  comment: 'User accounts',
   orderBy: {
     created_at: 'ASC',
   },
+  comment: 'User accounts',
 })
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
 export class Account {
@@ -55,7 +54,7 @@ export class Account {
     enum: RoleEnum,
     comment: "User's role",
   })
-  role: string;
+  role: RoleEnum;
 
   @Column({
     type: 'boolean',
@@ -64,15 +63,6 @@ export class Account {
     comment: `user's account status, true if active, false if inactive`,
   })
   is_active: boolean;
-  /*
-    @Column({
-      type: 'boolean',
-      nullable: false,
-      default: () => 'false',
-      comment: `user's account verification status, true if verified, false if not verified`,
-    })
-    is_verified: boolean;
-  */
 
   @Column({
     type: 'boolean',
@@ -99,12 +89,6 @@ export class Account {
   })
   updated_at: Date;
 
-  // each account can have multiple plans, but if the account activates a plan, he can't activate it again until it expires
-  @OneToMany(() => Plan_Account, (plan_account) => plan_account.account, {
-    lazy: true,
-  })
-  plans_account: Promise<Plan_Account[]>;
-
   // each account has one profile
   @OneToOne(() => Profile, (profile) => profile.account, {
     lazy: true,
@@ -118,15 +102,22 @@ export class Account {
   instructor: Promise<Instructor>;
 
   // each instructor can have multiple courses
-
   @OneToMany(() => Course, (course) => course.instructor, {
     lazy: true,
   })
   courses: Promise<Course[]>;
 
   // each user can have one order to be instructor
-  @OneToMany(() => Order, (order) => order.account, { lazy: true })
+  @OneToMany(() => Order, (order) => order.account, {
+    lazy: true,
+  })
   order: Promise<Order[]>;
+
+  // each account can have multiple plans, but if the account activates a plan, he can't activate it again until it expires
+  @OneToMany(() => Plan_Account, (plan_account) => plan_account.account, {
+    lazy: true,
+  })
+  plans_account: Promise<Plan_Account[]>;
 
   // each admin can review multiple orders and add them to the backlog
   @OneToMany(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, {

@@ -32,7 +32,7 @@ export class TagsRepository {
 
 	async deleteTagById(id: string) {
 		try {
-			return await this.tagsModle.deleteOne({ id });
+			await this.tagsModle.deleteOne({ id });
 		} catch (error) {
 			throw new InternalServerErrorException({
 				message: 'Error while deleting tag',

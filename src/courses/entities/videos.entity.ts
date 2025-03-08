@@ -1,14 +1,15 @@
 import {
-    Entity
-    , Column
-    , PrimaryGeneratedColumn
-    , JoinColumn
-    , ManyToOne
+	Entity
+	, Column
+	, PrimaryGeneratedColumn
+	, JoinColumn
+	, ManyToOne, Unique,
 } from 'typeorm';
 import { Section } from './sections.entity';
 
 
 @Entity()
+@Unique(["order", "section"])
 export class Videos {
 
     @PrimaryGeneratedColumn()
@@ -31,6 +32,8 @@ export class Videos {
 
     @ManyToOne(() => Section, section => section.videos, {
         eager: true,
+        cascade: true,
+        onDelete: "CASCADE",
     })
     @JoinColumn({
         name: "section_id",
