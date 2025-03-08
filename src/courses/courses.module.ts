@@ -24,6 +24,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Section } from './entities/sections.entity';
 import { Videos } from './entities/videos.entity';
+import { KeyGeneratorProvider } from './providers/key.generator.provider';
+import { FactoryKeyGeneratorProvider } from './providers/factory.key.generator.provider';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Course, Section, Videos]),
@@ -37,6 +39,8 @@ import { Videos } from './entities/videos.entity';
     SectionsRepo,
     VideosService,
     VideosRepo,
+    KeyGeneratorProvider,
+    FactoryKeyGeneratorProvider,
   ],
   exports: [CourseService, SectionsService, VideosService],
 })

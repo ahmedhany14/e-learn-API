@@ -12,13 +12,8 @@ import {
 } from '@nestjs/common';
 
 
-import {
-    generateJitteredKeyBetween,
-    generateKeyBetween
-} from 'fractional-indexing-jittered';
-import { IndexGenerator } from 'fractional-indexing-jittered';
-
 // services
+import { FactoryKeyGeneratorProvider } from '../../courses/providers/factory.key.generator.provider';
 import { SectionsService } from 'src/courses/service/sections.service';
 import { CourseService } from 'src/courses/service/course.service';
 
@@ -36,24 +31,23 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
+import { Section } from 'src/courses/entities/sections.entity';
 
 @Controller('instructor-sections')
 export class InstructorManageSectionsController {
     private readonly logger = new Logger(InstructorManageSectionsController.name);
-    private readonly indexGenerator = new IndexGenerator([]);
 
     constructor(
         @Inject()
         private readonly sectionService: SectionsService,
         @Inject()
         private readonly courseService: CourseService,
+
+        @Inject()
+        private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Section>,
     ) { }
 
 
-    private UpDateGenerator(sections) {
-        const sectionOrders = sections.map((section) => section.order);
-        this.indexGenerator.updateList(sectionOrders);
-    }
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -67,22 +61,17 @@ export class InstructorManageSectionsController {
         const course = await this.courseService.getCourse(course_id);
         const sections = await course.sections;
 
-        this.UpDateGenerator(sections);
 
-        let newOrder: string;
 
-        if (sections.length === 0) {
-            newOrder = this.indexGenerator.keyStart();
-        } else {
-            console.log('sections', sections[sections.length - 1].order);
-            newOrder = this.indexGenerator.keyEnd();
-        }
-
-        console.log('newOrder', newOrder);
+        const order: string = await this.factoryKeyGeneratorProvider.generateNewKey(
+            'new_key',
+            sections
+        )
+        console.log('newOrder', order);
 
         const section = await this.sectionService.createSection(
             addCourseSectionsDto.title,
-            newOrder,
+            order,
             course_id,
         );
 
@@ -168,29 +157,33 @@ export class InstructorManageSectionsController {
 
         if (reOrderSectionsDto.new_order !== all_sections.findIndex(section => section.id === section_id) + 1) {
             this.logger.log(`moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`);
-            let newOrder: string;
-            this.UpDateGenerator(all_sections);
-            if (reOrderSectionsDto.new_order === 1) {
-                newOrder = generateKeyBetween(
-                    'a0',
-                    all_sections[reOrderSectionsDto.new_order - 1].order,
-                )
 
-            } else if (reOrderSectionsDto.new_order === all_sections.length) {
-                newOrder = generateKeyBetween(
-                    all_sections[reOrderSectionsDto.new_order - 1].order,
-                    null
+            let order: string, target_order: number = reOrderSectionsDto.new_order;
+            const position = target_order === 1 ? 'first_key' : target_order === all_sections.length ? 'last_key' : 'between_key';
+
+            if (position === 'first_key')
+                order = await this.factoryKeyGeneratorProvider.generateNewKey(
+                    'first_key',
+                    all_sections,
+                    all_sections[target_order - 1].order
                 );
-            } else {
-                newOrder = generateJitteredKeyBetween(
-                    all_sections[reOrderSectionsDto.new_order - 1].order,
-                    all_sections[reOrderSectionsDto.new_order].order
+            else if (position === 'last_key')
+                order = await this.factoryKeyGeneratorProvider.generateNewKey(
+                    'last_key',
+                    all_sections,
+                    all_sections[target_order - 1].order
                 );
-            }
+            else
+                order = await this.factoryKeyGeneratorProvider.generateNewKey(
+                    'between_key',
+                    all_sections,
+                    all_sections[target_order - 2].order,
+                    all_sections[target_order - 1].order
+                );
 
-            console.log('newOrder', newOrder);
+            console.log('newOrder', order);
 
-            await this.sectionService.updateOrder(section_id, newOrder);
+            await this.sectionService.updateOrder(section_id, order);
         }
 
 
