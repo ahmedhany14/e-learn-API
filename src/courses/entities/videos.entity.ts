@@ -1,14 +1,15 @@
 import {
-    Entity
-    , Column
-    , PrimaryGeneratedColumn
-    , JoinColumn
-    , ManyToOne
+	Entity
+	, Column
+	, PrimaryGeneratedColumn
+	, JoinColumn
+	, ManyToOne, Unique,
 } from 'typeorm';
 import { Section } from './sections.entity';
 
 
 @Entity()
+@Unique(["order", "section"])
 export class Videos {
 
     @PrimaryGeneratedColumn()
