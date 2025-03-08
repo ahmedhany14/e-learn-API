@@ -22,17 +22,22 @@ export class Videos {
     title: string;
 
     @Column({
+        type: "int",
+        default: 0,
+    })
+    duration: number;
+
+    @Column({
         type: 'varchar',
         length: 256,
         unique: true,
     })
-    video_url: string;
+    video_url: string; 10
 
     @Column({ type: "varchar", unique: true })
     order: string
 
     @ManyToOne(() => Section, section => section.videos, {
-        eager: true,
         cascade: true,
         onDelete: "CASCADE",
     })

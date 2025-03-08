@@ -27,6 +27,7 @@ export class KeyGeneratorProvider<T> {
         data: T[],
         first_order: string,
     ) {
+        this.logger.log('Generating key to insert first');
         this.UpDateGenerator(data);
         return generateKeyBetween('a0', first_order);
     }
@@ -34,6 +35,8 @@ export class KeyGeneratorProvider<T> {
     async generateKeyToInserLast(
         data: T[],
         last_order: string) {
+        this.logger.log('Generating key to insert last');
+
         this.UpDateGenerator(data);
         return generateKeyBetween(last_order, null);
     }
@@ -41,6 +44,7 @@ export class KeyGeneratorProvider<T> {
     async generateKeyToInsertBetween(
         data: T[],
         previous_order: string, next_order: string,) {
+        this.logger.log('Generating key to insert between');
         this.UpDateGenerator(data);
         return generateJitteredKeyBetween(previous_order, next_order);
     }
