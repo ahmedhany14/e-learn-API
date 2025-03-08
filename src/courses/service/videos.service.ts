@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { VideosRepo } from '../repository/videos.repo';
 import { AddVideoDto } from '../../instructor/dtos/add.video.dto';
 import { VideoEnum, VideoRelations } from '../entities/enums/videos.enums';
+import { UpdateVideoDto } from 'src/instructor/dtos/update.video.dto';
 
 @Injectable()
 export class VideosService {
@@ -30,5 +31,9 @@ export class VideosService {
 
     async deleteVideo(video_id: number) {
         return await this.videosRepo.deleteVideo(video_id);
+    }
+
+    async updateVideo(video_id: number, updateVideoDto: UpdateVideoDto) {
+        return await this.videosRepo.updateVideo(video_id, updateVideoDto);
     }
 }

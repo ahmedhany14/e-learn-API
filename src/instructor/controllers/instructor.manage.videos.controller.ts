@@ -6,6 +6,7 @@ import {
     Logger,
     Param,
     ParseIntPipe,
+    Patch,
     Post,
     UseGuards,
 } from '@nestjs/common';
@@ -34,6 +35,7 @@ import {
     SectionRelations,
 } from 'src/courses/entities/enums/sections.enums';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
+import { UpdateVideoDto } from '../dtos/update.video.dto';
 
 @Controller('instructor-videos')
 export class InstructorManageVideosController {
@@ -105,4 +107,28 @@ export class InstructorManageVideosController {
             },
         };
     }
+
+    @UseGuards(IsYourVideoGuard)
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('update-video/:video_id')
+    async updateVideo(
+        @Param('video_id', ParseIntPipe) video_id: number,
+        @Body() updateVideoDto: UpdateVideoDto,
+    ) {
+        this.logger.log(`updating video with id: ${video_id}`);
+
+        const video = await this.videosService.updateVideo(
+            video_id,
+            updateVideoDto,
+        );
+
+        return {
+            response: {
+                message: 'video updated successfully',
+                video
+            },
+        };
+    }
+
 }
