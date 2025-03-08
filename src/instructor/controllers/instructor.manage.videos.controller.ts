@@ -195,18 +195,16 @@ export class InstructorManageVideosController {
                     next = all_videos[target_order - 1].order;
                     prev = all_videos[target_order - 2].order;
                 }
-                console.log(target_order, my_order);
 
-                console.log(prev, next);
                 order = await this.factoryKeyGeneratorProvider.generateNewKey(
                     'between_key',
                     all_videos,
                     prev,
                     next
                 );
+
             }
 
-            console.log(order);
             await this.videosService.updateOrder(video_id, order);
         }
 
