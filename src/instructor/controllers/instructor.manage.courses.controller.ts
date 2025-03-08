@@ -21,6 +21,7 @@ import { IsYourCourseGuard } from '../guards/is.your.course.guard';
 
 // validators
 import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
+import { CourseEnum, CourseRelations } from 'src/courses/entities/enums/course.enums';
 
 @Controller('instructor-courses')
 export class InstructorManageCoursesController {
@@ -62,16 +63,20 @@ export class InstructorManageCoursesController {
             `Getting courses for the instuctor account_id: ${account_id}`,
         );
 
+        const select: CourseEnum[] = [
+            CourseEnum.ID,
+            CourseEnum.TITLE,
+            CourseEnum.DESCRIPTION,
+            CourseEnum.IMAGE_URL,
+            CourseEnum.STATE,
+        ];
+
         const filter = {
             instructor: account_id,
             state: queryDto.state,
         };
 
-        const my_courses = await this.courseService.getMyCourses(
-            filter,
-            queryDto,
-        )
-
+        const my_courses = await this.courseService.getMyCourses(select, [], filter, queryDto,)
 
         return {
             response: {
@@ -92,7 +97,21 @@ export class InstructorManageCoursesController {
     ) {
         this.logger.log(`Getting course with course_id: ${course_id}`);
 
-        const course = await this.courseService.getCourse(course_id);
+        const select: CourseEnum[] = [
+            CourseEnum.ID,
+            CourseEnum.TITLE,
+            CourseEnum.DESCRIPTION,
+            CourseEnum.REQUIREMENTS,
+            CourseEnum.WHAT_YOU_LEARN,
+            CourseEnum.PRICE,
+            CourseEnum.STATE,
+            CourseEnum.IMAGE_URL,
+            CourseEnum.VIEWS,
+            CourseEnum.RATE,
+        ]
+
+
+        const course = await this.courseService.getCourse(select, [], course_id);
 
         return {
             response: {
@@ -113,10 +132,16 @@ export class InstructorManageCoursesController {
     ) {
         this.logger.log(`Updating course metadata for course_id: ${course_id}`);
 
-        const course = await this.courseService.updateCourseData(
-            course_id,
-            updateCourseDataDto
-        );
+        const select: CourseEnum[] = [
+            CourseEnum.ID,
+            CourseEnum.TITLE,
+            CourseEnum.DESCRIPTION,
+            CourseEnum.REQUIREMENTS,
+            CourseEnum.WHAT_YOU_LEARN,
+            CourseEnum.PRICE,
+        ];
+
+        const course = await this.courseService.updateCourseData(select, [], course_id, updateCourseDataDto);
 
         return {
             response: {

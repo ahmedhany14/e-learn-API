@@ -21,7 +21,6 @@ export class Course {
         type: "varchar",
         default: "default.jpg",
         nullable: true,
-        unique: true,
         length: 256,
     })
     image_url: string;
@@ -84,7 +83,6 @@ export class Course {
     rate: number;
 
     @ManyToOne(() => Account, (account) => account.courses, {
-        eager: true,
         cascade: true,
         onDelete: "CASCADE",
     })

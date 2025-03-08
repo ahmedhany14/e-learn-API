@@ -7,8 +7,8 @@ export enum CourseEnum {
     WHAT_YOU_LEARN = 'what_you_learn',
     STATE = 'state',
     PRICE = 'price',
-    CREATED_AT = 'created_at',
-    UPDATED_AT = 'updated_at',
+    VIEWS = 'views',
+    RATE = 'rate',
 }
 
 export enum CourseRelations{

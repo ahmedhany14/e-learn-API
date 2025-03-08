@@ -58,7 +58,7 @@ export class InstructorManageSectionsController {
     ) {
         this.logger.log(`adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`);
 
-        const course = await this.courseService.getCourse(course_id);
+        const course = await this.courseService.getCourse([], [], course_id);
         const sections = await course.sections;
 
 
