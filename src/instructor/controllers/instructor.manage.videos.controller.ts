@@ -13,6 +13,7 @@ import {
 // services
 import { SectionsService } from '../../courses/service/sections.service';
 import { VideosService } from '../../courses/service/videos.service';
+import { FactoryKeyGeneratorProvider } from 'src/courses/providers/factory.key.generator.provider';
 
 // Auth and Role
 import { AUTH } from '../../auth/decorators/auth.decorator';
@@ -26,6 +27,9 @@ import { AddVideoDto } from '../dtos/add.video.dto';
 // guards
 import { IsYourSectionGuard } from '../guards/is.your.section.guard';
 
+// entities
+import { Videos } from 'src/courses/entities/videos.entity';
+
 @Controller('instructor-videos')
 export class InstructorManageVideosController {
     private readonly logger = new Logger(InstructorManageVideosController.name);
@@ -35,36 +39,34 @@ export class InstructorManageVideosController {
         private readonly videosService: VideosService,
         @Inject()
         private readonly sectionsService: SectionsService,
+        @Inject()
+        private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Videos>
     ) { }
 
-    /*@UseGuards(IsYourSectionGuard)
+    @UseGuards(IsYourSectionGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
-    @Post('add-video-to-section/:section_id')
-    async addVideoToSection(
-        @Body() addVideoToSectionDto: AddVideoDto,
+    @Post('add-video/:course_id/:section_id')
+    async addVideo(
         @Param('section_id', ParseIntPipe) section_id: number,
+        @Body() addVideoDto: AddVideoDto,
     ) {
+        this.logger.log(`adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`);
+
         const section = await this.sectionsService.findSectionById(section_id);
 
-        let videoOrder: string;
+        const all_videos = await section.videos;
 
-        if()
+        const order = await this.factoryKeyGeneratorProvider.generateNewKey('new_key', all_videos);
 
+        const video = await this.videosService.createVideo(addVideoDto, section.id, order);
 
-        const video = await this.videosService.addVideoToSection(
-            addVideoToSectionDto,
-            section_id,
-            videoOrder,
-        );
-
-
-        await section.populate('videos_id');
         return {
             response: {
-                message: 'Video added to section successfully',
-                section,
+                message: 'video added successfully',
+                video
             },
-        };
-    }*/
+        }
+    }
+
 }

@@ -6,20 +6,20 @@ import { AddVideoDto } from '../../instructor/dtos/add.video.dto';
 
 @Injectable()
 export class VideosService {
-  constructor(
-    @Inject()
-    private readonly videosRepo: VideosRepo,
-  ) { }
+    constructor(
+        @Inject()
+        private readonly videosRepo: VideosRepo,
+    ) { }
 
-  async addVideoToSection(
-    addVideoToSectionDto: AddVideoDto,
-    section_id: number,
-    order: string,
-  ) {
-    return await this.videosRepo.addVideoToSection(
-      addVideoToSectionDto,
-      section_id,
-      order,
-    );
-  }
+    async createVideo(
+        addVideoToSectionDto: AddVideoDto,
+        section_id: number,
+        order: string,
+    ) {
+        return await this.videosRepo.createVideo(
+            addVideoToSectionDto,
+            section_id,
+            order,
+        );
+    }
 }

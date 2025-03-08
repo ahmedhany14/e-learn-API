@@ -1,9 +1,9 @@
 import {
-	Entity
-	, Column
-	, PrimaryGeneratedColumn
-	, JoinColumn
-	, ManyToOne, Unique,
+    Entity
+    , Column
+    , PrimaryGeneratedColumn
+    , JoinColumn
+    , ManyToOne, Unique,
 } from 'typeorm';
 import { Section } from './sections.entity';
 
@@ -24,6 +24,7 @@ export class Videos {
     @Column({
         type: 'varchar',
         length: 256,
+        unique: true,
     })
     video_url: string;
 
