@@ -5,10 +5,10 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+    Unique
 } from 'typeorm';
 import { Course } from './course.entity';
 import { Videos } from './videos.entity';
-import { Unique } from 'typeorm/browser';
 
 @Entity()
 @Unique(['order', 'course'])

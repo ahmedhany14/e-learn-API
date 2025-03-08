@@ -42,6 +42,6 @@ import { FactoryKeyGeneratorProvider } from './providers/factory.key.generator.p
     KeyGeneratorProvider,
     FactoryKeyGeneratorProvider,
   ],
-  exports: [CourseService, SectionsService, VideosService],
+  exports: [CourseService, SectionsService, VideosService, FactoryKeyGeneratorProvider],
 })
 export class CoursesModule { }
