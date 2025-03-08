@@ -29,6 +29,7 @@ import { IsYourSectionGuard } from '../guards/is.your.section.guard';
 
 // entities
 import { Videos } from 'src/courses/entities/videos.entity';
+import { SectionEnum, SectionRelations } from 'src/courses/entities/enums/sections.enums';
 
 @Controller('instructor-videos')
 export class InstructorManageVideosController {
@@ -53,7 +54,10 @@ export class InstructorManageVideosController {
     ) {
         this.logger.log(`adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`);
 
-        const section = await this.sectionsService.findSectionById(section_id);
+        const select: SectionEnum[] = [];
+        const relations: SectionRelations[] = [];
+
+        const section = await this.sectionsService.findSectionById(select, relations, section_id);
 
         const all_videos = await section.videos;
 

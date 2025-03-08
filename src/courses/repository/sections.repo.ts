@@ -3,9 +3,10 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 // entities and orm
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsSelect, Repository } from 'typeorm';
 import { Section } from '../entities/sections.entity';
 import { EditSectionDto } from 'src/instructor/dtos/edit.section.dto';
+import { SectionEnum, SectionRelations } from '../entities/enums/sections.enums';
 
 @Injectable()
 export class SectionsRepo {
@@ -14,17 +15,24 @@ export class SectionsRepo {
         private readonly sectionRepository: Repository<Section>,
     ) { }
 
-    async findSectionById(section_id: number): Promise<Section> {
+    async findSectionById(
+        select: SectionEnum[] = [],
+        relations: SectionRelations[] = [],
+        id: number
+    ): Promise<Section> {
         try {
             return await this.sectionRepository.findOne({
                 where: {
-                    id: section_id,
+                    id: id,
                 },
+                select: select as FindOptionsSelect<Section>,
+                relations: relations
             });
 
         } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException({
-                message: `Error while finding section with id ${section_id}`,
+                message: `Error while finding section with id ${id}`,
                 details: error.message,
             });
         }
@@ -80,8 +88,12 @@ export class SectionsRepo {
         editSectionDto: EditSectionDto,
     ): Promise<Section> {
         try {
-            let section = await this.findSectionById(section_id);
 
+            let section = await this.findSectionById(
+                [SectionEnum.ID, SectionEnum.TITLE],
+                [],
+                section_id
+            );
             section = {
                 ...section,
                 ...editSectionDto,
@@ -111,7 +123,11 @@ export class SectionsRepo {
 
     async updateOrder(section_id: number, new_order: string): Promise<Section> {
         try {
-            let section = await this.findSectionById(section_id);
+            let section = await this.findSectionById(
+                [SectionEnum.ID, SectionEnum.ORDER],
+                [],
+                section_id
+            );
 
             section = {
                 ...section,

@@ -20,6 +20,7 @@ import { CourseService } from 'src/courses/service/course.service';
 // dtos
 import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
 import { EditSectionDto } from '../dtos/edit.section.dto';
+import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';
@@ -30,8 +31,10 @@ import { ROLE } from 'src/auth/decorators/role.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
-import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
+
+// entities and enums
 import { Section } from 'src/courses/entities/sections.entity';
+import { SectionEnum, SectionRelations } from 'src/courses/entities/enums/sections.enums';
 
 @Controller('instructor-sections')
 export class InstructorManageSectionsController {
@@ -115,7 +118,10 @@ export class InstructorManageSectionsController {
     ) {
         this.logger.log(`deleting section with id: ${section_id}`);
 
-        const section = await this.sectionService.findSectionById(section_id);
+        const select: SectionEnum[] = [SectionEnum.ID];
+        const relations: SectionRelations[] = [];
+
+        const section = await this.sectionService.findSectionById(select, relations, section_id);
 
         const videos = await section.videos;
 
