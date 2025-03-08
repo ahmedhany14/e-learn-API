@@ -20,6 +20,7 @@ import { CourseService } from 'src/courses/service/course.service';
 // dtos
 import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
 import { EditSectionDto } from '../dtos/edit.section.dto';
+import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';
@@ -30,8 +31,10 @@ import { ROLE } from 'src/auth/decorators/role.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
-import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
+
+// entities and enums
 import { Section } from 'src/courses/entities/sections.entity';
+import { SectionEnum, SectionRelations } from 'src/courses/entities/enums/sections.enums';
 
 @Controller('instructor-sections')
 export class InstructorManageSectionsController {
@@ -58,7 +61,7 @@ export class InstructorManageSectionsController {
     ) {
         this.logger.log(`adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`);
 
-        const course = await this.courseService.getCourse(course_id);
+        const course = await this.courseService.getCourse([], [], course_id);
         const sections = await course.sections;
 
 
@@ -115,7 +118,10 @@ export class InstructorManageSectionsController {
     ) {
         this.logger.log(`deleting section with id: ${section_id}`);
 
-        const section = await this.sectionService.findSectionById(section_id);
+        const select: SectionEnum[] = [SectionEnum.ID];
+        const relations: SectionRelations[] = [];
+
+        const section = await this.sectionService.findSectionById(select, relations, section_id);
 
         const videos = await section.videos;
 
@@ -173,15 +179,30 @@ export class InstructorManageSectionsController {
                     all_sections,
                     all_sections[target_order - 1].order
                 );
-            else
+            else {
+
+                let my_order = -1;
+
+                for (let i = 0; i < all_sections.length; i++)
+                    if (all_sections[i].id === section_id)
+                        my_order = i + 1;
+
+                let prev: string, next: string;
+                if (target_order > my_order) {
+                    next = all_sections[target_order].order;
+                    prev = all_sections[target_order - 1].order;
+                } else {
+                    next = all_sections[target_order - 1].order;
+                    prev = all_sections[target_order - 2].order;
+                }
+
                 order = await this.factoryKeyGeneratorProvider.generateNewKey(
                     'between_key',
                     all_sections,
-                    all_sections[target_order - 2].order,
-                    all_sections[target_order - 1].order
+                    prev,
+                    next
                 );
-
-            console.log('newOrder', order);
+            }
 
             await this.sectionService.updateOrder(section_id, order);
         }
