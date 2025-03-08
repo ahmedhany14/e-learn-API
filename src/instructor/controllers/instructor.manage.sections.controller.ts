@@ -179,15 +179,30 @@ export class InstructorManageSectionsController {
                     all_sections,
                     all_sections[target_order - 1].order
                 );
-            else
+            else {
+
+                let my_order = -1;
+
+                for (let i = 0; i < all_sections.length; i++)
+                    if (all_sections[i].id === section_id)
+                        my_order = i + 1;
+
+                let prev: string, next: string;
+                if (target_order > my_order) {
+                    next = all_sections[target_order].order;
+                    prev = all_sections[target_order - 1].order;
+                } else {
+                    next = all_sections[target_order - 1].order;
+                    prev = all_sections[target_order - 2].order;
+                }
+
                 order = await this.factoryKeyGeneratorProvider.generateNewKey(
                     'between_key',
                     all_sections,
-                    all_sections[target_order - 2].order,
-                    all_sections[target_order - 1].order
+                    prev,
+                    next
                 );
-
-            console.log('newOrder', order);
+            }
 
             await this.sectionService.updateOrder(section_id, order);
         }
