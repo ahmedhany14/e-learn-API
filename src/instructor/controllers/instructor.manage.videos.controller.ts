@@ -1,9 +1,9 @@
 import {
     Body,
     Controller,
+    Delete,
     Inject,
     Logger,
-    NotFoundException,
     Param,
     ParseIntPipe,
     Post,
@@ -29,7 +29,11 @@ import { IsYourSectionGuard } from '../guards/is.your.section.guard';
 
 // entities
 import { Videos } from 'src/courses/entities/videos.entity';
-import { SectionEnum, SectionRelations } from 'src/courses/entities/enums/sections.enums';
+import {
+    SectionEnum,
+    SectionRelations,
+} from 'src/courses/entities/enums/sections.enums';
+import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
 @Controller('instructor-videos')
 export class InstructorManageVideosController {
@@ -41,7 +45,7 @@ export class InstructorManageVideosController {
         @Inject()
         private readonly sectionsService: SectionsService,
         @Inject()
-        private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Videos>
+        private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Videos>,
     ) { }
 
     @UseGuards(IsYourSectionGuard)
@@ -52,25 +56,53 @@ export class InstructorManageVideosController {
         @Param('section_id', ParseIntPipe) section_id: number,
         @Body() addVideoDto: AddVideoDto,
     ) {
-        this.logger.log(`adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`);
+        this.logger.log(
+            `adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`,
+        );
 
         const select: SectionEnum[] = [];
         const relations: SectionRelations[] = [];
 
-        const section = await this.sectionsService.findSectionById(select, relations, section_id);
+        const section = await this.sectionsService.findSectionById(
+            select,
+            relations,
+            section_id,
+        );
 
         const all_videos = await section.videos;
 
-        const order = await this.factoryKeyGeneratorProvider.generateNewKey('new_key', all_videos);
+        const order = await this.factoryKeyGeneratorProvider.generateNewKey(
+            'new_key',
+            all_videos,
+        );
 
-        const video = await this.videosService.createVideo(addVideoDto, section.id, order);
+        const video = await this.videosService.createVideo(
+            addVideoDto,
+            section.id,
+            order,
+        );
 
         return {
             response: {
                 message: 'video added successfully',
-                video
+                video,
             },
-        }
+        };
     }
 
+    @UseGuards(IsYourVideoGuard)
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Delete('delete-video/:video_id')
+    async deleteVideo(@Param('video_id', ParseIntPipe) video_id: number) {
+        this.logger.log(`deleting video with id: ${video_id}`);
+
+        await this.videosService.deleteVideo(video_id);
+
+        return {
+            response: {
+                message: 'video deleted successfully',
+            },
+        };
+    }
 }

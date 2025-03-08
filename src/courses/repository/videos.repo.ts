@@ -7,9 +7,10 @@ import {
 import { AddVideoDto } from '../../instructor/dtos/add.video.dto';
 
 // orm and entities
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsSelect } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Videos } from '../entities/videos.entity';
+import { VideoEnum, VideoRelations } from '../entities/enums/videos.enums';
 @Injectable()
 export class VideosRepo {
     private readonly logger = new Logger(VideosRepo.name);
@@ -18,6 +19,31 @@ export class VideosRepo {
         @InjectRepository(Videos)
         private readonly videosRepository: Repository<Videos>,
     ) { }
+
+    async findOneById(select: VideoEnum[], relations: VideoRelations[] = [], video_id: number): Promise<Videos> {
+        try {
+            return await this.videosRepository.findOne({
+                where: { id: video_id },
+                select: select as FindOptionsSelect<Videos>,
+            });
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: `Error while fetching video with id: ${video_id}`,
+                details: error.message,
+            });
+        }
+    }
+
+    async deleteVideo(video_id: number): Promise<void> {
+        try {
+            await this.videosRepository.delete(video_id);
+        }catch (error) {
+            throw new InternalServerErrorException({
+                message: `Error while deleting video with id: ${video_id}`,
+                details: error.message,
+            });
+        }
+    }
 
     async createVideo(
         video: AddVideoDto,
