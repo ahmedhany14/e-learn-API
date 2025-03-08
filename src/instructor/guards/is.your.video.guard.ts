@@ -26,7 +26,7 @@ export class IsYourVideoGuard implements CanActivate {
 
         const video = await this.videosService.findOneById(video_select, video_relations, video_id);
 
-        this.logger.log(`video: ${JSON.stringify(video)}`);
+        
         if (!video) {
             throw new NotFoundException({
                 message: `Video with id: ${video_id} not found`,
@@ -57,6 +57,8 @@ export class IsYourVideoGuard implements CanActivate {
         console.log(course.instructor.id);
         console.log(instructor_id);        
 
+        request.course_id = course.id;
+        request.section_id = section.id;
         if (course.instructor.id !== instructor_id) {
             throw new UnauthorizedException({
                 message: 'You are not allowed to perform this action',

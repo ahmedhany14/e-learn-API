@@ -36,4 +36,15 @@ export class VideosService {
     async updateVideo(video_id: number, updateVideoDto: UpdateVideoDto) {
         return await this.videosRepo.updateVideo(video_id, updateVideoDto);
     }
+
+    async findAllVideosInSection(
+        select: VideoEnum[] = [],
+        section_id: number,
+    ) {
+        return await this.videosRepo.findAllVideosInSection(select, section_id);
+    }
+
+    async updateOrder(video_id: number, new_order: string) {
+        return await this.videosRepo.updateOrder(video_id, new_order);
+    }
 }

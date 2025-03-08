@@ -38,7 +38,6 @@ export class Videos {
     order: string
 
     @ManyToOne(() => Section, section => section.videos, {
-        eager: true,
         cascade: true,
         onDelete: "CASCADE",
     })

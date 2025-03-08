@@ -1,5 +1,6 @@
 import {
     Body,
+    ConflictException,
     Controller,
     Delete,
     Inject,
@@ -8,6 +9,7 @@ import {
     ParseIntPipe,
     Patch,
     Post,
+    Req,
     UseGuards,
 } from '@nestjs/common';
 
@@ -36,6 +38,8 @@ import {
 } from 'src/courses/entities/enums/sections.enums';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 import { UpdateVideoDto } from '../dtos/update.video.dto';
+import { ReOrderingDto } from '../dtos/re-ordering.dto';
+import { VideoEnum } from 'src/courses/entities/enums/videos.enums';
 
 @Controller('instructor-videos')
 export class InstructorManageVideosController {
@@ -127,6 +131,88 @@ export class InstructorManageVideosController {
             response: {
                 message: 'video updated successfully',
                 video
+            },
+        };
+    }
+
+    @UseGuards(IsYourVideoGuard)
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('move-video-in-section/:video_id')
+    async moveVideo(
+        @Param('video_id', ParseIntPipe) video_id: number,
+        @Req() request,
+        @Body() reOrderingDto: ReOrderingDto,
+    ) {
+        const section_id = request.section_id, course_id = request.course_id;
+
+        const all_videos = await this.videosService.findAllVideosInSection([VideoEnum.ID, VideoEnum.ORDER], section_id);
+
+
+        if (reOrderingDto.new_order < 1 || reOrderingDto.new_order > all_videos.length) {
+            throw new ConflictException({
+                message: 'Invalid new order',
+                details: 'New order is out of range',
+            });
+        }
+
+        if (reOrderingDto.new_order !== all_videos.findIndex(video => video.id === video_id) + 1) {
+            this.logger.log(`moving video with id: ${video_id} to new order: ${reOrderingDto.new_order}`);
+
+            let order: string, target_order: number = reOrderingDto.new_order;
+            const position = target_order === 1 ? 'first_key' : target_order === all_videos.length ? 'last_key' : 'between_key';
+
+            if (position === 'first_key') {
+                order = await this.factoryKeyGeneratorProvider.generateNewKey(
+                    'first_key',
+                    all_videos,
+                    all_videos[target_order - 1].order
+                );
+            }
+
+            else if (position === 'last_key') {
+                order = await this.factoryKeyGeneratorProvider.generateNewKey(
+                    'last_key',
+                    all_videos,
+                    all_videos[target_order - 1].order
+                );
+            }
+            else {
+                let my_order = -1;
+
+                for (let i = 0; i < all_videos.length; i++) 
+                    if (all_videos[i].id === video_id) 
+                        my_order = i + 1;
+                
+
+                let prev: string, next: string;
+
+                if (target_order > my_order) {
+                    next = all_videos[target_order].order;
+                    prev = all_videos[target_order - 1].order;
+                }
+                else {
+                    next = all_videos[target_order - 1].order;
+                    prev = all_videos[target_order - 2].order;
+                }
+                console.log(target_order, my_order);
+
+                console.log(prev, next);
+                order = await this.factoryKeyGeneratorProvider.generateNewKey(
+                    'between_key',
+                    all_videos,
+                    prev,
+                    next
+                );
+            }
+
+            console.log(order);
+            await this.videosService.updateOrder(video_id, order);
+        }
+
+        return {
+            response: {
+                message: 'video moved successfully',
             },
         };
     }

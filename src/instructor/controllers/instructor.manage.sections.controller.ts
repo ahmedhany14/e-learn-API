@@ -20,7 +20,7 @@ import { CourseService } from 'src/courses/service/course.service';
 // dtos
 import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
 import { EditSectionDto } from '../dtos/edit.section.dto';
-import { ReOrderSectionsDto } from '../dtos/re-order.sections.dto';
+import { ReOrderingDto } from '../dtos/re-ordering.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';
@@ -149,7 +149,7 @@ export class InstructorManageSectionsController {
     async moveSection(
         @Param('section_id', ParseIntPipe) section_id: number,
         @Param('course_id', ParseIntPipe) course_id: number,
-        @Body() reOrderSectionsDto: ReOrderSectionsDto,
+        @Body() reOrderSectionsDto: ReOrderingDto,
     ) {
 
         const all_sections = await this.sectionService.getCourseSections(course_id);
