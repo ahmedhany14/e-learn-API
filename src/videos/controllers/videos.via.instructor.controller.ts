@@ -39,6 +39,7 @@ import { Videos } from '../entity/videos.entity';
 import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 import { VideoEnum } from 'src/videos/entity/videos.enums';
 import { KeyGeneratorService } from '../../common/key.generator/key.generator.service';
+import * as console from 'node:console';
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
@@ -152,6 +153,46 @@ export class VideosViaInstructorController {
             await this.videosService.updateOrder(video_id, order);
         }
 
+        return {
+            response: {
+                message: 'video moved successfully',
+            },
+        };
+    }
+
+    @UseGuards(IsYourVideoGuard)
+    @UseGuards(IsYourSectionGuard)
+    @Patch('move-video-from-section-to-section/:video_id/:section_id')
+    async moveVideoFromSectionToSection(
+        @Param('video_id', ParseIntPipe) video_id: number,
+        @Param('section_id', ParseIntPipe) new_section_id: number,
+        @Body() reOrderingDto: ReOrderingDto,
+    ) {
+        this.logger.log(
+            `moving video with id: ${video_id} to new section with id: ${new_section_id}`,
+        );
+
+        const all_videos = await this.videosService.findAllVideosInSection(
+            [VideoEnum.ID, VideoEnum.ORDER],
+            new_section_id,
+        );
+
+        console.log('all_videos', all_videos.length + 1);
+        console.log('reOrderingDto.new_order', reOrderingDto.new_order);
+        if (reOrderingDto.new_order > all_videos.length + 1) {
+            throw new ConflictException({
+                message: 'Invalid new order',
+                details: 'New order is out of range',
+            });
+        }
+
+        const order = await this.keyGeneratorService.generator(
+            all_videos,
+            video_id,
+            reOrderingDto.new_order,
+        );
+
+        await this.videosService.moveToNewSection(video_id, new_section_id, order);
         return {
             response: {
                 message: 'video moved successfully',

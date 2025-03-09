@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { generateKeyBetween, generateJitteredKeyBetween } from 'fractional-indexing-jittered';
 import { IndexGenerator } from 'fractional-indexing-jittered';
-import * as console from 'node:console';
 import { Section } from '../../../sections/entity/sections.entity';
 import { Videos } from '../../../videos/entity/videos.entity';
 
@@ -15,22 +13,18 @@ export class KeyGeneratorProvider<T extends WillBe> {
 
     async generateNewKey(data: T[]) {
         this.logger.log('Generating new key');
-
         this.UpDateGenerator(data);
         return data.length === 0 ? this.indexGenerator.keyStart() : this.indexGenerator.keyEnd();
     }
 
     async generateKeyToInsertFirst(data: T[], first_order: string) {
         this.logger.log('Generating key to insert first');
-        this.UpDateGenerator(data);
-        return generateKeyBetween('a0', first_order);
+        return this.getKeyBetween('0', first_order);
     }
 
     async generateKeyToInsertLast(data: T[], last_order: string) {
         this.logger.log('Generating key to insert last');
-
-        this.UpDateGenerator(data);
-        return generateKeyBetween(last_order, null);
+        return this.getKeyBetween(last_order, 'ZZZZZ');
     }
 
     getKeyBetween(previous: string, next: string): string {

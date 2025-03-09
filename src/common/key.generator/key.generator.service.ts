@@ -17,18 +17,21 @@ export class KeyGeneratorService<T extends WillBe> {
 
     determineKeyType(target_order: number, n: number): KeyTypeEnum {
         if (target_order === 1) return KeyTypeEnum.FIRST;
-        if (target_order === n) return KeyTypeEnum.LAST;
+        if (target_order === n || target_order == n + 1) return KeyTypeEnum.LAST;
         return KeyTypeEnum.BETWEEN;
     }
 
     async generator(data: T[], id: number, target_order: number): Promise<string> {
         const n = data.length;
         const keyType = this.determineKeyType(target_order, n);
+
+        console.log('keyType', keyType);
+
         switch (keyType) {
             case KeyTypeEnum.FIRST:
-                return await this.insertFirstKey(data, data[target_order - 1].order);
+                return await this.insertFirstKey(data, data[0].order);
             case KeyTypeEnum.LAST:
-                return await this.insertLastKey(data, data[target_order - 1].order);
+                return await this.insertLastKey(data, data[n - 1].order);
             case KeyTypeEnum.BETWEEN:
                 const { previous_order, next_order } = this.getPreviousAndNextOrder(
                     data,
@@ -82,14 +85,15 @@ export class KeyGeneratorService<T extends WillBe> {
 
         for (let i = 0; i < data.length; i++) if (data[i].id === id) my_order = i + 1;
 
-        if (target_order > my_order) {
+        console.log('my_order', my_order);
+        if (target_order > my_order && ~my_order) {
             next = data[target_order].order;
             prev = data[target_order - 1].order;
         } else {
+            // NOTE this case will be suitable moving video from section to section also.
             next = data[target_order - 1].order;
             prev = data[target_order - 2].order;
         }
-
         return { previous_order: prev, next_order: next };
     }
 }
