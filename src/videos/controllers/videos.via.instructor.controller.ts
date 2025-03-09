@@ -31,7 +31,7 @@ import { UpdateVideoDto } from '../dtos/update.video.dto';
 import { ReOrderingDto } from '../..//common//dtos/re-ordering/re-ordering.dto';
 
 // guards
-import { IsYourSectionGuard } from '../../instructor/guards/is.your.section.guard';
+import { IsYourSectionGuard } from '../../sections//guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
 // entities

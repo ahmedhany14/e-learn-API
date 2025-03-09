@@ -23,62 +23,58 @@ import { SectionsInstructorService } from 'src/sections/services/instructor/sect
 
 @Controller('instructor')
 export class InstructorController {
-  private readonly logger = new Logger(InstructorController.name);
+    private readonly logger = new Logger(InstructorController.name);
 
-  constructor(
-    @Inject()
-    private readonly instructorService: InstructorService,
-    @Inject()
-    private readonly courseService: CourseService,
-    @Inject()
-    private readonly sectionService: SectionsInstructorService,
-  ) {}
+    constructor(
+        @Inject()
+        private readonly instructorService: InstructorService,
+    ) { }
 
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  @Get('my-payments')
-  async getPayments(@ExtractAccountData('id') account_id: number) {
-    this.logger.log(`Getting payments for account_id: ${account_id}`);
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Get('my-payments')
+    async getPayments(@ExtractAccountData('id') account_id: number) {
+        this.logger.log(`Getting payments for account_id: ${account_id}`);
 
-    const payments = new SafePaymentInfo(
-      await this.instructorService.getPayments(account_id),
-    );
+        const payments = new SafePaymentInfo(
+            await this.instructorService.getPayments(account_id),
+        );
 
-    return {
-      response: payments,
-    };
-  }
+        return {
+            response: payments,
+        };
+    }
 
-  /*  @ROLE(RoleEnum.INSTRUCTOR)
-            @AUTH(AuthEnum.BEARER)
-            @Patch('edit-payments')
-            async updatePayments(
-                @ExtractAccountData('id') account_id: number,
-                @Body() updatePaymentsDto: UpdatePaymentsDto,
-            ) {
-                if (Object.keys(updatePaymentsDto).length === 0) {
-                    return {
-                        response: 'No data provided to update',
-                    };
-                }
-        
-                await this.instructorService.updatePayments(account_id, updatePaymentsDto);
-        
-                return {
-                    response: 'Payments updated successfully',
-                };
-            }*/
+    /*  @ROLE(RoleEnum.INSTRUCTOR)
+              @AUTH(AuthEnum.BEARER)
+              @Patch('edit-payments')
+              async updatePayments(
+                  @ExtractAccountData('id') account_id: number,
+                  @Body() updatePaymentsDto: UpdatePaymentsDto,
+              ) {
+                  if (Object.keys(updatePaymentsDto).length === 0) {
+                      return {
+                          response: 'No data provided to update',
+                      };
+                  }
+          
+                  await this.instructorService.updatePayments(account_id, updatePaymentsDto);
+          
+                  return {
+                      response: 'Payments updated successfully',
+                  };
+              }*/
 
-  @Get('push-course-to-review/:course_id')
-  @UseGuards(IsYourCourseGuard)
-  @ROLE(RoleEnum.INSTRUCTOR)
-  @AUTH(AuthEnum.BEARER)
-  async pushCourseToBeReviewed(@ExtractCourseDate('id') course_id: number) {
-    this.logger.log(`Pushing course with id: ${course_id} for review`);
-    const review = await this.instructorService.pushCourseForReview(course_id);
+    @Get('push-course-to-review/:course_id')
+    @UseGuards(IsYourCourseGuard)
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    async pushCourseToBeReviewed(@ExtractCourseDate('id') course_id: number) {
+        this.logger.log(`Pushing course with id: ${course_id} for review`);
+        const review = await this.instructorService.pushCourseForReview(course_id);
 
-    return {
-      response: `Course with id: ${course_id} has been pushed for review, with review id: ${review.id}`,
-    };
-  }
+        return {
+            response: `Course with id: ${course_id} has been pushed for review, with review id: ${review.id}`,
+        };
+    }
 }

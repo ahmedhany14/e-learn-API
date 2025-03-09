@@ -4,9 +4,7 @@ import { CoursesModule } from 'src/courses/courses.module';
 import { AdminModule } from 'src/admin/admin.module';
 
 // controllers
-import { InstructorManageSectionsController } from './controllers/instructor.manage.sections.controller';
 import { InstructorManageCoursesController } from './controllers/instructor.manage.courses.controller';
-import { InstructorManageVideosController } from './controllers/instructor.manage.videos.controller';
 import { InstructorController } from './instructor.controller';
 
 // entities
@@ -26,15 +24,8 @@ import { KeyGeneratorModule } from 'src/common/key.generator/key.generator.modul
         CoursesModule,
         AdminModule,
         SectionsModule,
-        VideosModule,
-        KeyGeneratorModule
     ],
-    controllers: [
-        InstructorController,
-        InstructorManageSectionsController,
-        InstructorManageCoursesController,
-        InstructorManageVideosController,
-    ],
+    controllers: [InstructorController, InstructorManageCoursesController],
     providers: [InstructorService, InstructorRepository],
 })
 export class InstructorModule { }

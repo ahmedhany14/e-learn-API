@@ -17,12 +17,12 @@ import { SectionsInstructorService } from 'src/sections/services/instructor/sect
 import { CourseService } from 'src/courses/service/course.service';
 
 // dtos
-import { AddCourseSectionsDto } from '../dtos/sections/add.course.sections.dto';
-import { EditSectionDto } from '../dtos/sections/edit.section.dto';
+import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
+import { EditSectionDto } from '../dtos/edit.section.dto';
 import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 
 // guards
-import { IsYourCourseGuard } from '../guards/is.your.course.guard';
+import { IsYourCourseGuard } from '../../instructor/guards/is.your.course.guard';
 import { IsYourSectionGuard } from '../guards/is.your.section.guard';
 
 // Auth and Role
@@ -38,9 +38,9 @@ import {
     SectionRelations,
 } from 'src/sections/entity/sections.enums';
 
-@Controller('instructor-sections')
-export class InstructorManageSectionsController {
-    private readonly logger = new Logger(InstructorManageSectionsController.name);
+@Controller('sections-via-instructor')
+export class SectionsViaInstructorController {
+    private readonly logger = new Logger(SectionsViaInstructorController.name);
 
     constructor(
         @Inject()
