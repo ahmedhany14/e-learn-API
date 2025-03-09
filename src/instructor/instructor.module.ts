@@ -3,10 +3,6 @@ import { Module } from '@nestjs/common';
 import { CoursesModule } from 'src/courses/courses.module';
 import { AdminModule } from 'src/admin/admin.module';
 
-// controllers
-import { InstructorManageSectionsController } from './controllers/instructor.manage.sections.controller';
-import { InstructorManageCoursesController } from './controllers/instructor.manage.courses.controller';
-import { InstructorManageVideosController } from './controllers/instructor.manage.videos.controller';
 import { InstructorController } from './instructor.controller';
 
 // entities
@@ -21,20 +17,8 @@ import { VideosModule } from '../videos/videos.module';
 import { KeyGeneratorModule } from 'src/common/key.generator/key.generator.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Instructor]),
-        CoursesModule,
-        AdminModule,
-        SectionsModule,
-        VideosModule,
-        KeyGeneratorModule
-    ],
-    controllers: [
-        InstructorController,
-        InstructorManageSectionsController,
-        InstructorManageCoursesController,
-        InstructorManageVideosController,
-    ],
+    imports: [TypeOrmModule.forFeature([Instructor]), CoursesModule, AdminModule],
+    controllers: [InstructorController],
     providers: [InstructorService, InstructorRepository],
 })
-export class InstructorModule { }
+export class InstructorModule {}
