@@ -1,27 +1,28 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 // repository and providers
-import { SectionsRepo } from '../repository/sections.repo';
+import { SectionsInstructorRepo } from '../../repository/instructor/sections.instructor.repo';
 
 // dto
-import { EditSectionDto } from '../../instructor/dtos/sections/edit.section.dto';
-import { SectionEnum, SectionRelations } from '../entities/enums/sections.enums';
+import { EditSectionDto } from '../../../instructor/dtos/sections/edit.section.dto';
+import { SectionEnum, SectionRelations } from '../../entity/sections.enums';
 
 @Injectable()
-export class SectionsService {
+export class SectionsInstructorService {
     constructor(
         @Inject()
-        private readonly SectionsRepo: SectionsRepo,
+        private readonly SectionsRepo: SectionsInstructorRepo,
     ) { }
 
     async findSectionById(
         select: SectionEnum[] = [],
         relations: SectionRelations[] = [],
-        section_id: number) {
+        section_id: number,
+    ) {
         return await this.SectionsRepo.findSectionById(
             select,
             relations,
-            section_id
+            section_id,
         );
     }
 

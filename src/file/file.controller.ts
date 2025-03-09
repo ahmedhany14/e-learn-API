@@ -1,14 +1,13 @@
 import {
-    BadRequestException,
-    Controller,
-    Inject,
-    NotFoundException,
-    Param,
-    ParseIntPipe,
-    Post,
-    UnauthorizedException,
-    UploadedFile,
-    UseInterceptors,
+  Controller,
+  Inject,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -26,78 +25,81 @@ import { RoleEnum } from '../auth/enums/role.enum';
 // decorators
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { ProfileService } from '../profile/services/profile.service';
-import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
-import { CourseEnum, CourseRelations } from 'src/courses/entities/enums/course.enums';
+import { CourseEnum, CourseRelations } from 'src/courses/entities/course.enums';
 
 @Controller('file')
 export class FileController {
-    constructor(
-        @Inject()
-        private readonly fileService: FileService,
-        @Inject()
-        private readonly courseService: CourseService,
-        @Inject()
-        private readonly profileService: ProfileService,
-    ) { }
+  constructor(
+    @Inject()
+    private readonly fileService: FileService,
+    @Inject()
+    private readonly courseService: CourseService,
+    @Inject()
+    private readonly profileService: ProfileService,
+  ) {}
 
-    @ROLE(RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
-    @Post('upload-course-image/:course_id')
-    @UseInterceptors(FileInterceptor('course-image'))
-    async uploadCourseImage(
-        @UploadedFile() file: Express.Multer.File,
-        @Param('course_id', ParseIntPipe) course_id: number,
-        @ExtractAccountData('id') account_id: number,
-    ) {
-        const course = await this.courseService.getCourse([CourseEnum.ID], [CourseRelations.INSTRUCTOR], course_id);
-        if (!course)
-            throw new NotFoundException({
-                message: 'Course not found',
-                details:
-                    'you are trying to upload image for a course that does not exist',
-            });
-        if (course.instructor.id !== account_id)
-            throw new UnauthorizedException({
-                message: 'Unauthorized',
-                details: 'You are not the instructor of this course',
-            });
-        const filename = await this.fileService.resizeAndOptimize(
-            file,
-            'course',
-            course_id,
-        );
+  @ROLE(RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Post('upload-course-image/:course_id')
+  @UseInterceptors(FileInterceptor('course-image'))
+  async uploadCourseImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('course_id', ParseIntPipe) course_id: number,
+    @ExtractAccountData('id') account_id: number,
+  ) {
+    const course = await this.courseService.getCourse(
+      [CourseEnum.ID],
+      [CourseRelations.INSTRUCTOR],
+      course_id,
+    );
+    if (!course)
+      throw new NotFoundException({
+        message: 'Course not found',
+        details:
+          'you are trying to upload image for a course that does not exist',
+      });
+    if (course.instructor.id !== account_id)
+      throw new UnauthorizedException({
+        message: 'Unauthorized',
+        details: 'You are not the instructor of this course',
+      });
+    const filename = await this.fileService.resizeAndOptimize(
+      file,
+      'course',
+      course_id,
+    );
 
-        await this.courseService.updateImageName(course_id, filename);
+    await this.courseService.updateImageName(course_id, filename);
 
-        return {
-            response: {
-                message: 'Course image uploaded successfully',
-                fileName: filename,
-            },
-        };
-    }
+    return {
+      response: {
+        message: 'Course image uploaded successfully',
+        fileName: filename,
+      },
+    };
+  }
 
-    @ROLE(RoleEnum.USER, RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
-    @Post('upload-profile-image')
-    @UseInterceptors(FileInterceptor('profile-image'))
-    async uploadProfileImage(
-        @UploadedFile() file: Express.Multer.File,
-        @ExtractAccountData('id') account_id: number,
-    ) {
-        const filename = await this.fileService.resizeAndOptimize(
-            file,
-            'profile',
-            account_id,
-        );
+  @ROLE(RoleEnum.USER, RoleEnum.INSTRUCTOR)
+  @AUTH(AuthEnum.BEARER)
+  @Post('upload-profile-image')
+  @UseInterceptors(FileInterceptor('profile-image'))
+  async uploadProfileImage(
+    @UploadedFile() file: Express.Multer.File,
+    @ExtractAccountData('id') account_id: number,
+  ) {
+    const filename = await this.fileService.resizeAndOptimize(
+      file,
+      'profile',
+      account_id,
+    );
 
-        // add it to the DB
-        await this.profileService.updateProfileImage(account_id, filename);
-        return {
-            response: {
-                message: 'Profile image uploaded successfully',
-                fileName: filename,
-            },
-        };
-    }
+    // add it to the DB
+    await this.profileService.updateProfileImage(account_id, filename);
+    return {
+      response: {
+        message: 'Profile image uploaded successfully',
+        fileName: filename,
+      },
+    };
+  }
 }

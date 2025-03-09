@@ -50,110 +50,116 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentsModule } from './blog-system/comments/comments.module';
 import { RepliesModule } from './blog-system/replies/replies.module';
+import { VideosModule } from './videos/videos.module';
+import { SectionsModule } from './sections/sections.module';
 
 
 @Module({
-  imports: [
-    // ORM and Database
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigurationsModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.databaseConfig.host,
-        port: configService.databaseConfig.port,
-        username: configService.databaseConfig.username,
-        password: configService.databaseConfig.password,
-        database: configService.databaseConfig.database,
-        synchronize: configService.databaseConfig.synchronize,
-        autoLoadEntities: configService.databaseConfig.autoLoadEntities,
-        namingStrategy: new SnakeNamingStrategy(),
-        logger: 'advanced-console', // Use the advanced console logger
-      }),
-    }),
+    imports: [
+        // ORM and Database
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigurationsModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.databaseConfig.host,
+                port: configService.databaseConfig.port,
+                username: configService.databaseConfig.username,
+                password: configService.databaseConfig.password,
+                database: configService.databaseConfig.database,
+                synchronize: configService.databaseConfig.synchronize,
+                autoLoadEntities: configService.databaseConfig.autoLoadEntities,
+                namingStrategy: new SnakeNamingStrategy(),
+                logger: 'advanced-console', // Use the advanced console logger
+            }),
+        }),
 
-    MongooseModule.forRootAsync({
-      imports: [ConfigurationsModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.databaseConfig.url
-      })
-    }),
+        MongooseModule.forRootAsync({
+            imports: [ConfigurationsModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService) => ({
+                uri: configService.databaseConfig.url
+            })
+        }),
 
 
-    AuthModule,
+        AuthModule,
 
-    AccountModule,
+        AccountModule,
 
-    ProfileModule,
+        ProfileModule,
 
-    EmailModule,
+        EmailModule,
 
-    AdminModule,
+        AdminModule,
 
-    InstructorModule,
+        InstructorModule,
 
-    PaginationModule,
+        PaginationModule,
 
-    CoursesModule,
+        CoursesModule,
 
-    FileModule,
+        FileModule,
 
-    TagsModule,
+        TagsModule,
 
-    PlansModule,
+        PlansModule,
 
-    RedisModule,
+        RedisModule,
 
-    ConfigurationsModule,
+        ConfigurationsModule,
 
-    JwtModule,
+        JwtModule,
 
-    OrdersModule,
+        OrdersModule,
 
-    BlogModule,
+        BlogModule,
 
-    CommentsModule,
+        CommentsModule,
 
-    RepliesModule,
+        RepliesModule,
 
-    // DbModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    AccessTokenGuard,
-    TokenProvider,
-    Email,
-    // MigrationService,
+        VideosModule,
 
-    // Guards
-    {
-      provide: APP_GUARD,
-      useClass: AuthenticationGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PermissionGuard,
-    },
+        SectionsModule,
 
-    // Interceptors
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
+        // DbModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        AppService,
+        AccessTokenGuard,
+        TokenProvider,
+        Email,
+        // MigrationService,
 
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+        // Guards
+        {
+            provide: APP_GUARD,
+            useClass: AuthenticationGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: PermissionGuard,
+        },
 
-    PlansViaAdminService,
-  ],
+        // Interceptors
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ResponseInterceptor,
+        },
+
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
+        },
+
+        PlansViaAdminService,
+    ],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware, RateLimiterMiddleware).forRoutes('*');
-    //consumer.apply(LoggerMiddleware).forRoutes('auth'); // for specific route
-  }
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware, RateLimiterMiddleware).forRoutes('*');
+        //consumer.apply(LoggerMiddleware).forRoutes('auth'); // for specific route
+    }
 }

@@ -16,11 +16,23 @@ import { Instructor } from './entity/instructor.entity';
 // services
 import { InstructorService } from './services/instructor.service';
 import { InstructorRepository } from './repository/instructor.repository';
-
+import { SectionsModule } from '../sections/sections.module';
+import { VideosModule } from '../videos/videos.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Instructor]), CoursesModule, AdminModule],
-    controllers: [InstructorController, InstructorManageSectionsController, InstructorManageCoursesController, InstructorManageVideosController],
-    providers: [InstructorService, InstructorRepository],
+  imports: [
+    TypeOrmModule.forFeature([Instructor]),
+    CoursesModule,
+    AdminModule,
+    SectionsModule,
+    VideosModule,
+  ],
+  controllers: [
+    InstructorController,
+    InstructorManageSectionsController,
+    InstructorManageCoursesController,
+    InstructorManageVideosController,
+  ],
+  providers: [InstructorService, InstructorRepository],
 })
-export class InstructorModule { }
+export class InstructorModule {}

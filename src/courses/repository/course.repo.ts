@@ -12,17 +12,15 @@ import { Course } from '../entities/course.entity';
 import { QueryDto } from 'src/instructor/dtos/courses/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/instructor/dtos/courses/update.course.dto';
 
-import { CourseEnum, CourseRelations } from '../entities/enums/course.enums';
+import { CourseEnum, CourseRelations } from '../entities/course.enums';
 
 @Injectable()
 export class CourseRepo {
     private readonly logger = new Logger(CourseRepo.name);
 
     constructor(
-
         @InjectRepository(Course)
         private readonly courseRepository: Repository<Course>,
-
     ) { }
 
     async createCourse(account_id: number): Promise<Course> {
@@ -43,7 +41,7 @@ export class CourseRepo {
     async findOneById(
         select: CourseEnum[],
         relation: CourseRelations[],
-        id: number
+        id: number,
     ): Promise<Course> {
         try {
             return await this.courseRepository.findOne({
@@ -60,7 +58,10 @@ export class CourseRepo {
         }
     }
 
-    async updateImageName(course_id: number, image_name: string): Promise<string> {
+    async updateImageName(
+        course_id: number,
+        image_name: string,
+    ): Promise<string> {
         try {
             const course = await this.courseRepository.findOne({
                 where: { id: course_id },
@@ -83,9 +84,8 @@ export class CourseRepo {
         select: CourseEnum[],
         relations: CourseRelations[],
         filter: any,
-        queryDto: QueryDto
+        queryDto: QueryDto,
     ) {
-
         try {
             console.log('filter', filter);
             console.log('queryDto', queryDto);
@@ -98,7 +98,6 @@ export class CourseRepo {
                 take: queryDto.limit,
                 relations: relations,
             });
-
 
             const totalCourses = await this.courseRepository.count({
                 where: filter,
@@ -138,18 +137,19 @@ export class CourseRepo {
     async updateCourseData(
         select: CourseEnum[],
         relation: CourseRelations[],
-        course_id: number, updateCourseDto: UpdateCourseDto): Promise<Course> {
+        course_id: number,
+        updateCourseDto: UpdateCourseDto,
+    ): Promise<Course> {
         try {
             let course = await this.courseRepository.findOne({
                 where: { id: course_id },
                 select: select as FindOptionsSelect<Course>,
                 relations: relation,
             });
-            course =
-            {
+            course = {
                 ...course,
-                ...updateCourseDto
-            }
+                ...updateCourseDto,
+            };
             return await this.courseRepository.save(course);
         } catch (error) {
             throw new InternalServerErrorException(

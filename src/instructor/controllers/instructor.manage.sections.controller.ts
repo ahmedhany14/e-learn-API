@@ -11,10 +11,9 @@ import {
     UseGuards,
 } from '@nestjs/common';
 
-
 // services
 import { FactoryKeyGeneratorProvider } from '../../courses/providers/factory.key.generator.provider';
-import { SectionsService } from 'src/courses/service/sections.service';
+import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 import { CourseService } from 'src/courses/service/course.service';
 
 // dtos
@@ -33,8 +32,11 @@ import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 
 // entities and enums
-import { Section } from 'src/courses/entities/sections.entity';
-import { SectionEnum, SectionRelations } from 'src/courses/entities/enums/sections.enums';
+import { Section } from 'src/sections/entity/sections.entity';
+import {
+    SectionEnum,
+    SectionRelations,
+} from 'src/sections/entity/sections.enums';
 
 @Controller('instructor-sections')
 export class InstructorManageSectionsController {
@@ -42,14 +44,12 @@ export class InstructorManageSectionsController {
 
     constructor(
         @Inject()
-        private readonly sectionService: SectionsService,
-        @Inject()
         private readonly courseService: CourseService,
-
+        @Inject()
+        private readonly sectionService: SectionsInstructorService,
         @Inject()
         private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Section>,
     ) { }
-
 
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
@@ -59,17 +59,17 @@ export class InstructorManageSectionsController {
         @Param('course_id', ParseIntPipe) course_id: number,
         @Body() addCourseSectionsDto: AddCourseSectionsDto,
     ) {
-        this.logger.log(`adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`);
+        this.logger.log(
+            `adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`,
+        );
 
         const course = await this.courseService.getCourse([], [], course_id);
         const sections = await course.sections;
 
-
-
         const order: string = await this.factoryKeyGeneratorProvider.generateNewKey(
             'new_key',
-            sections
-        )
+            sections,
+        );
         console.log('newOrder', order);
 
         const section = await this.sectionService.createSection(
@@ -94,7 +94,9 @@ export class InstructorManageSectionsController {
         @Param('section_id', ParseIntPipe) section_id: number,
         @Body() editSectionDto: EditSectionDto,
     ) {
-        this.logger.log(`editing section with id: ${section_id}, with properties: ${JSON.stringify(editSectionDto)}`);
+        this.logger.log(
+            `editing section with id: ${section_id}, with properties: ${JSON.stringify(editSectionDto)}`,
+        );
 
         const section = await this.sectionService.editSection(
             section_id,
@@ -113,15 +115,17 @@ export class InstructorManageSectionsController {
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
     @Delete('delete-section/:section_id')
-    async deleteSection(
-        @Param('section_id', ParseIntPipe) section_id: number,
-    ) {
+    async deleteSection(@Param('section_id', ParseIntPipe) section_id: number) {
         this.logger.log(`deleting section with id: ${section_id}`);
 
         const select: SectionEnum[] = [SectionEnum.ID];
         const relations: SectionRelations[] = [];
 
-        const section = await this.sectionService.findSectionById(select, relations, section_id);
+        const section = await this.sectionService.findSectionById(
+            select,
+            relations,
+            section_id,
+        );
 
         const videos = await section.videos;
 
@@ -133,7 +137,6 @@ export class InstructorManageSectionsController {
         }
 
         await this.sectionService.deleteSection(section_id);
-
 
         return {
             response: {
@@ -151,41 +154,52 @@ export class InstructorManageSectionsController {
         @Param('course_id', ParseIntPipe) course_id: number,
         @Body() reOrderSectionsDto: ReOrderingDto,
     ) {
-
         const all_sections = await this.sectionService.getCourseSections(course_id);
 
-        if (reOrderSectionsDto.new_order < 1 || reOrderSectionsDto.new_order > all_sections.length) {
+        if (
+            reOrderSectionsDto.new_order < 1 ||
+            reOrderSectionsDto.new_order > all_sections.length
+        ) {
             throw new ConflictException({
                 message: 'Invalid new order',
                 details: 'New order is out of range',
             });
         }
 
-        if (reOrderSectionsDto.new_order !== all_sections.findIndex(section => section.id === section_id) + 1) {
-            this.logger.log(`moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`);
+        if (
+            reOrderSectionsDto.new_order !==
+            all_sections.findIndex((section) => section.id === section_id) + 1
+        ) {
+            this.logger.log(
+                `moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`,
+            );
 
-            let order: string, target_order: number = reOrderSectionsDto.new_order;
-            const position = target_order === 1 ? 'first_key' : target_order === all_sections.length ? 'last_key' : 'between_key';
+            let order: string,
+                target_order: number = reOrderSectionsDto.new_order;
+            const position =
+                target_order === 1
+                    ? 'first_key'
+                    : target_order === all_sections.length
+                        ? 'last_key'
+                        : 'between_key';
 
             if (position === 'first_key')
                 order = await this.factoryKeyGeneratorProvider.generateNewKey(
                     'first_key',
                     all_sections,
-                    all_sections[target_order - 1].order
+                    all_sections[target_order - 1].order,
                 );
             else if (position === 'last_key')
                 order = await this.factoryKeyGeneratorProvider.generateNewKey(
                     'last_key',
                     all_sections,
-                    all_sections[target_order - 1].order
+                    all_sections[target_order - 1].order,
                 );
             else {
-
                 let my_order = -1;
 
                 for (let i = 0; i < all_sections.length; i++)
-                    if (all_sections[i].id === section_id)
-                        my_order = i + 1;
+                    if (all_sections[i].id === section_id) my_order = i + 1;
 
                 let prev: string, next: string;
                 if (target_order > my_order) {
@@ -200,13 +214,12 @@ export class InstructorManageSectionsController {
                     'between_key',
                     all_sections,
                     prev,
-                    next
+                    next,
                 );
             }
 
             await this.sectionService.updateOrder(section_id, order);
         }
-
 
         return {
             response: {
@@ -214,5 +227,4 @@ export class InstructorManageSectionsController {
             },
         };
     }
-
 }
