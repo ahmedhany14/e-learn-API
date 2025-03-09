@@ -19,7 +19,7 @@ import { SafePaymentInfo } from './types/instructor.types';
 import { IsYourCourseGuard } from './guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
 import { CourseService } from 'src/courses/service/course.service';
-import { SectionsService } from 'src/courses/service/sections.service';
+import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 
 @Controller('instructor')
 export class InstructorController {
@@ -31,7 +31,7 @@ export class InstructorController {
     @Inject()
     private readonly courseService: CourseService,
     @Inject()
-    private readonly sectionService: SectionsService,
+    private readonly sectionService: SectionsInstructorService,
   ) {}
 
   @ROLE(RoleEnum.INSTRUCTOR)
@@ -50,24 +50,24 @@ export class InstructorController {
   }
 
   /*  @ROLE(RoleEnum.INSTRUCTOR)
-		@AUTH(AuthEnum.BEARER)
-		@Patch('edit-payments')
-		async updatePayments(
-			@ExtractAccountData('id') account_id: number,
-			@Body() updatePaymentsDto: UpdatePaymentsDto,
-		) {
-			if (Object.keys(updatePaymentsDto).length === 0) {
-				return {
-					response: 'No data provided to update',
-				};
-			}
-	
-			await this.instructorService.updatePayments(account_id, updatePaymentsDto);
-	
-			return {
-				response: 'Payments updated successfully',
-			};
-		}*/
+            @AUTH(AuthEnum.BEARER)
+            @Patch('edit-payments')
+            async updatePayments(
+                @ExtractAccountData('id') account_id: number,
+                @Body() updatePaymentsDto: UpdatePaymentsDto,
+            ) {
+                if (Object.keys(updatePaymentsDto).length === 0) {
+                    return {
+                        response: 'No data provided to update',
+                    };
+                }
+        
+                await this.instructorService.updatePayments(account_id, updatePaymentsDto);
+        
+                return {
+                    response: 'Payments updated successfully',
+                };
+            }*/
 
   @Get('push-course-to-review/:course_id')
   @UseGuards(IsYourCourseGuard)

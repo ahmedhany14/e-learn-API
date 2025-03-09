@@ -11,6 +11,6 @@ export enum CourseEnum {
     RATE = 'rate',
 }
 
-export enum CourseRelations{
+export enum CourseRelations {
     INSTRUCTOR = 'instructor',
 }

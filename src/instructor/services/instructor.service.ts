@@ -8,7 +8,7 @@ import { UpdatePaymentsDto } from '../dtos/update.payments.dto';
 
 // services
 import { CourseService } from 'src/courses/service/course.service';
-import { QueryDto } from '../dtos/my.courses.query.dto';
+import { QueryDto } from '../dtos/courses/my.courses.query.dto';
 import { AdminService } from 'src/admin/sevices/admin.service';
 
 @Injectable()

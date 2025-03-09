@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Inject, Logger, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Logger,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 
 // auth and role decorators
 import { AUTH } from '../../auth/decorators/auth.decorator';
@@ -13,19 +25,17 @@ import { ExtractAccountData } from 'src/common/decorators/request.extractData.de
 import { CourseService } from 'src/courses/service/course.service';
 
 // dto
-import { QueryDto } from '../dtos/my.courses.query.dto';
-import { UpdateCourseDto } from '../dtos/update.course.dto';
+import { QueryDto } from '../dtos/courses/my.courses.query.dto';
+import { UpdateCourseDto } from '../dtos/courses/update.course.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';
 
 // validators
-import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
-import { CourseEnum, CourseRelations } from 'src/courses/entities/enums/course.enums';
+import { CourseEnum } from 'src/courses/entities/course.enums';
 
 @Controller('instructor-courses')
 export class InstructorManageCoursesController {
-
     private readonly logger = new Logger(InstructorManageCoursesController.name);
 
     constructor(
@@ -33,12 +43,13 @@ export class InstructorManageCoursesController {
         private readonly courseService: CourseService,
     ) { }
 
-
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
     @Post('new-course')
     async createCourse(@ExtractAccountData('id') account_id: number) {
-        this.logger.log(`Creating a new course for the instructor account_id: ${account_id}`);
+        this.logger.log(
+            `Creating a new course for the instructor account_id: ${account_id}`,
+        );
 
         const course = await this.courseService.createCourse(account_id);
 
@@ -50,7 +61,6 @@ export class InstructorManageCoursesController {
         };
     }
 
-
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
     @Get('my-courses')
@@ -58,7 +68,6 @@ export class InstructorManageCoursesController {
         @Query() queryDto: QueryDto,
         @ExtractAccountData('id') account_id: number,
     ) {
-
         this.logger.log(
             `Getting courses for the instuctor account_id: ${account_id}`,
         );
@@ -76,7 +85,12 @@ export class InstructorManageCoursesController {
             state: queryDto.state,
         };
 
-        const my_courses = await this.courseService.getMyCourses(select, [], filter, queryDto,)
+        const my_courses = await this.courseService.getMyCourses(
+            select,
+            [],
+            filter,
+            queryDto,
+        );
 
         return {
             response: {
@@ -86,14 +100,13 @@ export class InstructorManageCoursesController {
         };
     }
 
-
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
     @Get('course/:course_id')
     async getCourse(
         @Param('course_id', ParseIntPipe) course_id: number,
-        @ExtractAccountData('id') account_id: number
+        @ExtractAccountData('id') account_id: number,
     ) {
         this.logger.log(`Getting course with course_id: ${course_id}`);
 
@@ -108,8 +121,7 @@ export class InstructorManageCoursesController {
             CourseEnum.IMAGE_URL,
             CourseEnum.VIEWS,
             CourseEnum.RATE,
-        ]
-
+        ];
 
         const course = await this.courseService.getCourse(select, [], course_id);
 
@@ -120,7 +132,6 @@ export class InstructorManageCoursesController {
             },
         };
     }
-
 
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
@@ -141,7 +152,12 @@ export class InstructorManageCoursesController {
             CourseEnum.PRICE,
         ];
 
-        const course = await this.courseService.updateCourseData(select, [], course_id, updateCourseDataDto);
+        const course = await this.courseService.updateCourseData(
+            select,
+            [],
+            course_id,
+            updateCourseDataDto,
+        );
 
         return {
             response: {
@@ -150,5 +166,4 @@ export class InstructorManageCoursesController {
             },
         };
     }
-
 }

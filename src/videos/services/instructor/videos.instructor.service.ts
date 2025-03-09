@@ -1,19 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 // repository and providers
-import { VideosRepo } from '../repository/videos.repo';
-import { AddVideoDto } from '../../instructor/dtos/add.video.dto';
-import { VideoEnum, VideoRelations } from '../entities/enums/videos.enums';
-import { UpdateVideoDto } from 'src/instructor/dtos/update.video.dto';
+import { VideosInstructorRepo } from '../../repository/instructor/videos.instructor.repo';
+import { AddVideoDto } from '../../../instructor/dtos/videos/add.video.dto';
+import { VideoEnum, VideoRelations } from '../../entity/videos.enums';
+import { UpdateVideoDto } from 'src/instructor/dtos/videos/update.video.dto';
 
 @Injectable()
-export class VideosService {
+export class VideosInstructorService {
     constructor(
         @Inject()
-        private readonly videosRepo: VideosRepo,
+        private readonly videosRepo: VideosInstructorRepo,
     ) { }
 
-    async findOneById(select: VideoEnum[] = [], relations: VideoRelations[] = [], video_id: number) {
+    async findOneById(
+        select: VideoEnum[] = [],
+        relations: VideoRelations[] = [],
+        video_id: number,
+    ) {
         return await this.videosRepo.findOneById(select, relations, video_id);
     }
 
@@ -37,10 +41,7 @@ export class VideosService {
         return await this.videosRepo.updateVideo(video_id, updateVideoDto);
     }
 
-    async findAllVideosInSection(
-        select: VideoEnum[] = [],
-        section_id: number,
-    ) {
+    async findAllVideosInSection(select: VideoEnum[] = [], section_id: number) {
         return await this.videosRepo.findAllVideosInSection(select, section_id);
     }
 

@@ -4,9 +4,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CourseRepo } from '../repository/course.repo';
 
 // dto
-import { QueryDto } from 'src/instructor/dtos/my.courses.query.dto';
-import { UpdateCourseDto } from 'src/instructor/dtos/update.course.dto';
-import { CourseEnum, CourseRelations } from '../entities/enums/course.enums';
+import { QueryDto } from 'src/instructor/dtos/courses/my.courses.query.dto';
+import { UpdateCourseDto } from 'src/instructor/dtos/courses/update.course.dto';
+import { CourseEnum, CourseRelations } from '../entities/course.enums';
 
 @Injectable()
 export class CourseService {
@@ -22,13 +22,9 @@ export class CourseService {
     async getCourse(
         select: CourseEnum[] = [CourseEnum.ID, CourseEnum.STATE],
         relation: CourseRelations[] = [],
-        id: number
+        id: number,
     ) {
-        return await this.courserRepo.findOneById(
-            select,
-            relation,
-            id
-        );
+        return await this.courserRepo.findOneById(select, relation, id);
     }
 
     async updateImageName(course_id: number, image_name: string) {
@@ -36,24 +32,42 @@ export class CourseService {
     }
 
     async getMyCourses(
-        select: CourseEnum[] = [CourseEnum.ID, CourseEnum.TITLE, CourseEnum.DESCRIPTION, CourseEnum.PRICE, CourseEnum.IMAGE_URL, CourseEnum.STATE],
+        select: CourseEnum[] = [
+            CourseEnum.ID,
+            CourseEnum.TITLE,
+            CourseEnum.DESCRIPTION,
+            CourseEnum.PRICE,
+            CourseEnum.IMAGE_URL,
+            CourseEnum.STATE,
+        ],
         relataion: CourseRelations[] = [],
         filter: any,
-        queryDto: QueryDto
+        queryDto: QueryDto,
     ) {
-        return await this.courserRepo.getMyCourses(select, relataion, filter, queryDto);
+        return await this.courserRepo.getMyCourses(
+            select,
+            relataion,
+            filter,
+            queryDto,
+        );
     }
 
     async updateCourseData(
-        select: CourseEnum[] = [CourseEnum.ID, CourseEnum.TITLE, CourseEnum.DESCRIPTION, CourseEnum.PRICE],
+        select: CourseEnum[] = [
+            CourseEnum.ID,
+            CourseEnum.TITLE,
+            CourseEnum.DESCRIPTION,
+            CourseEnum.PRICE,
+        ],
         relation: CourseRelations[] = [],
-        course_id: number, updateCourseDto: UpdateCourseDto) {
+        course_id: number,
+        updateCourseDto: UpdateCourseDto,
+    ) {
         return await this.courserRepo.updateCourseData(
             select,
             relation,
             course_id,
-            updateCourseDto
+            updateCourseDto,
         );
     }
-
 }
