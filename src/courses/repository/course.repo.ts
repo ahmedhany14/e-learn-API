@@ -9,8 +9,8 @@ import { FindOptionsSelect, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from '../entities/course.entity';
 // dto
-import { QueryDto } from 'src/instructor/dtos/courses/my.courses.query.dto';
-import { UpdateCourseDto } from 'src/instructor/dtos/courses/update.course.dto';
+import { QueryDto } from 'src/courses/dtos/my.courses.query.dto';
+import { UpdateCourseDto } from 'src/courses/dtos/update.course.dto';
 
 import { CourseEnum, CourseRelations } from '../entities/course.enums';
 

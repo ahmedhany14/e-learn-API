@@ -16,10 +16,8 @@ import { InstructorService } from './services/instructor.service';
 import { SafePaymentInfo } from './types/instructor.types';
 
 // dto
-import { IsYourCourseGuard } from './guards/is.your.course.guard';
+import { IsYourCourseGuard } from '../courses/guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
-import { CourseService } from 'src/courses/service/course.service';
-import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 
 @Controller('instructor')
 export class InstructorController {

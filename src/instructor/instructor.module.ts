@@ -3,8 +3,6 @@ import { Module } from '@nestjs/common';
 import { CoursesModule } from 'src/courses/courses.module';
 import { AdminModule } from 'src/admin/admin.module';
 
-// controllers
-import { InstructorManageCoursesController } from './controllers/instructor.manage.courses.controller';
 import { InstructorController } from './instructor.controller';
 
 // entities
@@ -23,9 +21,8 @@ import { KeyGeneratorModule } from 'src/common/key.generator/key.generator.modul
         TypeOrmModule.forFeature([Instructor]),
         CoursesModule,
         AdminModule,
-        SectionsModule,
     ],
-    controllers: [InstructorController, InstructorManageCoursesController],
+    controllers: [InstructorController],
     providers: [InstructorService, InstructorRepository],
 })
 export class InstructorModule { }

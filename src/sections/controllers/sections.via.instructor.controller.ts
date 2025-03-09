@@ -22,7 +22,7 @@ import { EditSectionDto } from '../dtos/edit.section.dto';
 import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 
 // guards
-import { IsYourCourseGuard } from '../../instructor/guards/is.your.course.guard';
+import { IsYourCourseGuard } from '../../courses/guards/is.your.course.guard';
 import { IsYourSectionGuard } from '../guards/is.your.section.guard';
 
 // Auth and Role

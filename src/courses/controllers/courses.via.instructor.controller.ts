@@ -24,19 +24,18 @@ import { ExtractAccountData } from 'src/common/decorators/request.extractData.de
 // services and providers
 import { CourseService } from 'src/courses/service/course.service';
 
-// dto
-import { QueryDto } from '../dtos/courses/my.courses.query.dto';
-import { UpdateCourseDto } from '../dtos/courses/update.course.dto';
+// dto and enums
+import { QueryDto } from '../dtos/my.courses.query.dto';
+import { UpdateCourseDto } from '../dtos/update.course.dto';
+import { CourseEnum } from 'src/courses/entities/course.enums';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';
 
-// validators
-import { CourseEnum } from 'src/courses/entities/course.enums';
 
-@Controller('instructor-courses')
-export class InstructorManageCoursesController {
-    private readonly logger = new Logger(InstructorManageCoursesController.name);
+@Controller('courses.via.instructor')
+export class CoursesViaInstructorController {
+    private readonly logger = new Logger(CoursesViaInstructorController.name);
 
     constructor(
         @Inject()
