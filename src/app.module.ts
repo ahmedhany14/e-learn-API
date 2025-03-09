@@ -49,6 +49,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentsModule } from './blog-system/comments/comments.module';
+import { RepliesModule } from './blog-system/replies/replies.module';
 
 
 @Module({
@@ -112,8 +113,9 @@ import { CommentsModule } from './blog-system/comments/comments.module';
 
     BlogModule,
 
-    CommentsModule
+    CommentsModule,
 
+    RepliesModule
     // DbModule,
   ],
   controllers: [AppController],
