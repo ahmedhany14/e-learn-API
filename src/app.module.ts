@@ -117,7 +117,6 @@ import { RepliesModule } from './blog-system/replies/replies.module';
 
     RepliesModule,
 
-    VideosModule
     // DbModule,
   ],
   controllers: [AppController],
