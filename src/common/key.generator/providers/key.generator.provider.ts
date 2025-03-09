@@ -15,7 +15,6 @@ export class KeyGeneratorProvider<T extends WillBe> {
     async generateNewKey(data: T[]) {
         this.logger.log('Generating new key');
         this.UpDateGenerator(data);
-        console.log('data', data);
 
         return data.length === 0
             ? this.indexGenerator.keyStart()
