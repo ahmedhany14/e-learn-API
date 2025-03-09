@@ -18,6 +18,7 @@ import { SectionsInstructorService } from '../../sections/services/instructor/se
 import { VideosInstructorService } from '../../videos/services/instructor/videos.instructor.service';
 import { FactoryKeyGeneratorProvider } from 'src/common/key.generator/providers/factory.key.generator.provider';
 
+
 // Auth and Role
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../auth/enums/auth.enum';
@@ -25,10 +26,13 @@ import { ROLE } from '../../auth/decorators/role.decorator';
 import { RoleEnum } from '../../auth/enums/role.enum';
 
 // dto
-import { AddVideoDto } from '../dtos/videos/add.video.dto';
+import { AddVideoDto } from '../dtos//add.video.dto';
+import { UpdateVideoDto } from '../dtos/update.video.dto';
+import { ReOrderingDto } from '../..//common//dtos/re-ordering/re-ordering.dto';
 
 // guards
-import { IsYourSectionGuard } from '../guards/is.your.section.guard';
+import { IsYourSectionGuard } from '../../instructor/guards/is.your.section.guard';
+import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
 // entities
 import { Videos } from './../../videos/entity/videos.entity';
@@ -40,13 +44,12 @@ import {
 } from 'src/sections/entity/sections.enums';
 import { VideoEnum } from 'src/videos/entity/videos.enums';
 
-import { IsYourVideoGuard } from '../guards/is.your.video.guard';
-import { UpdateVideoDto } from '../dtos/videos/update.video.dto';
-import { ReOrderingDto } from '../dtos/re-ordering/re-ordering.dto';
 
-@Controller('instructor-videos')
-export class InstructorManageVideosController {
-    private readonly logger = new Logger(InstructorManageVideosController.name);
+@ROLE(RoleEnum.INSTRUCTOR)
+@AUTH(AuthEnum.BEARER)
+@Controller('videos-via-instructor')
+export class VideosViaInstructorController {
+    private readonly logger = new Logger(VideosViaInstructorController.name);
 
     constructor(
         @Inject()
@@ -58,8 +61,6 @@ export class InstructorManageVideosController {
     ) { }
 
     @UseGuards(IsYourSectionGuard)
-    @ROLE(RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
     @Post('add-video/:course_id/:section_id')
     async addVideo(
         @Param('section_id', ParseIntPipe) section_id: number,
@@ -100,8 +101,6 @@ export class InstructorManageVideosController {
     }
 
     @UseGuards(IsYourVideoGuard)
-    @ROLE(RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
     @Delete('delete-video/:video_id')
     async deleteVideo(@Param('video_id', ParseIntPipe) video_id: number) {
         this.logger.log(`deleting video with id: ${video_id}`);
@@ -116,8 +115,6 @@ export class InstructorManageVideosController {
     }
 
     @UseGuards(IsYourVideoGuard)
-    @ROLE(RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
     @Patch('update-video/:video_id')
     async updateVideo(
         @Param('video_id', ParseIntPipe) video_id: number,
@@ -139,8 +136,6 @@ export class InstructorManageVideosController {
     }
 
     @UseGuards(IsYourVideoGuard)
-    @ROLE(RoleEnum.INSTRUCTOR)
-    @AUTH(AuthEnum.BEARER)
     @Patch('move-video-in-section/:video_id')
     async moveVideo(
         @Param('video_id', ParseIntPipe) video_id: number,

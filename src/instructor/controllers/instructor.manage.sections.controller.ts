@@ -19,7 +19,7 @@ import { CourseService } from 'src/courses/service/course.service';
 // dtos
 import { AddCourseSectionsDto } from '../dtos/sections/add.course.sections.dto';
 import { EditSectionDto } from '../dtos/sections/edit.section.dto';
-import { ReOrderingDto } from '../dtos/re-ordering/re-ordering.dto';
+import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';

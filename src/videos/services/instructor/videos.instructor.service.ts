@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 
 // repository and providers
 import { VideosInstructorRepo } from '../../repository/instructor/videos.instructor.repo';
-import { AddVideoDto } from '../../../instructor/dtos/videos/add.video.dto';
+import { AddVideoDto } from '../../dtos/add.video.dto';
 import { VideoEnum, VideoRelations } from '../../entity/videos.enums';
-import { UpdateVideoDto } from 'src/instructor/dtos/videos/update.video.dto';
+import { UpdateVideoDto } from '../../dtos/update.video.dto';
 
 @Injectable()
 export class VideosInstructorService {
