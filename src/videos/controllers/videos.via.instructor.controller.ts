@@ -72,6 +72,7 @@ export class VideosViaInstructorController {
         const section = await this.sectionsService.findSectionById(select, relations, section_id);
 
         const all_videos = await section.videos;
+        all_videos.sort((a, b) => a.order.localeCompare(b.order));
 
         const order = await this.keyGeneratorService.generateNewKey(all_videos);
 
