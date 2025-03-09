@@ -1,10 +1,6 @@
-import {
-    Injectable,
-    InternalServerErrorException,
-    Logger,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
-import { AddVideoDto } from '../../dtos/add.video.dto'
+import { AddVideoDto } from '../../dtos/add.video.dto';
 
 // orm and entities
 import { FindOptionsSelect, Repository } from 'typeorm';
@@ -20,7 +16,7 @@ export class VideosInstructorRepo {
     constructor(
         @InjectRepository(Videos)
         private readonly videosRepository: Repository<Videos>,
-    ) { }
+    ) {}
 
     async findOneById(
         select: VideoEnum[],
@@ -41,10 +37,7 @@ export class VideosInstructorRepo {
         }
     }
 
-    async findAllVideosInSection(
-        select: VideoEnum[],
-        section_id: number,
-    ): Promise<Videos[]> {
+    async findAllVideosInSection(select: VideoEnum[], section_id: number): Promise<Videos[]> {
         try {
             return await this.videosRepository.find({
                 where: { section: { id: section_id } },
@@ -72,11 +65,7 @@ export class VideosInstructorRepo {
         }
     }
 
-    async createVideo(
-        video: AddVideoDto,
-        section_id: number,
-        order: string,
-    ): Promise<Videos> {
+    async createVideo(video: AddVideoDto, section_id: number, order: string): Promise<Videos> {
         try {
             const newVideo = this.videosRepository.create({
                 ...video,
@@ -92,10 +81,7 @@ export class VideosInstructorRepo {
         }
     }
 
-    async updateVideo(
-        video_id: number,
-        updateVideoDto: UpdateVideoDto,
-    ): Promise<Videos> {
+    async updateVideo(video_id: number, updateVideoDto: UpdateVideoDto): Promise<Videos> {
         try {
             let video = await this.videosRepository.findOne({
                 where: { id: video_id },
@@ -130,6 +116,24 @@ export class VideosInstructorRepo {
         } catch (error) {
             throw new InternalServerErrorException({
                 message: `Error while updating video order with id: ${video_id}`,
+                details: error.message,
+            });
+        }
+    }
+
+    async moveToNewSection(
+        video_id: number,
+        new_section_id: number,
+        new_order: string,
+    ): Promise<void> {
+        try {
+            await this.videosRepository.update(
+                { id: video_id },
+                { section: { id: new_section_id }, order: new_order },
+            );
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: `Error while moving video with id: ${video_id} to new section with id: ${new_section_id}`,
                 details: error.message,
             });
         }
