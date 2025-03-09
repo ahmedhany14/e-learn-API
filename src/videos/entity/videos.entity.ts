@@ -1,15 +1,9 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    Unique,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Section } from '../../sections/entity/sections.entity';
 
 @Entity()
 @Unique(['order', 'section'])
+@Unique(['video_url', 'section'])
 export class Videos {
     @PrimaryGeneratedColumn()
     id: number;
@@ -29,10 +23,8 @@ export class Videos {
     @Column({
         type: 'varchar',
         length: 256,
-        unique: true,
     })
     video_url: string;
-    10;
 
     @Column({ type: 'varchar', unique: true })
     order: string;

@@ -11,7 +11,7 @@ export class VideosInstructorService {
     constructor(
         @Inject()
         private readonly videosRepo: VideosInstructorRepo,
-    ) { }
+    ) {}
 
     async findOneById(
         select: VideoEnum[] = [],
@@ -21,16 +21,8 @@ export class VideosInstructorService {
         return await this.videosRepo.findOneById(select, relations, video_id);
     }
 
-    async createVideo(
-        addVideoToSectionDto: AddVideoDto,
-        section_id: number,
-        order: string,
-    ) {
-        return await this.videosRepo.createVideo(
-            addVideoToSectionDto,
-            section_id,
-            order,
-        );
+    async createVideo(addVideoToSectionDto: AddVideoDto, section_id: number, order: string) {
+        return await this.videosRepo.createVideo(addVideoToSectionDto, section_id, order);
     }
 
     async deleteVideo(video_id: number) {
@@ -47,5 +39,9 @@ export class VideosInstructorService {
 
     async updateOrder(video_id: number, new_order: string) {
         return await this.videosRepo.updateOrder(video_id, new_order);
+    }
+
+    async moveToNewSection(video_id: number, new_section_id: number, new_order: string) {
+        return await this.videosRepo.moveToNewSection(video_id, new_section_id, new_order);
     }
 }
