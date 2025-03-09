@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 
 // services
-import { FactoryKeyGeneratorProvider } from '../../courses/providers/factory.key.generator.provider';
+import { FactoryKeyGeneratorProvider } from '../../common/key.generator/providers/factory.key.generator.provider';
 import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 import { CourseService } from 'src/courses/service/course.service';
 

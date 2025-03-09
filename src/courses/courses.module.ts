@@ -7,8 +7,6 @@ import { CoursesController } from './courses.controller';
 import { CourseService } from './service/course.service';
 import { CourseRepo } from './repository/course.repo';
 import { PaginationModule } from 'src/common/pagination/pagination.module';
-import { KeyGeneratorProvider } from './providers/key.generator.provider';
-import { FactoryKeyGeneratorProvider } from './providers/factory.key.generator.provider';
 
 // entities and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,9 +19,7 @@ import { Section } from '../sections/entity/sections.entity';
     providers: [
         CourseService,
         CourseRepo,
-        KeyGeneratorProvider,
-        FactoryKeyGeneratorProvider,
     ],
-    exports: [CourseService, FactoryKeyGeneratorProvider],
+    exports: [CourseService],
 })
 export class CoursesModule { }

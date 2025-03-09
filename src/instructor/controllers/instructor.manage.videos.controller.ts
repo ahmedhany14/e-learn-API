@@ -16,7 +16,7 @@ import {
 // services
 import { SectionsInstructorService } from '../../sections/services/instructor/sections.instructor.service';
 import { VideosInstructorService } from '../../videos/services/instructor/videos.instructor.service';
-import { FactoryKeyGeneratorProvider } from 'src/courses/providers/factory.key.generator.provider';
+import { FactoryKeyGeneratorProvider } from 'src/common/key.generator/providers/factory.key.generator.provider';
 
 // Auth and Role
 import { AUTH } from '../../auth/decorators/auth.decorator';
