@@ -1,6 +1,10 @@
 import { CanActivate, ConflictException, ExecutionContext, Injectable } from '@nestjs/common';
-import { MoveMode } from '../dtos/re-ordering/move.data.dto';
+
+// extened guard
 import { IsYourVideoGuard } from './is.your.video.guard';
+
+// enum
+import { MoveTypeENUM } from '../dtos/re-ordering/enum/move.type.enum';
 
 @Injectable()
 export class ReOrderingVideossGuard
@@ -20,15 +24,12 @@ export class ReOrderingVideossGuard
             });
         }
 
-        if (moveMode === MoveMode.VIDEO_IN_SAME_SECTION) {
-            const ret = await super.checkIfVideoBelongsToInstructor(
+        if (moveMode === MoveTypeENUM.VIDEO_IN_SAME_SECTION) {
+            return await super.checkIfVideoBelongsToInstructor(
                 id,
                 request.accountId,
                 request,
-            );
-            console.log(request)
-
-            return ret;
+            );;
         }
         return true;
     }

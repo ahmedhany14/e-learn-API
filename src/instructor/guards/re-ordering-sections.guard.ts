@@ -1,7 +1,10 @@
 import { CanActivate, ConflictException, ExecutionContext, Injectable } from '@nestjs/common';
-import { MoveMode } from '../dtos/re-ordering/move.data.dto';
+
+// extened guard
 import { IsYourSectionGuard } from './is.your.section.guard';
-import { IsYourVideoGuard } from './is.your.video.guard';
+
+// enum
+import { MoveTypeENUM } from '../dtos/re-ordering/enum/move.type.enum';
 
 @Injectable()
 export class ReOrderingSectionsGuard
@@ -21,7 +24,7 @@ export class ReOrderingSectionsGuard
             });
         }
 
-        if (moveMode === MoveMode.SECTION) {
+        if (moveMode === MoveTypeENUM.SECTION) {
             console.log('Checking if section belongs to instructor');
             return await super.checkIfSectionBelongsToInstructor(
                 id,

@@ -2,39 +2,31 @@ import {
     IsEnum,
     IsNotEmpty,
     IsNumber,
-    IsOptional,
     IsPositive,
-    IsString,
     Min,
     ValidateIf
 } from 'class-validator';
+import { MoveTypeENUM } from './enum/move.type.enum';
 
-export enum MoveMode {
-    SECTION = 'section',
-    VIDEO_IN_SAME_SECTION = 'video_in_same_section',
-    VIDEO_FROM_SECTION_TO_SECTION = 'video_from_section_to_section',
-}
 
-export class MoveModeDTO {
-    @IsEnum(MoveMode)
-    @IsNotEmpty()
-    moveMode: MoveMode;
-}
-
-export class AnyNameDTO {
+export class MoveDataDTO {
     /**  
      * Should be in any request body  
      */
-    @IsEnum(MoveMode)
+    @IsEnum(MoveTypeENUM)
     @IsNotEmpty()
-    moveMode: MoveMode;
+    moveMode: MoveTypeENUM;
 
     @IsNotEmpty()
     @IsPositive()
     @Min(1)
     new_order: number;
 
-    @ValidateIf((obj) => obj.moveMode === MoveMode.VIDEO_FROM_SECTION_TO_SECTION)
+    /*
+        will be validated only if moveMode is 'video_in_same_section'
+    */
+
+    @ValidateIf((obj) => obj.moveMode === MoveTypeENUM.VIDEO_FROM_SECTION_TO_SECTION)
     @IsNotEmpty()
     @IsNumber()
     @IsPositive()
