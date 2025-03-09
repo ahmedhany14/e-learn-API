@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { IndexGenerator } from 'fractional-indexing-jittered';
 import { Section } from '../../../sections/entity/sections.entity';
 import { Videos } from '../../../videos/entity/videos.entity';
+import * as console from 'node:console';
 
 type WillBe = Section | Videos;
 
@@ -14,7 +15,11 @@ export class KeyGeneratorProvider<T extends WillBe> {
     async generateNewKey(data: T[]) {
         this.logger.log('Generating new key');
         this.UpDateGenerator(data);
-        return data.length === 0 ? this.indexGenerator.keyStart() : this.indexGenerator.keyEnd();
+        console.log('data', data);
+
+        return data.length === 0
+            ? this.indexGenerator.keyStart()
+            : this.getKeyBetween(data[data.length - 1].order, 'ZZZZZ');
     }
 
     async generateKeyToInsertFirst(data: T[], first_order: string) {
