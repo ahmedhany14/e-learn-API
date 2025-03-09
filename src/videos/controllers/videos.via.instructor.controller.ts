@@ -15,9 +15,7 @@ import {
 
 // services
 import { SectionsInstructorService } from '../../sections/services/instructor/sections.instructor.service';
-import { VideosInstructorService } from '../../videos/services/instructor/videos.instructor.service';
-import { FactoryKeyGeneratorProvider } from 'src/common/key.generator/providers/factory.key.generator.provider';
-
+import { VideosInstructorService } from '../services/instructor/videos.instructor.service';
 
 // Auth and Role
 import { AUTH } from '../../auth/decorators/auth.decorator';
@@ -26,24 +24,21 @@ import { ROLE } from '../../auth/decorators/role.decorator';
 import { RoleEnum } from '../../auth/enums/role.enum';
 
 // dto
-import { AddVideoDto } from '../dtos//add.video.dto';
+import { AddVideoDto } from '../dtos/add.video.dto';
 import { UpdateVideoDto } from '../dtos/update.video.dto';
-import { ReOrderingDto } from '../..//common//dtos/re-ordering/re-ordering.dto';
+import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 
 // guards
-import { IsYourSectionGuard } from '../../sections//guards/is.your.section.guard';
+import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
 // entities
-import { Videos } from './../../videos/entity/videos.entity';
+import { Videos } from '../entity/videos.entity';
 
 // enums
-import {
-    SectionEnum,
-    SectionRelations,
-} from 'src/sections/entity/sections.enums';
+import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 import { VideoEnum } from 'src/videos/entity/videos.enums';
-
+import { KeyGeneratorService } from '../../common/key.generator/key.generator.service';
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
@@ -57,8 +52,8 @@ export class VideosViaInstructorController {
         @Inject()
         private readonly sectionsService: SectionsInstructorService,
         @Inject()
-        private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Videos>,
-    ) { }
+        private readonly keyGeneratorService: KeyGeneratorService<Videos>,
+    ) {}
 
     @UseGuards(IsYourSectionGuard)
     @Post('add-video/:course_id/:section_id')
@@ -73,24 +68,13 @@ export class VideosViaInstructorController {
         const select: SectionEnum[] = [];
         const relations: SectionRelations[] = [];
 
-        const section = await this.sectionsService.findSectionById(
-            select,
-            relations,
-            section_id,
-        );
+        const section = await this.sectionsService.findSectionById(select, relations, section_id);
 
         const all_videos = await section.videos;
 
-        const order = await this.factoryKeyGeneratorProvider.generateNewKey(
-            'new_key',
-            all_videos,
-        );
+        const order = await this.keyGeneratorService.generateNewKey(all_videos);
 
-        const video = await this.videosService.createVideo(
-            addVideoDto,
-            section.id,
-            order,
-        );
+        const video = await this.videosService.createVideo(addVideoDto, section.id, order);
 
         return {
             response: {
@@ -122,10 +106,7 @@ export class VideosViaInstructorController {
     ) {
         this.logger.log(`updating video with id: ${video_id}`);
 
-        const video = await this.videosService.updateVideo(
-            video_id,
-            updateVideoDto,
-        );
+        const video = await this.videosService.updateVideo(video_id, updateVideoDto);
 
         return {
             response: {
@@ -142,18 +123,14 @@ export class VideosViaInstructorController {
         @Req() request,
         @Body() reOrderingDto: ReOrderingDto,
     ) {
-        const section_id = request.section_id,
-            course_id = request.course_id;
+        const section_id = request.section_id;
 
         const all_videos = await this.videosService.findAllVideosInSection(
             [VideoEnum.ID, VideoEnum.ORDER],
             section_id,
         );
 
-        if (
-            reOrderingDto.new_order < 1 ||
-            reOrderingDto.new_order > all_videos.length
-        ) {
+        if (reOrderingDto.new_order > all_videos.length) {
             throw new ConflictException({
                 message: 'Invalid new order',
                 details: 'New order is out of range',
@@ -167,52 +144,11 @@ export class VideosViaInstructorController {
             this.logger.log(
                 `moving video with id: ${video_id} to new order: ${reOrderingDto.new_order}`,
             );
-
-            let order: string,
-                target_order: number = reOrderingDto.new_order;
-            const position =
-                target_order === 1
-                    ? 'first_key'
-                    : target_order === all_videos.length
-                        ? 'last_key'
-                        : 'between_key';
-
-            if (position === 'first_key') {
-                order = await this.factoryKeyGeneratorProvider.generateNewKey(
-                    'first_key',
-                    all_videos,
-                    all_videos[target_order - 1].order,
-                );
-            } else if (position === 'last_key') {
-                order = await this.factoryKeyGeneratorProvider.generateNewKey(
-                    'last_key',
-                    all_videos,
-                    all_videos[target_order - 1].order,
-                );
-            } else {
-                let my_order = -1;
-
-                for (let i = 0; i < all_videos.length; i++)
-                    if (all_videos[i].id === video_id) my_order = i + 1;
-
-                let prev: string, next: string;
-
-                if (target_order > my_order) {
-                    next = all_videos[target_order].order;
-                    prev = all_videos[target_order - 1].order;
-                } else {
-                    next = all_videos[target_order - 1].order;
-                    prev = all_videos[target_order - 2].order;
-                }
-
-                order = await this.factoryKeyGeneratorProvider.generateNewKey(
-                    'between_key',
-                    all_videos,
-                    prev,
-                    next,
-                );
-            }
-
+            const order = await this.keyGeneratorService.generator(
+                all_videos,
+                video_id,
+                reOrderingDto.new_order,
+            );
             await this.videosService.updateOrder(video_id, order);
         }
 

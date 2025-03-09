@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 
 // services
-import { FactoryKeyGeneratorProvider } from '../../common/key.generator/providers/factory.key.generator.provider';
+import { KeyGeneratorService } from '../../common/key.generator/key.generator.service';
 import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 import { CourseService } from 'src/courses/service/course.service';
 
@@ -33,10 +33,7 @@ import { RoleEnum } from 'src/auth/enums/role.enum';
 
 // entities and enums
 import { Section } from 'src/sections/entity/sections.entity';
-import {
-    SectionEnum,
-    SectionRelations,
-} from 'src/sections/entity/sections.enums';
+import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 
 @Controller('sections-via-instructor')
 export class SectionsViaInstructorController {
@@ -48,8 +45,8 @@ export class SectionsViaInstructorController {
         @Inject()
         private readonly sectionService: SectionsInstructorService,
         @Inject()
-        private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<Section>,
-    ) { }
+        private readonly keyGeneratorService: KeyGeneratorService<Section>,
+    ) {}
 
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
@@ -66,10 +63,7 @@ export class SectionsViaInstructorController {
         const course = await this.courseService.getCourse([], [], course_id);
         const sections = await course.sections;
 
-        const order: string = await this.factoryKeyGeneratorProvider.generateNewKey(
-            'new_key',
-            sections,
-        );
+        const order: string = await this.keyGeneratorService.generateNewKey(sections);
         console.log('newOrder', order);
 
         const section = await this.sectionService.createSection(
@@ -98,10 +92,7 @@ export class SectionsViaInstructorController {
             `editing section with id: ${section_id}, with properties: ${JSON.stringify(editSectionDto)}`,
         );
 
-        const section = await this.sectionService.editSection(
-            section_id,
-            editSectionDto,
-        );
+        const section = await this.sectionService.editSection(section_id, editSectionDto);
 
         return {
             response: {
@@ -121,11 +112,7 @@ export class SectionsViaInstructorController {
         const select: SectionEnum[] = [SectionEnum.ID];
         const relations: SectionRelations[] = [];
 
-        const section = await this.sectionService.findSectionById(
-            select,
-            relations,
-            section_id,
-        );
+        const section = await this.sectionService.findSectionById(select, relations, section_id);
 
         const videos = await section.videos;
 
@@ -174,49 +161,11 @@ export class SectionsViaInstructorController {
                 `moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`,
             );
 
-            let order: string,
-                target_order: number = reOrderSectionsDto.new_order;
-            const position =
-                target_order === 1
-                    ? 'first_key'
-                    : target_order === all_sections.length
-                        ? 'last_key'
-                        : 'between_key';
-
-            if (position === 'first_key')
-                order = await this.factoryKeyGeneratorProvider.generateNewKey(
-                    'first_key',
-                    all_sections,
-                    all_sections[target_order - 1].order,
-                );
-            else if (position === 'last_key')
-                order = await this.factoryKeyGeneratorProvider.generateNewKey(
-                    'last_key',
-                    all_sections,
-                    all_sections[target_order - 1].order,
-                );
-            else {
-                let my_order = -1;
-
-                for (let i = 0; i < all_sections.length; i++)
-                    if (all_sections[i].id === section_id) my_order = i + 1;
-
-                let prev: string, next: string;
-                if (target_order > my_order) {
-                    next = all_sections[target_order].order;
-                    prev = all_sections[target_order - 1].order;
-                } else {
-                    next = all_sections[target_order - 1].order;
-                    prev = all_sections[target_order - 2].order;
-                }
-
-                order = await this.factoryKeyGeneratorProvider.generateNewKey(
-                    'between_key',
-                    all_sections,
-                    prev,
-                    next,
-                );
-            }
+            const order = await this.keyGeneratorService.generator(
+                all_sections,
+                section_id,
+                reOrderSectionsDto.new_order,
+            );
 
             await this.sectionService.updateOrder(section_id, order);
         }

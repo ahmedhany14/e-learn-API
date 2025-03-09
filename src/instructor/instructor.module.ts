@@ -17,12 +17,8 @@ import { VideosModule } from '../videos/videos.module';
 import { KeyGeneratorModule } from 'src/common/key.generator/key.generator.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Instructor]),
-        CoursesModule,
-        AdminModule,
-    ],
+    imports: [TypeOrmModule.forFeature([Instructor]), CoursesModule, AdminModule],
     controllers: [InstructorController],
     providers: [InstructorService, InstructorRepository],
 })
-export class InstructorModule { }
+export class InstructorModule {}
