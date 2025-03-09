@@ -25,7 +25,7 @@ import { ROLE } from '../../auth/decorators/role.decorator';
 import { RoleEnum } from '../../auth/enums/role.enum';
 
 // dto
-import { AddVideoDto } from '../dtos/add.video.dto';
+import { AddVideoDto } from '../dtos/videos/add.video.dto';
 
 // guards
 import { IsYourSectionGuard } from '../guards/is.your.section.guard';
@@ -37,8 +37,8 @@ import {
     SectionRelations,
 } from 'src/courses/entities/enums/sections.enums';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
-import { UpdateVideoDto } from '../dtos/update.video.dto';
-import { ReOrderingDto } from '../dtos/re-ordering.dto';
+import { UpdateVideoDto } from '../dtos/videos/update.video.dto';
+import { ReOrderingDto } from '../dtos/re-ordering/re-ordering.dto';
 import { VideoEnum } from 'src/courses/entities/enums/videos.enums';
 
 @Controller('instructor-videos')
@@ -180,10 +180,10 @@ export class InstructorManageVideosController {
             else {
                 let my_order = -1;
 
-                for (let i = 0; i < all_videos.length; i++) 
-                    if (all_videos[i].id === video_id) 
+                for (let i = 0; i < all_videos.length; i++)
+                    if (all_videos[i].id === video_id)
                         my_order = i + 1;
-                
+
 
                 let prev: string, next: string;
 

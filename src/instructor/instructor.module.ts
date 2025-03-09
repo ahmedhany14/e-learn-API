@@ -9,10 +9,11 @@ import { AdminModule } from 'src/admin/admin.module';
 import { InstructorManageSectionsController } from './controllers/instructor.manage.sections.controller';
 import { InstructorManageCoursesController } from './controllers/instructor.manage.courses.controller';
 import { InstructorManageVideosController } from './controllers/instructor.manage.videos.controller';
+import { InstructorManageReOrderingController } from './controllers/instructor.manage.re-ordering.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Instructor]), CoursesModule, AdminModule],
-  controllers: [InstructorController, InstructorManageSectionsController, InstructorManageCoursesController, InstructorManageVideosController],
+  controllers: [InstructorController, InstructorManageSectionsController, InstructorManageCoursesController, InstructorManageVideosController, InstructorManageReOrderingController],
   providers: [InstructorService, InstructorRepository],
 })
 export class InstructorModule {}

@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { SectionsRepo } from '../repository/sections.repo';
 
 // dto
-import { EditSectionDto } from '../../instructor/dtos/edit.section.dto';
+import { EditSectionDto } from '../../instructor/dtos/sections/edit.section.dto';
 import { SectionEnum, SectionRelations } from '../entities/enums/sections.enums';
 
 @Injectable()

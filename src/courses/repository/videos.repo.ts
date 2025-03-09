@@ -4,14 +4,14 @@ import {
     Logger,
 } from '@nestjs/common';
 
-import { AddVideoDto } from '../../instructor/dtos/add.video.dto';
+import { AddVideoDto } from '../../instructor/dtos/videos/add.video.dto';
 
 // orm and entities
 import { Repository, FindOptionsSelect } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Videos } from '../entities/videos.entity';
 import { VideoEnum, VideoRelations } from '../entities/enums/videos.enums';
-import { UpdateVideoDto } from 'src/instructor/dtos/update.video.dto';
+import { UpdateVideoDto } from 'src/instructor/dtos/videos/update.video.dto';
 @Injectable()
 export class VideosRepo {
     private readonly logger = new Logger(VideosRepo.name);

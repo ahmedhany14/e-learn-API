@@ -13,8 +13,8 @@ import { ExtractAccountData } from 'src/common/decorators/request.extractData.de
 import { CourseService } from 'src/courses/service/course.service';
 
 // dto
-import { QueryDto } from '../dtos/my.courses.query.dto';
-import { UpdateCourseDto } from '../dtos/update.course.dto';
+import { QueryDto } from '../dtos/courses/my.courses.query.dto';
+import { UpdateCourseDto } from '../dtos/courses/update.course.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';

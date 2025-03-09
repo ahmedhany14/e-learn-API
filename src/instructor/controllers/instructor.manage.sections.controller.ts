@@ -18,9 +18,9 @@ import { SectionsService } from 'src/courses/service/sections.service';
 import { CourseService } from 'src/courses/service/course.service';
 
 // dtos
-import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
-import { EditSectionDto } from '../dtos/edit.section.dto';
-import { ReOrderingDto } from '../dtos/re-ordering.dto';
+import { AddCourseSectionsDto } from '../dtos/sections/add.course.sections.dto';
+import { EditSectionDto } from '../dtos/sections/edit.section.dto';
+import { ReOrderingDto } from '../dtos/re-ordering/re-ordering.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';

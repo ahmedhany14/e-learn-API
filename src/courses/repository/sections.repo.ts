@@ -5,7 +5,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsSelect, Repository } from 'typeorm';
 import { Section } from '../entities/sections.entity';
-import { EditSectionDto } from 'src/instructor/dtos/edit.section.dto';
+import { EditSectionDto } from 'src/instructor/dtos/sections/edit.section.dto';
 import { SectionEnum, SectionRelations } from '../entities/enums/sections.enums';
 
 @Injectable()

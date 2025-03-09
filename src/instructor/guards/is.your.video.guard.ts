@@ -21,12 +21,12 @@ export class IsYourVideoGuard implements CanActivate {
         const instructor_id: number = request.accountId;
         const video_id = parseInt(request.params.video_id);
 
-        const video_select: VideoEnum[] = [VideoEnum.ID];
+        /*const video_select: VideoEnum[] = [VideoEnum.ID];
         const video_relations: VideoRelations[] = [VideoRelations.SECTION];
 
         const video = await this.videosService.findOneById(video_select, video_relations, video_id);
 
-        
+
         if (!video) {
             throw new NotFoundException({
                 message: `Video with id: ${video_id} not found`,
@@ -55,7 +55,7 @@ export class IsYourVideoGuard implements CanActivate {
         const course = await this.courseService.getCourse(course_select, course_relations, section.course.id);
 
         console.log(course.instructor.id);
-        console.log(instructor_id);        
+        console.log(instructor_id);
 
         request.course_id = course.id;
         request.section_id = section.id;
@@ -63,7 +63,49 @@ export class IsYourVideoGuard implements CanActivate {
             throw new UnauthorizedException({
                 message: 'You are not allowed to perform this action',
             })
+        }*/
+        return this.checkIfVideoBelongsToInstructor(video_id, instructor_id, request);
+    }
+
+    async checkIfVideoBelongsToInstructor(video_id: number, instructor_id: number, request): Promise<boolean> {
+        const video_select: VideoEnum[] = [VideoEnum.ID];
+        const video_relations: VideoRelations[] = [VideoRelations.SECTION];
+
+        const video = await this.videosService.findOneById(video_select, video_relations, video_id);
+
+        if (!video) {
+            throw new NotFoundException({
+                message: `Video with id: ${video_id} not found`,
+            });
         }
+
+        const section_select: SectionEnum[] = [SectionEnum.ID];
+        const section_relations: SectionRelations[] = [SectionRelations.COURSE];
+
+        const section = await this.sectionsService.findSectionById(
+            section_select,
+            section_relations,
+            video.section.id
+        );
+
+        if (!section) {
+            throw new NotFoundException({
+                message: `Section with id: ${video.section.id} not found`,
+            });
+        };
+
+        const course_select: CourseEnum[] = [CourseEnum.ID];
+        const course_relations: CourseRelations[] = [CourseRelations.INSTRUCTOR];
+
+        const course = await this.courseService.getCourse(course_select, course_relations, section.course.id);
+
+        if (course.instructor.id !== instructor_id) {
+            throw new UnauthorizedException({
+                message: 'You are not allowed to perform this action',
+            })
+        }
+        request.course_id = course.id;
+        request.section_id = section.id;
         return true;
     }
 }
