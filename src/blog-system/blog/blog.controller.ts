@@ -7,6 +7,7 @@ import { CreateBlogDto } from './dtos/create.blog.dto';
 // Services
 import { BlogService } from './blog.service';
 import { BlogRedisCachingService } from '../../redis/services/blog.redis.caching.service';
+import { ReactisRedisCachingService } from 'src/redis/services/reactis.redis.caching.service';
 
 // Pipes
 import { ObjectIdValidationPipe } from './validators/object.id.validation.pipe';
@@ -15,6 +16,7 @@ import { ObjectIdValidationPipe } from './validators/object.id.validation.pipe';
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { types } from 'src/common/enums/react.to.types';
 
 @Controller('blog')
 export class BlogController {
@@ -23,8 +25,10 @@ export class BlogController {
         private readonly blogService: BlogService,
 
         @Inject()
-        private readonly blogRedisCachingService: BlogRedisCachingService
+        private readonly blogRedisCachingService: BlogRedisCachingService,
 
+        @Inject()
+        private readonly reactisRedisCachingService: ReactisRedisCachingService,
     ) { }
 
 
@@ -44,9 +48,11 @@ export class BlogController {
         };
     }
 
+    @AUTH(AuthEnum.BEARER)
     @Get('get-one-blog/:blog_id')
     async getOneBlog(
         @Param('blog_id', ObjectIdValidationPipe) blog_id: string,
+        @ExtractAccountData('id') author_id: number
     ) {
         /*
             Cache the views of the blog
@@ -61,7 +67,8 @@ export class BlogController {
 
         return {
             response: {
-                message: 'Blog fetched', blog
+                message: 'Blog fetched',
+                blog
             }
         };
     }
@@ -103,7 +110,7 @@ export class BlogController {
             blog_id
         );
 
-        await this.blogRedisCachingService.delAllBlogKeys(blog_id);
+        await this.reactisRedisCachingService.delAllKeys(types.BLOG, blog_id);
 
         return {
             response: {
@@ -122,17 +129,15 @@ export class BlogController {
 
         if (!blog) throw new NotFoundException('Blog not found');
 
-        const ret = await this.blogRedisCachingService.setUpVote(blog_id, upvoter_id);
+        const ret = await this.reactisRedisCachingService.setLike(types.BLOG, blog_id, upvoter_id);
 
-        await this.blogService.upvoteBlog(blog_id, ret.upvote);
-        await this.blogService.downvoteBlog(blog_id, ret.downvote);
+        await this.blogService.upvoteBlog(blog_id, ret.like);
+        await this.blogService.downvoteBlog(blog_id, ret.dislike);
 
         return {
             response: {
-                message: {
-                    upvote: ret.upvote === 1 ? 'Blog upvoted' : 'Blog upvote removed',
-                    downvote: ret.downvote === 1 ? 'Blog downvoted' : 'Blog downvote removed'
-                }
+                upvote: ret.like === 1 ? 'Blog upvoted' : 'Blog upvote removed',
+                downvote: ret.dislike === 1 ? 'Blog downvoted' : 'Blog downvote removed'
             }
         };
     }
@@ -146,18 +151,16 @@ export class BlogController {
         const blog = await this.blogService.getOneBlog(blog_id);
         if (!blog) throw new NotFoundException('Blog not found');
 
-        const ret = await this.blogRedisCachingService.setDownVote(blog_id, downvoter_id); // 1 ? will increase the downvote count : -1 ? will decrease the downvote count
+        const ret = await this.reactisRedisCachingService.setDislike(types.BLOG, blog_id, downvoter_id); // 1 ? will increase the downvote count : -1 ? will decrease the downvote count
 
-        await this.blogService.upvoteBlog(blog_id, ret.upvote);
-        await this.blogService.downvoteBlog(blog_id, ret.downvote);
+        await this.blogService.upvoteBlog(blog_id, ret.like);
+        await this.blogService.downvoteBlog(blog_id, ret.dislike);
 
 
         return {
             response: {
-                message: {
-                    upvote: ret.upvote === 1 ? 'Blog upvoted' : 'Blog upvote removed',
-                    downvote: ret.downvote === 1 ? 'Blog downvoted' : 'Blog downvote removed'
-                }
+                upvote: ret.like === 1 ? 'Blog upvoted' : 'Blog upvote removed',
+                downvote: ret.dislike === 1 ? 'Blog downvoted' : 'Blog downvote removed'
             }
         };
     }
