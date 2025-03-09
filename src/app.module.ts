@@ -50,7 +50,6 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentsModule } from './blog-system/comments/comments.module';
 import { RepliesModule } from './blog-system/replies/replies.module';
-import { VideosModule } from './videos/videos.module';
 
 
 @Module({
