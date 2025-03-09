@@ -52,6 +52,7 @@ import { CommentsModule } from './blog-system/comments/comments.module';
 import { RepliesModule } from './blog-system/replies/replies.module';
 import { VideosModule } from './videos/videos.module';
 import { SectionsModule } from './sections/sections.module';
+import { KeyGeneratorModule } from './common/key.generator/key.generator.module';
 
 
 @Module({
@@ -122,6 +123,8 @@ import { SectionsModule } from './sections/sections.module';
         VideosModule,
 
         SectionsModule,
+
+        KeyGeneratorModule,
 
         // DbModule,
     ],
