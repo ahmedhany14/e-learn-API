@@ -1,50 +1,48 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn } from 'typeorm';
+import { Account } from '../../account/entity/account.entity';
 
-export type TagsDocument = Tags & Document;
+@Entity()
+@Unique(['category', 'subcategory', 'tag'])
+export class Tags {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-@Schema({
-    timestamps: true,
-    toJSON: {
-        transform: function (_doc, ret) {
-            ret.id = ret._id;
-            delete ret._id;
-            delete ret.__v;
-        },
-    },
-})
-export class Tags extends Document {
-
-    @Prop({
-        type: mongoose.Schema.Types.String,
-        required: true,
+    @Column({
+        type: 'varchar',
+        length: 32,
+        nullable: false,
     })
     category: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
-        required: true,
+    @Column({
+        type: 'varchar',
+        length: 32,
+        nullable: false,
     })
     subcategory: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
-        required: true,
-        unique: true,
+    @Column({
+        type: 'varchar',
+        length: 32,
+        nullable: false,
     })
     tag: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.String,
-        required: true,
+    @Column({
+        type: 'varchar',
+        length: 255,
+        nullable: false,
     })
     description: string;
 
-    @Prop({
-        type: mongoose.Schema.Types.Number,
-        required: true,
+    @ManyToOne(() => Account, (account) => account.tags, {
+        nullable: false,
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
     })
-    tag_creator: number
+    @JoinColumn({
+        name: 'tag_creator_id',
+        referencedColumnName: 'id',
+    })
+    tag_creator: Account;
 }
-
-export const TagsSchema = SchemaFactory.createForClass(Tags);
