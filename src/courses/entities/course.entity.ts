@@ -1,14 +1,8 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CourseStatusEnum } from '../enums/course.status.enum';
 import { Account } from 'src/account/entity/account.entity';
 import { Section } from '../../sections/entity/sections.entity';
+import { CourseTags } from './course.tags.entity';
 
 @Entity()
 export class Course {
@@ -99,5 +93,13 @@ export class Course {
 
     // plans (later)
 
+    /*
+     * Many to Many, where a course can be assigned to many tags and a tag can be assigned to many courses
+     * Need normalization
+     */
     // tags (later)
+    @OneToMany(() => CourseTags, (courseTag) => courseTag.course, {
+        lazy: true,
+    })
+    course_tags: Promise<CourseTags[]>;
 }

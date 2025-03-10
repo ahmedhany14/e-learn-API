@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 // controllers
+import { CoursesViaInstructorController } from './controllers/courses.via.instructor.controller';
 
 // providers and services
 import { CourseService } from './service/course.service';
@@ -10,16 +11,12 @@ import { PaginationModule } from 'src/common/pagination/pagination.module';
 // entities and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
-import { Section } from '../sections/entity/sections.entity';
-import { CoursesViaInstructorController } from './controllers/courses.via.instructor.controller';
+import { CourseTags } from './entities/course.tags.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Course, Section]), PaginationModule],
+    imports: [TypeOrmModule.forFeature([Course, CourseTags]), PaginationModule],
     controllers: [CoursesViaInstructorController],
-    providers: [
-        CourseService,
-        CourseRepo,
-    ],
+    providers: [CourseService, CourseRepo],
     exports: [CourseService],
 })
-export class CoursesModule { }
+export class CoursesModule {}

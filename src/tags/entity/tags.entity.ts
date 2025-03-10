@@ -1,5 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    Unique,
+    ManyToOne,
+    JoinColumn,
+    OneToMany,
+} from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
+import { CourseTags } from '../../courses/entities/course.tags.entity';
 
 @Entity()
 @Unique(['category', 'subcategory', 'tag'])
@@ -45,4 +54,9 @@ export class Tags {
         referencedColumnName: 'id',
     })
     tag_creator: Account;
+
+    @OneToMany(() => CourseTags, (courseTag) => courseTag.tag, {
+        lazy: true,
+    })
+    courseTags: Promise<CourseTags[]>;
 }
