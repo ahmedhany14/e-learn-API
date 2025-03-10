@@ -25,7 +25,9 @@ import { UpdateTagDto } from './dtos/update.tag.dto';
 
 // services
 import { TagsService } from './services/tags.service';
-import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
+
+// enums
+import { TagsEnum, TagsRelations } from './entity/tags.enum';
 
 @Controller('tags')
 export class TagsController {
@@ -38,10 +40,31 @@ export class TagsController {
     @AUTH(AuthEnum.BEARER)
     @Get('one-tag/:tag_id')
     async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
+        const select = [
+            TagsEnum.ID,
+            TagsEnum.CATEGORY,
+            TagsEnum.SUBCATEGORY,
+            TagsEnum.TAG,
+            TagsEnum.DESCRIPTION,
+        ];
+        const relations = [TagsRelations.TAG_CREATOR];
+        const tag = await this.tagsService.getTagById(select, relations, tag_id);
+        if (!tag) {
+            throw new NotFoundException({
+                message: 'Tag not found',
+                details: `Tag with id: ${tag_id} not found`,
+            });
+        }
+
+        const creator_account = tag.tag_creator;
+        const creator_profile = await creator_account.profile;
+        delete tag.tag_creator;
         return {
             response: {
                 message: 'Tag fetched successfully',
-                tag: await this.tagsService.getTagById(tag_id),
+                tag,
+                creator_account,
+                creator_profile,
             },
         };
     }
@@ -95,7 +118,15 @@ export class TagsController {
         @Param('tag_id', ParseIntPipe) tag_id: number,
         @Body() updateTagDto: UpdateTagDto,
     ) {
-        const tag = await this.tagsService.getTagById(tag_id);
+        const select = [
+            TagsEnum.ID,
+            TagsEnum.CATEGORY,
+            TagsEnum.SUBCATEGORY,
+            TagsEnum.TAG,
+            TagsEnum.DESCRIPTION,
+        ];
+
+        const tag = await this.tagsService.getTagById(select, [], tag_id);
         if (!tag) {
             throw new NotFoundException({
                 message: 'Tag not found',
@@ -117,7 +148,8 @@ export class TagsController {
     @AUTH(AuthEnum.BEARER)
     @Delete('tag/:tag_id')
     async deleteTag(@Param('tag_id', ParseIntPipe) tag_id: number) {
-        const tag = await this.tagsService.getTagById(tag_id);
+        const select = [TagsEnum.ID];
+        const tag = await this.tagsService.getTagById(select, [], tag_id);
         if (!tag) {
             throw new ConflictException({
                 message: 'Tag not found',

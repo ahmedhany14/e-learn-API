@@ -8,6 +8,7 @@ import { TagsRepository } from '../repository/tags.repo';
 import { GetByThree } from '../interfaces/tags.interfases';
 import { Tags } from '../entity/tags.entity';
 import { UpdateTagDto } from '../dtos/update.tag.dto';
+import { TagsEnum, TagsRelations } from '../entity/tags.enum';
 
 @Injectable()
 export class TagsService {
@@ -20,8 +21,8 @@ export class TagsService {
         return await this.tagsRepo.getAllTags();
     }
 
-    async getTagById(id: number) {
-        return await this.tagsRepo.getTagById(id);
+    async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
+        return await this.tagsRepo.getTagById(select, relations, id);
     }
 
     async deleteTagById(id: number) {

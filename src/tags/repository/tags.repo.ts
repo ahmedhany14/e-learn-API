@@ -3,12 +3,13 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 // orm and entity
 import { Tags } from '../entity/tags.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsSelect, Repository } from 'typeorm';
 
 // dto and interfaces
 import { CreateTagDto } from '../dtos/create.tag.dto';
 import { GetByThree } from '../interfaces/tags.interfases';
 import { UpdateTagDto } from '../dtos/update.tag.dto';
+import { TagsEnum, TagsRelations } from '../entity/tags.enum';
 
 @Injectable()
 export class TagsRepository {
@@ -17,10 +18,12 @@ export class TagsRepository {
         private readonly tagsRepository: Repository<Tags>,
     ) {}
 
-    async getTagById(id: number) {
+    async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
         try {
             return await this.tagsRepository.findOne({
                 where: { id },
+                select: select as FindOptionsSelect<Tags>,
+                relations: relations as string[],
             });
         } catch (error) {
             console.log(error);
