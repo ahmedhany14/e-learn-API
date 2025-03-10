@@ -32,14 +32,15 @@ export class TagsController {
     constructor(
         @Inject()
         private readonly tagsService: TagsService,
-    ) { }
+    ) {}
 
     @ROLE(RoleEnum.ADMIN)
     @AUTH(AuthEnum.BEARER)
     @Get('one-tag/:tag_id')
-    async getTagById(@Param('tag_id', ObjectIdValidationPipe) tag_id: string) {
+    async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
         return {
             response: {
+                message: 'Tag fetched successfully',
                 tag: await this.tagsService.getTagById(tag_id),
             },
         };
@@ -52,6 +53,7 @@ export class TagsController {
         const tags = await this.tagsService.getAllTags();
         return {
             response: {
+                message: 'all Tags fetched successfully',
                 tags,
             },
         };
@@ -90,7 +92,7 @@ export class TagsController {
     @AUTH(AuthEnum.BEARER)
     @Patch('edit-tag/:tag_id')
     async editTag(
-        @Param('tag_id', ObjectIdValidationPipe) tag_id: string,
+        @Param('tag_id', ParseIntPipe) tag_id: number,
         @Body() updateTagDto: UpdateTagDto,
     ) {
         const tag = await this.tagsService.getTagById(tag_id);
@@ -114,7 +116,7 @@ export class TagsController {
     @ROLE(RoleEnum.ADMIN)
     @AUTH(AuthEnum.BEARER)
     @Delete('tag/:tag_id')
-    async deleteTag(@Param('tag_id', ObjectIdValidationPipe) tag_id: string) {
+    async deleteTag(@Param('tag_id', ParseIntPipe) tag_id: number) {
         const tag = await this.tagsService.getTagById(tag_id);
         if (!tag) {
             throw new ConflictException({

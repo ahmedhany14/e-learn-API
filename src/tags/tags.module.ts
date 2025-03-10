@@ -8,19 +8,12 @@ import { TagsService } from './services/tags.service';
 import { TagsRepository } from './repository/tags.repo';
 
 // orm and entity
-import { Tags, TagsSchema } from './entity/tags.entity';
-import { MongooseModule } from '@nestjs/mongoose';
+import { Tags } from './entity/tags.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: Tags.name,
-        schema: TagsSchema
-      }
-    ])
-  ],
-  controllers: [TagsController],
-  providers: [TagsService, TagsRepository],
+    imports: [TypeOrmModule.forFeature([Tags])],
+    controllers: [TagsController],
+    providers: [TagsService, TagsRepository],
 })
-export class TagsModule { }
+export class TagsModule {}
