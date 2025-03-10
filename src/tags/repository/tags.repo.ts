@@ -1,91 +1,100 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 // orm and entity
-import { Tags, TagsDocument } from '../entity/tags.entity';
+import { Tags } from '../entity/tags.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsSelect, Repository } from 'typeorm';
 
 // dto and interfaces
 import { CreateTagDto } from '../dtos/create.tag.dto';
 import { GetByThree } from '../interfaces/tags.interfases';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { UpdateTagDto } from '../dtos/update.tag.dto';
+import { TagsEnum, TagsRelations } from '../entity/tags.enum';
 
 @Injectable()
 export class TagsRepository {
-	constructor(
-		@InjectModel(Tags.name)
-		private readonly tagsModle: Model<TagsDocument>
-	) { }
+    constructor(
+        @InjectRepository(Tags)
+        private readonly tagsRepository: Repository<Tags>,
+    ) {}
 
-	async getTagById(id: string) {
-		try {
-			return await this.tagsModle.findOne(
-				{ _id: id }
-			);
-		} catch (error) {
-			console.log(error);
-			throw new InternalServerErrorException({
-				message: 'Error while fetching tag',
-			});
-		}
-	}
+    async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
+        try {
+            return await this.tagsRepository.findOne({
+                where: { id },
+                select: select as FindOptionsSelect<Tags>,
+                relations: relations as string[],
+            });
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException({
+                message: 'Error while fetching tag',
+                details: error.message,
+            });
+        }
+    }
 
-	async deleteTagById(id: string) {
-		try {
-			await this.tagsModle.deleteOne({ id });
-		} catch (error) {
-			throw new InternalServerErrorException({
-				message: 'Error while deleting tag',
-			});
-		}
-	}
+    async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
+        try {
+            const tag = this.tagsRepository.create({
+                ...createTagDto,
+                tag_creator: { id: admin_id },
+            });
 
-	async getOneTageByThree(getByThree: GetByThree) {
-		try {
-			return await this.tagsModle.findOne({
-				...getByThree
-			});
-		} catch (error) {
-			throw new InternalServerErrorException({
-				message: 'Error while fetching tags',
-			});
-		}
-	}
+            return await this.tagsRepository.save(tag);
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error while creating tag',
+                details: error.message,
+            });
+        }
+    }
 
-	async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
-		try {
-			const tag = new this.tagsModle({
-				...createTagDto,
-				tag_creator: admin_id
-			});
+    async deleteTagById(id: number) {
+        try {
+            await this.tagsRepository.delete(id);
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error while deleting tag',
+                details: error.message,
+            });
+        }
+    }
 
-			await tag.save();
-			return tag;
-		} catch (error) {
-			throw new InternalServerErrorException({
-				message: 'Error while creating tag',
-			});
-		}
-	}
+    async getOneTageByThree(getByThree: GetByThree) {
+        try {
+            return await this.tagsRepository.findOne({
+                where: { ...getByThree },
+            });
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error while fetching tags',
+                details: error.message,
+            });
+        }
+    }
 
-	async getAllTags() {
-		try {
-			return await this.tagsModle.find();
-		} catch (error) {
-			throw new InternalServerErrorException({
-				message: 'Error while fetching tags',
-			});
-		}
-	}
+    async getAllTags() {
+        try {
+            return await this.tagsRepository.find();
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error while fetching tags',
+            });
+        }
+    }
 
-	async updateTagById(tag: TagsDocument, updateTagDto: UpdateTagDto) {
-		try {
-			tag = Object.assign(tag, updateTagDto);
-			return await tag.save();
-		} catch (error) {
-			throw new InternalServerErrorException({
-				message: 'Error while updating tag',
-			});
-		}
-	}
+    async updateTagById(tag: Tags, updateTagDto: UpdateTagDto) {
+        try {
+            tag = {
+                ...tag,
+                ...updateTagDto,
+            };
+            return await this.tagsRepository.save(tag);
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error while updating tag',
+            });
+        }
+    }
 }

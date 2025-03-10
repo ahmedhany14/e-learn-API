@@ -2,14 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { FactoryKeyGeneratorProvider } from './providers/factory.key.generator.provider';
 
 import { KeyTypeEnum } from './key.type.enum';
-import { Videos } from '../../videos/entity/videos.entity';
-import { Section } from '../../sections/entity/sections.entity';
-import * as console from 'node:console';
 
-type WillBe = Videos | Section;
+import { DataI } from './data.interface';
 
 @Injectable()
-export class KeyGeneratorService<T extends WillBe> {
+export class KeyGeneratorService<T extends DataI> {
     constructor(
         @Inject()
         private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<T>,
@@ -24,8 +21,6 @@ export class KeyGeneratorService<T extends WillBe> {
     async generator(data: T[], id: number, target_order: number): Promise<string> {
         const n = data.length;
         const keyType = this.determineKeyType(target_order, n);
-
-        console.log('keyType', keyType);
 
         switch (keyType) {
             case KeyTypeEnum.FIRST:
@@ -85,7 +80,6 @@ export class KeyGeneratorService<T extends WillBe> {
 
         for (let i = 0; i < data.length; i++) if (data[i].id === id) my_order = i + 1;
 
-        console.log('my_order', my_order);
         if (target_order > my_order && ~my_order) {
             next = data[target_order].order;
             prev = data[target_order - 1].order;
