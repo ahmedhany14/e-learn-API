@@ -1,14 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { IndexGenerator } from 'fractional-indexing-jittered';
-import { Section } from '../../../sections/entity/sections.entity';
-import { Videos } from '../../../videos/entity/videos.entity';
-import * as console from 'node:console';
 
-type WillBe = Section | Videos;
+import { DataI } from '../data.interface';
 
 @Injectable()
-export class KeyGeneratorProvider<T extends WillBe> {
+export class KeyGeneratorProvider<T extends DataI> {
     private readonly indexGenerator = new IndexGenerator([]);
     private readonly logger = new Logger(KeyGeneratorProvider.name);
 

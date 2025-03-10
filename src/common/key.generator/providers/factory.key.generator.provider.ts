@@ -1,11 +1,9 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { KeyGeneratorProvider } from './key.generator.provider';
-import { Section } from '../../../sections/entity/sections.entity';
-import { Videos } from '../../../videos/entity/videos.entity';
 
-type WillBe = Section | Videos;
+import { DataI } from '../data.interface';
 @Injectable()
-export class FactoryKeyGeneratorProvider<T extends WillBe> {
+export class FactoryKeyGeneratorProvider<T extends DataI> {
     private readonly types = new Map<string, (data: T[], ...args: string[]) => Promise<string>>();
 
     private readonly logger = new Logger(FactoryKeyGeneratorProvider.name);
