@@ -13,31 +13,31 @@ import {
 } from '@nestjs/common';
 
 // decorators and enums from auth
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { AuthEnum } from '../auth/enums/auth.enum';
-import { ROLE } from '../auth/decorators/role.decorator';
-import { RoleEnum } from '../auth/enums/role.enum';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { AUTH } from '../../auth/decorators/auth.decorator';
+import { AuthEnum } from '../../auth/enums/auth.enum';
+import { ROLE } from '../../auth/decorators/role.decorator';
+import { RoleEnum } from '../../auth/enums/role.enum';
+import { ExtractAccountData } from '../../common/decorators/request.extractData.decorator';
 
 // dto
-import { CreateTagDto } from './dtos/create.tag.dto';
-import { UpdateTagDto } from './dtos/update.tag.dto';
+import { CreateTagDto } from '../dtos/create.tag.dto';
+import { UpdateTagDto } from '../dtos/update.tag.dto';
 
 // services
-import { TagsService } from './services/tags.service';
+import { TagsService } from '../services/tags.service';
 
 // enums
-import { TagsEnum, TagsRelations } from './entity/tags.enum';
+import { TagsEnum, TagsRelations } from '../entity/tags.enum';
 
-@Controller('tags')
-export class TagsController {
+@ROLE(RoleEnum.ADMIN)
+@AUTH(AuthEnum.BEARER)
+@Controller('tags-via-admins')
+export class TagsViaAdminsController {
     constructor(
         @Inject()
         private readonly tagsService: TagsService,
     ) {}
 
-    @ROLE(RoleEnum.ADMIN)
-    @AUTH(AuthEnum.BEARER)
     @Get('one-tag/:tag_id')
     async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
         const select = [
@@ -69,8 +69,6 @@ export class TagsController {
         };
     }
 
-    @ROLE(RoleEnum.ADMIN)
-    @AUTH(AuthEnum.BEARER)
     @Get('all-tags')
     async getAllTagsWithDetails() {
         const tags = await this.tagsService.getAllTags();
@@ -82,8 +80,6 @@ export class TagsController {
         };
     }
 
-    @ROLE(RoleEnum.ADMIN)
-    @AUTH(AuthEnum.BEARER)
     @Post('new-tag')
     async createTag(
         @Body() createTagDto: CreateTagDto,
@@ -111,8 +107,6 @@ export class TagsController {
         };
     }
 
-    @ROLE(RoleEnum.ADMIN)
-    @AUTH(AuthEnum.BEARER)
     @Patch('edit-tag/:tag_id')
     async editTag(
         @Param('tag_id', ParseIntPipe) tag_id: number,
@@ -144,8 +138,6 @@ export class TagsController {
         };
     }
 
-    @ROLE(RoleEnum.ADMIN)
-    @AUTH(AuthEnum.BEARER)
     @Delete('tag/:tag_id')
     async deleteTag(@Param('tag_id', ParseIntPipe) tag_id: number) {
         const select = [TagsEnum.ID];
