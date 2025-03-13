@@ -9,6 +9,7 @@ import { Plan_Account } from './account.plan.entity';
 import { RoleEnum } from '../../auth/enums/role.enum';
 import { Course } from '../../courses/entities/course.entity';
 import { Tags } from '../../tags/entity/tags.entity';
+import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
 
 @Entity({
     name: 'accounts',
@@ -136,4 +137,10 @@ export class Account {
         lazy: true,
     })
     plans_updated: Promise<Plan[]>;
+
+    // each account can review multiple courses
+    @OneToMany(() => CourseReview, (course_review) => course_review.reviewer, {
+        lazy: true,
+    })
+    course_reviews: Promise<CourseReview[]>;
 }
