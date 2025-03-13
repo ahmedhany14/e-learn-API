@@ -12,7 +12,7 @@ import {
     Post,
 } from '@nestjs/common';
 
-// decorators and enums from auth
+// decorators and types from auth
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../auth/enums/auth.enum';
 import { ROLE } from '../../auth/decorators/role.decorator';
@@ -26,7 +26,7 @@ import { UpdateTagDto } from '../dtos/update.tag.dto';
 // services
 import { TagsService } from '../services/tags.service';
 
-// enums
+// types
 import { TagsEnum, TagsRelations } from '../entity/tags.enum';
 
 @ROLE(RoleEnum.ADMIN)

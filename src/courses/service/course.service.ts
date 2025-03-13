@@ -19,6 +19,10 @@ export class CourseService {
         return await this.courserRepo.createCourse(account_id);
     }
 
+    async getTotalCourses(filter: any) {
+        return await this.courserRepo.getTotalCourses(filter);
+    }
+
     async getCourse(
         select: CourseEnum[] = [CourseEnum.ID, CourseEnum.STATE],
         relation: CourseRelations[] = [],
@@ -40,13 +44,13 @@ export class CourseService {
             CourseEnum.IMAGE_URL,
             CourseEnum.STATE,
         ],
-        relataion: CourseRelations[] = [],
+        relation: CourseRelations[] = [],
         filter: any,
         queryDto: QueryDto,
     ) {
         return await this.courserRepo.getMyCourses(
             select,
-            relataion,
+            relation,
             filter,
             queryDto,
         );

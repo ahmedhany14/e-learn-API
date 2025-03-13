@@ -4,7 +4,6 @@ import { ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 import { ApproveTransaction } from '../providers/approve.transaction';
 import { RejectTransaction } from '../providers/reject.transaction';
 import { OrdersService } from '../../orders/orders.service';
-import { CourseReviewRepository } from '../repository/coures.review.repo';
 
 @Injectable()
 export class AdminService {
@@ -13,8 +12,6 @@ export class AdminService {
   constructor(
     @Inject()
     private readonly orderService: OrdersService,
-    @Inject()
-    private readonly courseReviewRepository: CourseReviewRepository,
     @Inject()
     private readonly approveTransaction: ApproveTransaction,
     @Inject()
@@ -52,7 +49,5 @@ export class AdminService {
     return order.account.email;
   }
 
-  async pushCourseToReview(course_id: number) {
-    return this.courseReviewRepository.createCourseReview(course_id);
-  }
+
 }

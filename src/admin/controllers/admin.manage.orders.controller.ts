@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 
-//decorators and enums
+//decorators and types
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { ROLE } from '../../auth/decorators/role.decorator';
 import { RoleEnum } from '../../auth/enums/role.enum';

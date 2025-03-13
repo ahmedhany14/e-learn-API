@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 
-// constants and enums
+// constants and types
 import { SelectKey } from '../../common/constants/select.constant';
 import { AccountEnum } from '../entity/account.enum';
 

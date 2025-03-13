@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Inject, NotFoundException, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 
-// decorators and enums from auth
+// decorators and types from auth
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { ROLE } from 'src/auth/decorators/role.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
@@ -13,7 +13,7 @@ import { CourseTagService } from '../services/course.tag.service';
 import { IsYourCourseGuard } from 'src/courses/guards/is.your.course.guard';
 import { TagsService } from '../services/tags.service';
 
-// enums and dto
+// types and dto
 import { TagsEnum } from '../entity/tags.enum';
 import { AddTagsToCourseDto } from '../dtos/add.tags.to.course.dto';
 import { RemoveTagsFromCourseDto } from '../dtos/remove.tags.from.course.dto';

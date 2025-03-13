@@ -15,23 +15,19 @@ import { ApproveTransaction } from './providers/approve.transaction';
 import { OrdersService } from '../orders/orders.service';
 import { OrdersProvider } from '../orders/providers/orders.provider';
 import { BacklogOrdersProvider } from '../orders/providers/backlog.orders.provider';
-import { CourseReviewRepository } from './repository/coures.review.repo';
+import { CourseReviewRepository } from '../administration/review-courses/repository/coures.review.repo';
 
 // entity and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from '../orders/entity/order.entity';
 import { OrderBacklog } from '../orders/entity/order.backlog.entity';
 import { RejectTransaction } from './providers/reject.transaction';
-import { CourseReview } from './entity/courses/course.reviwe.entity';
 import { AdminPrivacyService } from './sevices/admin.privacy.service';
-import { AdminSiteAnalysisController } from './controllers/admin.site-analysis.controller';
-
 
 @Module({
-    controllers: [AdminController, AdminPrivacyController, AdminSiteAnalysisController],
+    controllers: [AdminController, AdminPrivacyController],
     providers: [
         AdminService,
-        CourseReviewRepository,
         ApproveTransaction,
         RejectTransaction,
         OrdersService,
@@ -40,7 +36,7 @@ import { AdminSiteAnalysisController } from './controllers/admin.site-analysis.c
         AdminPrivacyService,
     ],
     imports: [
-        TypeOrmModule.forFeature([Order, OrderBacklog, CourseReview]),
+        TypeOrmModule.forFeature([Order, OrderBacklog]),
         forwardRef(() => AccountModule),
         EmailModule,
         PaginationModule,
