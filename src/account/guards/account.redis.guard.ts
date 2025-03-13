@@ -4,11 +4,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AccountRedisService } from '../service/account.redis.service';
+import { AccountRedisService } from '../../redis/services/account.redis.service';
 
 @Injectable()
 export class TokenIsInRedisGuard implements CanActivate {
-  constructor(private readonly accountRedisService: AccountRedisService) {}
+  constructor(private readonly accountRedisService: AccountRedisService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -24,9 +24,9 @@ export class TokenIsInRedisGuard implements CanActivate {
       throw new UnauthorizedException('ID or Token is missing.');
     }
     const activeToken = await this.accountRedisService.getActiveToken(id);
-  console.log(activeToken);
-  console.log(token);
-  console.log(id);
+    console.log(activeToken);
+    console.log(token);
+    console.log(id);
     if (!activeToken) {
       throw new UnauthorizedException({
         message: `Can't activate account`,

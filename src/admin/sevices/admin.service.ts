@@ -3,7 +3,7 @@ import { ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 // providers and services
 import { ApproveTransaction } from '../providers/approve.transaction';
 import { RejectTransaction } from '../providers/reject.transaction';
-import { OrdersService } from '../sevices/orders.service';
+import { OrdersService } from '../../orders/orders.service';
 import { CourseReviewRepository } from '../repository/coures.review.repo';
 
 @Injectable()

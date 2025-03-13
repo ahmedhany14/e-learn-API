@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 // Service
-import { OrdersService } from '../../admin/sevices/orders.service';
+import { OrdersService } from '../../orders/orders.service';
 
 // Repository
 import { AccountRepository } from '../repository/account.repository';
@@ -75,5 +75,13 @@ export class AccountService {
     upgradeToInstructorDto: UpgradeToInstructorDto,
   ) {
     return this.orderService.createOrder(upgradeToInstructorDto, account);
+  }
+
+  async getTotalStudents(filter: any) {
+    return await this.accountRepository.getTotalStudents(filter);
+  }
+
+  async getTotalInstructors(filter: any) {
+    return await this.accountRepository.getTotalInstructors(filter);
   }
 }

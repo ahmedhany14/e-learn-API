@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { CourseReview } from './../entity/courses/course.reviwe.entity';
+import { CourseReview } from '../entity/courses/course.reviwe.entity';
 
 @Injectable()
 export class CourseReviewRepository {
@@ -15,7 +15,7 @@ export class CourseReviewRepository {
     @InjectRepository(CourseReview)
     private readonly courseReviewRepository: Repository<CourseReview>,
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async createCourseReview(course_id: number): Promise<CourseReview> {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -26,7 +26,7 @@ export class CourseReviewRepository {
     this.logger.log(`transaction started`);
     try {
       const courseReview = queryRunner.manager.create(CourseReview, {
-        course: { id: course_id },
+        // course: { id: course_id },
       });
       this.logger.log(`course review created`);
 

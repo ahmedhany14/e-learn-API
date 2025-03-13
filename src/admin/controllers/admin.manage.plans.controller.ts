@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Logger, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Logger, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 
 
 // Auth and Role decorators
@@ -12,11 +12,12 @@ import { ExtractAccountData } from 'src/common/decorators/request.extractData.de
 import { IsExistPlan } from '../../plans/pip_validators/is.exist.plan.decorator';
 
 // services
-import { PlansService } from 'src/plans/plans.service';
+import { PlansViaAdminService } from 'src/plans/service/plans.via.admin.service';
 
 // dtos
 import { CreatePlanDto } from 'src/plans/dtos/create.plan.dto';
 import { PlansPaginationDto } from 'src/plans/dtos/plans.pagination.dto';
+import { UpdatePlanDto } from 'src/plans/dtos/update.plan.dto';
 
 
 @ROLE(RoleEnum.ADMIN)
@@ -27,7 +28,7 @@ export class AdminManagePlansController {
 
     constructor(
         @Inject()
-        private readonly planService: PlansService,
+        private readonly planService: PlansViaAdminService,
     ) { }
 
     @Post('new-plan')
@@ -102,4 +103,36 @@ export class AdminManagePlansController {
         };
     }
 
+    @Patch('plan/:plan_id')
+    async updatePlan(
+        @Body() updatePlanDto: UpdatePlanDto,
+        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @ExtractAccountData('id') admin_id: number,
+    ) {
+
+        const plan = await this.planService.updatePlan(plan_id, admin_id, updatePlanDto);
+
+        return {
+            response: {
+                message: 'Plan updated successfully',
+                plan
+            }
+        }
+    }
+
+
+    @Patch('flip-activation-plan/:plan_id')
+    async deActivePlan(
+        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @ExtractAccountData('id') admin_id: number,
+    ) {
+        const plan = await this.planService.flipActivationPlan(plan_id, admin_id);
+
+        return {
+            response: {
+                message: 'Plan deactivated successfully',
+                plan
+            }
+        }
+    }
 }

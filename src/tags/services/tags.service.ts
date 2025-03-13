@@ -6,42 +6,46 @@ import { CreateTagDto } from '../dtos/create.tag.dto';
 // services and repository
 import { TagsRepository } from '../repository/tags.repo';
 import { GetByThree } from '../interfaces/tags.interfases';
+import { Tags } from '../entity/tags.entity';
+import { UpdateTagDto } from '../dtos/update.tag.dto';
+import { TagsEnum, TagsRelations } from '../entity/tags.enum';
 
 @Injectable()
 export class TagsService {
-  constructor(
-    @Inject()
-    private readonly tagsRepo: TagsRepository,
-  ) {}
+    constructor(
+        @Inject()
+        private readonly tagsRepo: TagsRepository,
+    ) { }
 
-  async getTagById(id: number) {
-    return await this.tagsRepo.getTagById(id);
-  }
+    async getAllTags(
+        select: TagsEnum[],
+        relations: TagsRelations[],
+        filter = {},
+    ) {
+        return await this.tagsRepo.getAllTags(
+            select,
+            relations,
+            filter,
+        );
+    }
 
-  async deleteTagById(id: number) {
-    return await this.tagsRepo.deleteTagById(id);
-  }
-  async getOneTageByThree(getByThree: GetByThree) {
-    return await this.tagsRepo.getOneTageByThree(getByThree);
-  }
+    async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
+        return await this.tagsRepo.getTagById(select, relations, id);
+    }
 
+    async deleteTagById(id: number) {
+        return await this.tagsRepo.deleteTagById(id);
+    }
 
-  async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
-    return await this.tagsRepo.createNewTage(createTagDto, admin_id);
-  }
+    async getOneTageByThree(getByThree: GetByThree) {
+        return await this.tagsRepo.getOneTageByThree(getByThree);
+    }
 
-  async getAllCategories() {
-    await this.tagsRepo.getAllCategories();
-  }
+    async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
+        return await this.tagsRepo.createNewTage(createTagDto, admin_id);
+    }
 
-  async getAllSubcategories() {
-    await this.tagsRepo.getAllSubcategories();
-  }
-
-  async getAllTags() {
-    await this.tagsRepo.getAllTags();
-  }
-  async getTagsWithDetails() {
-    await this.tagsRepo.getTagsWithDetails();
-  }
+    async updateTagById(tag: Tags, updateTagDto: UpdateTagDto) {
+        return await this.tagsRepo.updateTagById(tag, updateTagDto);
+    }
 }

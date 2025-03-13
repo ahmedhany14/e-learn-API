@@ -4,21 +4,9 @@ import { AppService } from './app.service';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 // App Modules
-import { AuthModule } from './auth/auth.module';
-
-// Configurations for the application
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import appConfig from './common/config/app.conf';
-import databaseConf from './common/config/database.conf';
-import jwtCong from './common/config/jwt.cong';
-import emialConf from './common/config/emial.conf';
-import envValidation from './common/config/validations.conf';
 
 // ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-// JWT
-import { JwtModule } from '@nestjs/jwt';
 
 // Guards
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -30,13 +18,33 @@ import { PermissionGuard } from './auth/guards/permission.guard';
 import { TokenProvider } from './auth/providers/token.provider';
 import { Email } from './common/email/email';
 import { MigrationService } from './db/migrations.service';
+import { PlansViaAdminService } from './plans/service/plans.via.admin.service';
 
 // Modules
 import { ProfileModule } from './profile/profile.module';
 import { EmailModule } from './common/email/email.module';
 import { DbModule } from './db/db.module';
+import { PlansModule } from './plans/plans.module';
 import { AdminModule } from './admin/admin.module';
 import { AccountModule } from './account/account.module';
+import { AuthModule } from './auth/auth.module';
+import { InstructorModule } from './instructor/instructor.module';
+import { PaginationModule } from './common/pagination/pagination.module';
+import { CoursesModule } from './courses/courses.module';
+import { FileModule } from './file/file.module';
+import { TagsModule } from './tags/tags.module';
+import { RedisModule } from './redis/redis.module';
+import { ConfigService } from './configurations/config.service';
+import { ConfigurationsModule } from './configurations/configurations.module';
+import { JwtModule } from '@nestjs/jwt';
+import { OrdersModule } from './orders/orders.module';
+import { BlogModule } from './blog-system/blog/blog.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { CommentsModule } from './blog-system/comments/comments.module';
+import { RepliesModule } from './blog-system/replies/replies.module';
+import { VideosModule } from './videos/videos.module';
+import { SectionsModule } from './sections/sections.module';
+//import { KeyGeneratorModule } from './common/key.generator/key.generator.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -45,135 +53,116 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
-import { InstructorModule } from './instructor/instructor.module';
-import { PaginationModule } from './common/pagination/pagination.module';
-import { CoursesModule } from './courses/courses.module';
-import { FileModule } from './file/file.module';
-import { TagsModule } from './tags/tags.module';
 
-// Redis
-import Redis from 'ioredis';
-import redisCon from './common/config/redis.conf';
-import { AccountRedisService } from './account/service/account.redis.service';
-import { PlansModule } from './plans/plans.module';
-import { PlansService } from './plans/plans.service';
-
-const env = process.env.NODE_ENV;
 
 @Module({
-  imports: [
-    // Configurations Parameters and Validation
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: `.${env}.env`,
-      load: [appConfig, databaseConf, emialConf],
-      validationSchema: envValidation,
-    }),
+    imports: [
+        // ORM and Database
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigurationsModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.databaseConfig.host,
+                port: configService.databaseConfig.port,
+                username: configService.databaseConfig.username,
+                password: configService.databaseConfig.password,
+                database: configService.databaseConfig.database,
+                synchronize: configService.databaseConfig.synchronize,
+                autoLoadEntities: configService.databaseConfig.autoLoadEntities,
+                namingStrategy: new SnakeNamingStrategy(),
+                logger: 'advanced-console', // Use the advanced console logger
+            }),
+        }),
 
-    // JWT
-    ConfigModule.forFeature(jwtCong),
-    JwtModule.registerAsync(jwtCong.asProvider()),
-    // Redis
-    ConfigModule.forFeature(redisCon),
+        MongooseModule.forRootAsync({
+            imports: [ConfigurationsModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService) => ({
+                uri: configService.databaseConfig.url
+            })
+        }),
 
-    // ORM and Database
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('database.host'),
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.database'),
-        synchronize: configService.get<boolean>('database.synchronize'),
-        autoLoadEntities: configService.get<boolean>(
-          'database.autoLoadEntities',
-        ),
-        namingStrategy: new SnakeNamingStrategy(),
-        logger: 'advanced-console', // Use the advanced console logger
-        // For even more detailed logging:
-        logging: ['query'],
-      }),
-    }),
 
-    AuthModule,
+        AuthModule,
 
-    AccountModule,
+        AccountModule,
 
-    ProfileModule,
+        ProfileModule,
 
-    EmailModule,
+        EmailModule,
 
-    AdminModule,
+        AdminModule,
 
-    InstructorModule,
+        InstructorModule,
 
-    PaginationModule,
+        PaginationModule,
 
-    //    OrdersModule,
+        CoursesModule,
 
-    CoursesModule,
+        FileModule,
 
-    FileModule,
+        TagsModule,
 
-    TagsModule,
+        PlansModule,
 
-    PlansModule,
+        RedisModule,
 
-    // DbModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    AccessTokenGuard,
-    TokenProvider,
-    Email,
-    // MigrationService,
+        ConfigurationsModule,
 
-    // Guards
-    {
-      provide: APP_GUARD,
-      useClass: AuthenticationGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PermissionGuard,
-    },
+        JwtModule,
 
-    // Interceptors
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
+        OrdersModule,
 
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+        BlogModule,
 
-    // redis
-    {
-      provide: 'REDIS_CLIENT',
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return new Redis({
-          host: configService.get('redis.host'),
-          port: configService.get('redis.port'),
-          password: configService.get('redis.password'),
-        });
-      },
-    },
-    AccountRedisService,
-    PlansService,
-  ],
+        CommentsModule,
 
-  exports: ['REDIS_CLIENT'],
+        RepliesModule,
+
+        VideosModule,
+
+        SectionsModule,
+
+        // KeyGeneratorModule,
+
+        // DbModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        AppService,
+        AccessTokenGuard,
+        TokenProvider,
+        Email,
+        // MigrationService,
+
+        // Guards
+        {
+            provide: APP_GUARD,
+            useClass: AuthenticationGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: PermissionGuard,
+        },
+
+        // Interceptors
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ResponseInterceptor,
+        },
+
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
+        },
+
+        PlansViaAdminService,
+    ],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware, RateLimiterMiddleware).forRoutes('*');
-    //consumer.apply(LoggerMiddleware).forRoutes('auth'); // for specific route
-  }
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware, RateLimiterMiddleware).forRoutes('*');
+        //consumer.apply(LoggerMiddleware).forRoutes('auth'); // for specific route
+    }
 }

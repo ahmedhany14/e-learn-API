@@ -7,7 +7,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { Course } from '../../courses/entity/courses.entity';
 import { Plan_Account } from '../../account/entity/account.plan.entity';
 
 @Entity('plans')
@@ -36,6 +35,13 @@ export class Plan {
     default: 0,
   })
   plan_duration: number;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: true,
+  })
+  is_active: boolean;
 
   @Column({
     type: 'timestamp with time zone',
@@ -70,10 +76,4 @@ export class Plan {
   })
   @JoinColumn({ name: 'updated_by' })
   updated_by: Account;
-
-  // each plan can have multiple courses
-  // @OneToMany(() => Course, (course) => course.plan, {
-  //   lazy: true,
-  // })
-  // courses: Promise<Course[]>;
 }

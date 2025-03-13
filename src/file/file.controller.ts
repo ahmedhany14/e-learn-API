@@ -1,9 +1,9 @@
 import {
-  BadRequestException,
   Controller,
   Inject,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   UnauthorizedException,
   UploadedFile,
@@ -25,6 +25,7 @@ import { RoleEnum } from '../auth/enums/role.enum';
 // decorators
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { ProfileService } from '../profile/services/profile.service';
+import { CourseEnum, CourseRelations } from 'src/courses/entities/course.enums';
 
 @Controller('file')
 export class FileController {
@@ -43,10 +44,14 @@ export class FileController {
   @UseInterceptors(FileInterceptor('course-image'))
   async uploadCourseImage(
     @UploadedFile() file: Express.Multer.File,
-    @Param('course_id') course_id: string,
+    @Param('course_id', ParseIntPipe) course_id: number,
     @ExtractAccountData('id') account_id: number,
   ) {
-    const course = await this.courseService.getCourse(parseInt(course_id));
+    const course = await this.courseService.getCourse(
+      [CourseEnum.ID],
+      [CourseRelations.INSTRUCTOR],
+      course_id,
+    );
     if (!course)
       throw new NotFoundException({
         message: 'Course not found',
@@ -61,10 +66,10 @@ export class FileController {
     const filename = await this.fileService.resizeAndOptimize(
       file,
       'course',
-      parseInt(course_id),
+      course_id,
     );
 
-    await this.courseService.updateImageName(parseInt(course_id), filename);
+    await this.courseService.updateImageName(course_id, filename);
 
     return {
       response: {

@@ -25,12 +25,12 @@ export class ResponseInterceptor implements NestInterceptor {
         const statusCode = response.statusCode;
         const responseTime = `${Date.now() - start}ms`;
 
-        const res = data?.response;
+        const res = data.response;
 
         return {
           status: 'success',
           code: statusCode,
-          data: res || null,
+          data: typeof res !== 'undefined' ? res : null,
           error: null,
           meta: {
             total_rows: data?.meta?.total ?? 0,

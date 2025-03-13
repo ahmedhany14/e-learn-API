@@ -1,124 +1,46 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  ConflictException,
-  Delete,
-  Param,
-  ParseIntPipe,
-} from '@nestjs/common';
-
-// decorators and enums from auth
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { AuthEnum } from '../auth/enums/auth.enum';
-import { ROLE } from '../auth/decorators/role.decorator';
-import { RoleEnum } from '../auth/enums/role.enum';
-
-// dto
-import { CreateTagDto } from './dtos/create.tag.dto';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
-
-// services
+import { Controller, Get, Param } from '@nestjs/common';
 import { TagsService } from './services/tags.service';
+import { TagsEnum } from './entity/tags.enum';
 
 @Controller('tags')
 export class TagsController {
-  constructor(
-    @Inject()
-    private readonly tagsService: TagsService,
-  ) {}
 
-  @ROLE(RoleEnum.ADMIN)
-  @AUTH(AuthEnum.BEARER)
-  @Get('all-tags-with-details')
-  async getAllTagsWithDetails() {
-    const tags = await this.tagsService.getAllTags();
-    return {
-      response: {
-        tags,
-      },
-    };
-  }
+    constructor(
+        private readonly tagsService: TagsService,
+    ) { }
 
-  @ROLE(RoleEnum.ADMIN)
-  @AUTH(AuthEnum.BEARER)
-  @Post('new-tag')
-  async createTag(
-    @Body() createTagDto: CreateTagDto,
-    @ExtractAccountData('id') admin_id: number,
-  ) {
-    const tagExists = await this.tagsService.getOneTageByThree({
-      category: createTagDto.category,
-      subcategory: createTagDto.subcategory,
-      tag: createTagDto.tag,
-    });
-    if (tagExists) {
-      throw new ConflictException({
-        message: 'Tag already exists',
-        details: `Tag with category: ${createTagDto.category}, subcategory: ${createTagDto.subcategory}, tag: ${createTagDto.tag} already exists`,
-      });
+    @Get('all')
+    async getAllTags() {
+        const select = [TagsEnum.ID, TagsEnum.CATEGORY, TagsEnum.SUBCATEGORY, TagsEnum.TAG, TagsEnum.DESCRIPTION];
+        return {
+            response: await this.tagsService.getAllTags(select, [], {}),
+        }
     }
 
-    const tag = await this.tagsService.createNewTage(createTagDto, admin_id);
+    @Get('category/:category')
+    async getTagsByCategory(
+        @Param('category') category: string,
+    ) {
+        const select = [TagsEnum.ID, TagsEnum.SUBCATEGORY, TagsEnum.TAG, TagsEnum.DESCRIPTION];
+        const filter = {
+            category,
+        };
 
-    return {
-      response: {
-        message: 'Tag created successfully',
-        tag,
-      },
-    };
-  }
-
-  @ROLE(RoleEnum.ADMIN)
-  @AUTH(AuthEnum.BEARER)
-  @Delete('tag/:tagId')
-  async deleteTag(@Param('tagId', ParseIntPipe) tagId: number) {
-    const tag = await this.tagsService.getTagById(tagId);
-    if (!tag) {
-      throw new ConflictException({
-        message: 'Tag not found',
-        details: `Tag with id: ${tagId} not found`,
-      });
+        return {
+            response: await this.tagsService.getAllTags(select, [], filter),
+        };
     }
 
-    await this.tagsService.deleteTagById(tagId);
-
-    return {
-      response: {
-        message: 'Tag deleted successfully',
-      },
-    };
-  }
-
-  @Get('categories')
-  async getCategories() {
-    const categories = await this.tagsService.getAllCategories();
-    return {
-      response: {
-        categories,
-      },
-    };
-  }
-
-  @Get('subcategories')
-  async getSubcategories() {
-    const subcategories = await this.tagsService.getAllSubcategories();
-    return {
-      response: {
-        subcategories,
-      },
-    };
-  }
-
-  @Get('all-tags')
-  async getAllTags() {
-    const tags = await this.tagsService.getAllTags();
-    return {
-      response: {
-        tags,
-      },
-    };
-  }
+    @Get('subcategory/:subcategory')
+    async getTagsBySubcategory(
+        @Param('subcategory') subcategory: string,
+    ) {
+        const select = [TagsEnum.ID, TagsEnum.TAG, TagsEnum.DESCRIPTION];
+        const filter = {
+            subcategory,
+        };
+        return {
+            response: await this.tagsService.getAllTags(select, [], filter),
+        };
+    }
 }

@@ -21,7 +21,7 @@ export class PaginationService {
     });
 
 
-    const totalPages = Math.round(total / limit);
+    const totalPages = Math.round(total * 1.0 / limit);
     const hasMore = page < totalPages;
 
     return {

@@ -1,9 +1,9 @@
 import { PipeTransform, Injectable, NotFoundException } from '@nestjs/common';
-import { PlansService } from '../plans.service';
+import { PlansViaAdminService } from '../service/plans.via.admin.service';
 
 @Injectable()
 export class IsExistPlan implements PipeTransform<number> {
-  constructor(private readonly plansService: PlansService) { }
+  constructor(private readonly plansService: PlansViaAdminService) { }
 
   async transform(id: number): Promise<number> {
     const plan = await this.plansService.getPlanById(id);

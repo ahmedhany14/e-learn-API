@@ -1,28 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Unique } from 'typeorm';
-import { Course } from '../../courses/entity/courses.entity';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { Tags } from './tags.entity';
+import { Course } from '../../courses/entities/course.entity';
 
 @Entity()
 @Unique(['course', 'tag'])
 export class CourseTags {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  // relation with course and tags, where course can have multiple tags, and tags can be in multiple courses
-  @ManyToOne(() => Course, (course) => course.tags, {
-    onDelete: 'CASCADE',
-    eager: true,
-  })
-  @JoinColumn({
-  })
-  course: Course;
+    @ManyToOne(() => Course, (course) => course.course_tags, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'course_id', referencedColumnName: 'id' })
+    course: Course;
 
-  // relation with course and tags, where tags can be in multiple courses, and course can have multiple tags
-  @ManyToOne(() => Tags, (tags) => tags.course, {
-    onDelete: 'CASCADE',
-    eager: true,
-  })
-  @JoinColumn({
-  })
-  tag: Course;
+    @ManyToOne(() => Tags, (tag) => tag.courseTags, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'tag_id' })
+    tag: Tags;
 }
