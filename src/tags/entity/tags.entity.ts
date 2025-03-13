@@ -46,8 +46,6 @@ export class Tags {
 
     @ManyToOne(() => Account, (account) => account.tags, {
         nullable: false,
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     })
     @JoinColumn({
         name: 'tag_creator_id',
