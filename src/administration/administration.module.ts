@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PrivacyModule } from './privacy/privacy.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import {ReviewCoursesModule} from "./review-courses/review-courses.module";
 
 @Module({
-  imports: [PrivacyModule, DashboardModule]
+  imports: [PrivacyModule, DashboardModule, ReviewCoursesModule]
 })
 export class AdministrationModule {}

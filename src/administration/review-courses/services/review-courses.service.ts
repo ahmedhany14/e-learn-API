@@ -10,4 +10,8 @@ export class ReviewCoursesService {
     async pushCourseToReview(course_id: number) {
         return this.courseReviewRepository.createCourseReview(course_id);
     }
+
+    async getPushedCourses(filter: any) {
+        return this.courseReviewRepository.getReviewCourses(filter);
+    }
 }
