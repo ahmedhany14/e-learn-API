@@ -16,7 +16,7 @@ export class VideosInstructorRepo {
     constructor(
         @InjectRepository(Videos)
         private readonly videosRepository: Repository<Videos>,
-    ) {}
+    ) { }
 
     async findOneById(
         select: VideoEnum[],
@@ -65,7 +65,7 @@ export class VideosInstructorRepo {
         }
     }
 
-    async createVideo(video: AddVideoDto, section_id: number, order: string): Promise<Videos> {
+    async createVideo(video: AddVideoDto, section_id: number, order: number): Promise<Videos> {
         try {
             const newVideo = this.videosRepository.create({
                 ...video,
@@ -101,39 +101,26 @@ export class VideosInstructorRepo {
         }
     }
 
-    async updateOrder(video_id: number, new_order: string): Promise<Videos> {
+    async updateVideosOrder(videos: Videos[], video_id: Videos['id'], new_order: number): Promise<Videos[]> {
         try {
-            let video = await this.videosRepository.findOne({
-                where: { id: video_id },
+            // find the video to move
+            const video = videos.find((video) => video.id === video_id);
+
+            // remove the video from the array
+            videos = videos.filter((video) => video.id !== video_id);
+
+            // insert the video at the new order
+            videos.splice(new_order - 1, 0, video);
+
+            const updatedVideos = videos.map((video, index) => {
+                video.order = index + 1;
+                return video;
             });
 
-            video = {
-                ...video,
-                order: new_order,
-            };
-
-            return await this.videosRepository.save(video);
+            return await this.videosRepository.save(updatedVideos);
         } catch (error) {
             throw new InternalServerErrorException({
-                message: `Error while updating video order with id: ${video_id}`,
-                details: error.message,
-            });
-        }
-    }
-
-    async moveToNewSection(
-        video_id: number,
-        new_section_id: number,
-        new_order: string,
-    ): Promise<void> {
-        try {
-            await this.videosRepository.update(
-                { id: video_id },
-                { section: { id: new_section_id }, order: new_order },
-            );
-        } catch (error) {
-            throw new InternalServerErrorException({
-                message: `Error while moving video with id: ${video_id} to new section with id: ${new_section_id}`,
+                message: `Error while updating videos order`,
                 details: error.message,
             });
         }

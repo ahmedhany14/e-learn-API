@@ -14,6 +14,7 @@ import { Videos } from './entity/videos.entity';
 // services and repository
 import { VideosInstructorService } from './services/instructor/videos.instructor.service';
 import { VideosInstructorRepo } from './repository/instructor/videos.instructor.repo';
+import { MoveVideosFromSectionToSectionTransaction } from './repository/transactions/move.videos.from.section.to.section.transaction';
 
 @Module({
     imports: [
@@ -22,7 +23,7 @@ import { VideosInstructorRepo } from './repository/instructor/videos.instructor.
         CoursesModule,
         KeyGeneratorModule
     ],
-    providers: [VideosInstructorService, VideosInstructorRepo],
+    providers: [VideosInstructorService, VideosInstructorRepo, MoveVideosFromSectionToSectionTransaction],
     exports: [VideosInstructorService],
     controllers: [VideosViaInstructorController],
 })

@@ -11,7 +11,6 @@ import { Course } from '../../courses/entities/course.entity';
 import { Videos } from '../../videos/entity/videos.entity';
 
 @Entity()
-@Unique(['order', 'course'])
 export class Section {
     @PrimaryGeneratedColumn()
     id: number;
@@ -22,8 +21,8 @@ export class Section {
     })
     title: string;
 
-    @Column({ type: 'varchar', unique: true })
-    order: string;
+    @Column({ type: 'int' })
+    order: number;
 
     @ManyToOne(() => Course, (course) => course.sections, {
         onDelete: 'CASCADE',

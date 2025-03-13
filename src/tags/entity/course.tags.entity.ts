@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Tags } from '../../tags/entity/tags.entity';
-import { Course } from './course.entity';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique } from 'typeorm';
+import { Tags } from './tags.entity';
+import { Course } from '../../courses/entities/course.entity';
 
 @Entity()
+@Unique(['course', 'tag'])
 export class CourseTags {
     @PrimaryGeneratedColumn()
     id: number;

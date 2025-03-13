@@ -8,7 +8,7 @@ import {
     OneToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { CourseTags } from '../../courses/entities/course.tags.entity';
+import { CourseTags } from './course.tags.entity';
 
 @Entity()
 @Unique(['category', 'subcategory', 'tag'])
@@ -46,8 +46,6 @@ export class Tags {
 
     @ManyToOne(() => Account, (account) => account.tags, {
         nullable: false,
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     })
     @JoinColumn({
         name: 'tag_creator_id',

@@ -11,8 +11,6 @@ import {
     UseGuards,
 } from '@nestjs/common';
 
-// services
-import { KeyGeneratorService } from '../../common/key.generator/key.generator.service';
 import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 import { CourseService } from 'src/courses/service/course.service';
 
@@ -31,22 +29,15 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 
-// entities and enums
-import { Section } from 'src/sections/entity/sections.entity';
 import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 
 @Controller('sections-via-instructor')
 export class SectionsViaInstructorController {
     private readonly logger = new Logger(SectionsViaInstructorController.name);
-
     constructor(
         @Inject()
-        private readonly courseService: CourseService,
-        @Inject()
         private readonly sectionService: SectionsInstructorService,
-        @Inject()
-        private readonly keyGeneratorService: KeyGeneratorService<Section>,
-    ) {}
+    ) { }
 
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
@@ -60,10 +51,10 @@ export class SectionsViaInstructorController {
             `adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`,
         );
 
-        const course = await this.courseService.getCourse([], [], course_id);
-        const sections = await course.sections;
+        const sections = await this.sectionService.getCourseSections(course_id);
 
-        const order: string = await this.keyGeneratorService.generateNewKey(sections);
+
+        const order = sections.length + 1;
         console.log('newOrder', order);
 
         const section = await this.sectionService.createSection(
@@ -79,7 +70,6 @@ export class SectionsViaInstructorController {
             },
         };
     }
-
     @UseGuards(IsYourSectionGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -141,7 +131,7 @@ export class SectionsViaInstructorController {
         @Param('course_id', ParseIntPipe) course_id: number,
         @Body() reOrderSectionsDto: ReOrderingDto,
     ) {
-        const all_sections = await this.sectionService.getCourseSections(course_id);
+        let all_sections = await this.sectionService.getCourseSections(course_id);
 
         if (
             reOrderSectionsDto.new_order < 1 ||
@@ -161,13 +151,12 @@ export class SectionsViaInstructorController {
                 `moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`,
             );
 
-            const order = await this.keyGeneratorService.generator(
+
+            all_sections = await this.sectionService.updateSectionsOrder(
                 all_sections,
                 section_id,
                 reOrderSectionsDto.new_order,
             );
-
-            await this.sectionService.updateOrder(section_id, order);
         }
 
         return {

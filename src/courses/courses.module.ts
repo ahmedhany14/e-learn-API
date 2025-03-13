@@ -11,12 +11,11 @@ import { PaginationModule } from 'src/common/pagination/pagination.module';
 // entities and orm
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
-import { CourseTags } from './entities/course.tags.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Course, CourseTags]), PaginationModule],
+    imports: [TypeOrmModule.forFeature([Course]), PaginationModule],
     controllers: [CoursesViaInstructorController],
     providers: [CourseService, CourseRepo],
     exports: [CourseService],
 })
-export class CoursesModule {}
+export class CoursesModule { }
