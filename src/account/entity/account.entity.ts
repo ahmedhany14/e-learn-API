@@ -126,7 +126,7 @@ export class Account {
     backlog: Promise<OrderBacklog[]>;
 
     // each admin can create multiple plans
-    @OneToMany(() => Plan, (plan) => plan.admin_id, {
+    @OneToMany(() => Plan, (plan) => plan.admin, {
         lazy: true,
     })
     plans: Promise<Plan[]>;

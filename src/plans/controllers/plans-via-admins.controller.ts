@@ -18,17 +18,17 @@ import { PlansViaAdminService } from 'src/plans/service/plans.via.admin.service'
 import { CreatePlanDto } from 'src/plans/dtos/create.plan.dto';
 import { PlansPaginationDto } from 'src/plans/dtos/plans.pagination.dto';
 import { UpdatePlanDto } from 'src/plans/dtos/update.plan.dto';
-
+import { PlanColumnEnum, PlanRelationEnum } from '../entity/plan.enum';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
-@Controller('admin')
-export class AdminManagePlansController {
-    private readonly logger = new Logger(AdminManagePlansController.name);
+@Controller('plans-via-admins')
+export class PlansViaAdminsController {
+    private readonly logger = new Logger(PlansViaAdminsController.name);
 
     constructor(
         @Inject()
-        private readonly planService: PlansViaAdminService,
+        private readonly plansViaAdminService: PlansViaAdminService,
     ) { }
 
     @Post('new-plan')
@@ -36,17 +36,9 @@ export class AdminManagePlansController {
         @Body() createPlanDto: CreatePlanDto,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        /*
-            API Endpoint to create a new plan
-    
-            Steps:
-                get the admin id from the request
-                call the admin service to create a new plan associated with the admin id
-        */
-
         this.logger.log('Create new plan');
 
-        const plan = await this.planService.createPlan(createPlanDto, admin_id);
+        const plan = await this.plansViaAdminService.createPlan(createPlanDto, admin_id);
 
         return {
             response: {
@@ -57,48 +49,70 @@ export class AdminManagePlansController {
     }
 
     @Get('plans')
-    async getAllPlans(@Query() plansPaginationDto: PlansPaginationDto) {
+    async getAllPlans(
+        @Query('is_active') is_active: boolean,
+    ) {
         this.logger.log('Get all plans');
 
-        /*
-          API Endpoint to get all plans
-    
-          steps:
-            call the admin service to get all plans
-        */
+        const select = [
+            PlanColumnEnum.ID,
+            PlanColumnEnum.PLAN_NAME,
+            PlanColumnEnum.PLAN_PRICE,
+            PlanColumnEnum.PLAN_DURATION,
+            PlanColumnEnum.PLAN_DESCRIPTION,
+            PlanColumnEnum.IS_ACTIVE,
+            PlanColumnEnum.CREATED_AT,
+            PlanColumnEnum.UPDATED_AT,
+        ];
 
-        const select = [];
+        const relations = [
+            PlanRelationEnum.ADMIN,
+            PlanRelationEnum.UPDATED_BY
+        ];
 
         const filter = {
-            email: plansPaginationDto.email,
+            is_active
         };
-        const relations = ['updated_by', 'admin_id'];
 
-        const plans = await this.planService.getAllPlans(
+        const plans = await this.plansViaAdminService.getAllPlans(
             select,
             filter,
             relations,
-            plansPaginationDto,
         );
 
-        return plans;
+        return {
+            response: {
+                message: 'All plans fetched successfully',
+                plans
+            }
+        };
     }
 
     @Get('plan/:plan_id')
     async getPlan(@Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number) {
         this.logger.log(`Get plan with id: ${plan_id}`);
 
-        /*
-          API Endpoint to get a plan by id
-          steps:
-            get the plan id from the request
-            call the admin service to get the plan by id
-        */
-
+        const plan = await this.plansViaAdminService.getPlanById(
+            [
+                PlanColumnEnum.ID,
+                PlanColumnEnum.PLAN_NAME,
+                PlanColumnEnum.PLAN_PRICE,
+                PlanColumnEnum.PLAN_DURATION,
+                PlanColumnEnum.PLAN_DESCRIPTION,
+                PlanColumnEnum.IS_ACTIVE,
+                PlanColumnEnum.CREATED_AT,
+                PlanColumnEnum.UPDATED_AT,
+            ],
+            [
+                PlanRelationEnum.ADMIN,
+                PlanRelationEnum.UPDATED_BY
+            ],
+            plan_id
+        );
         return {
             response: {
                 message: `Plan with id ${plan_id} fetched successfully`,
-                plans: await this.planService.getPlanById(plan_id),
+                plan
             },
         };
     }
@@ -110,7 +124,7 @@ export class AdminManagePlansController {
         @ExtractAccountData('id') admin_id: number,
     ) {
 
-        const plan = await this.planService.updatePlan(plan_id, admin_id, updatePlanDto);
+        const plan = await this.plansViaAdminService.updatePlan(plan_id, admin_id, updatePlanDto);
 
         return {
             response: {
@@ -120,13 +134,28 @@ export class AdminManagePlansController {
         }
     }
 
-
-    @Patch('flip-activation-plan/:plan_id')
-    async deActivePlan(
+    @Patch('active-plan/:plan_id')
+    async activePlan(
         @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        const plan = await this.planService.flipActivationPlan(plan_id, admin_id);
+        const plan = await this.plansViaAdminService.active(plan_id, admin_id);
+
+        return {
+            response: {
+                message: 'Plan deactivated successfully',
+                plan
+            }
+        }
+    }
+
+
+    @Patch('deactivate-plan/:plan_id')
+    async deactivatePlan(
+        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @ExtractAccountData('id') admin_id: number,
+    ) {
+        const plan = await this.plansViaAdminService.de_active(plan_id, admin_id);
 
         return {
             response: {
