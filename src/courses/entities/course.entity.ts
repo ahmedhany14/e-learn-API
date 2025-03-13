@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { CourseStatusEnum } from '../enums/course.status.enum';
 import { Account } from 'src/account/entity/account.entity';
 import { Section } from '../../sections/entity/sections.entity';
-import { CourseTags } from './course.tags.entity';
+import { CourseTags } from '../../tags/entity/course.tags.entity';
 
 @Entity()
 export class Course {

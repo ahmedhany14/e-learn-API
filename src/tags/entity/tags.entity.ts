@@ -8,7 +8,7 @@ import {
     OneToMany,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { CourseTags } from '../../courses/entities/course.tags.entity';
+import { CourseTags } from './course.tags.entity';
 
 @Entity()
 @Unique(['category', 'subcategory', 'tag'])
