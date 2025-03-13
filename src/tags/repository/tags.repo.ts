@@ -16,7 +16,7 @@ export class TagsRepository {
     constructor(
         @InjectRepository(Tags)
         private readonly tagsRepository: Repository<Tags>,
-    ) {}
+    ) { }
 
     async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
         try {
@@ -74,9 +74,17 @@ export class TagsRepository {
         }
     }
 
-    async getAllTags() {
+    async getAllTags(
+        select: TagsEnum[],
+        relations: TagsRelations[],
+        filter: any = {},
+    ) {
         try {
-            return await this.tagsRepository.find();
+            return await this.tagsRepository.find({
+                select: select as FindOptionsSelect<Tags>,
+                relations: relations as string[],
+                where: filter,
+            });
         } catch (error) {
             throw new InternalServerErrorException({
                 message: 'Error while fetching tags',

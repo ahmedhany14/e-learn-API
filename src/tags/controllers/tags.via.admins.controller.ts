@@ -36,7 +36,7 @@ export class TagsViaAdminsController {
     constructor(
         @Inject()
         private readonly tagsService: TagsService,
-    ) {}
+    ) { }
 
     @Get('one-tag/:tag_id')
     async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
@@ -71,7 +71,15 @@ export class TagsViaAdminsController {
 
     @Get('all-tags')
     async getAllTagsWithDetails() {
-        const tags = await this.tagsService.getAllTags();
+        const select = [
+            TagsEnum.ID,
+            TagsEnum.CATEGORY,
+            TagsEnum.SUBCATEGORY,
+            TagsEnum.TAG,
+            TagsEnum.DESCRIPTION,
+        ]
+        const relations = [TagsRelations.TAG_CREATOR];
+        const tags = await this.tagsService.getAllTags(select, relations);
         return {
             response: {
                 message: 'all Tags fetched successfully',
