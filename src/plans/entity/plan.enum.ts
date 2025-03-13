@@ -1,13 +1,15 @@
-import { Plan } from "./plan.entity";
-
-export enum PlanEnum {
+export enum PlanColumnEnum {
     ID = 'id',
     PLAN_NAME = 'plan_name',
     PLAN_PRICE = 'plan_price',
     PLAN_DURATION = 'plan_duration',
+    PLAN_DESCRIPTION = 'plan_description',
+    IS_ACTIVE = 'is_active',
     CREATED_AT = 'created_at',
     UPDATED_AT = 'updated_at',
-    PLANS_ACCOUNT = 'plans_account',
-    ADMIN_ID = 'admin_id',
-    UPDATED_BY = 'updated_by'   
+}
+
+export enum PlanRelationEnum {
+    ADMIN = 'admin',
+    UPDATED_BY = 'updated_by',
 }

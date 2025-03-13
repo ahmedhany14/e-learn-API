@@ -1,14 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
 
 // controllers
-import { AdminManagePlansController } from './controllers/admin.manage.plans.controller';
 import { AdminPrivacyController } from './controllers/admin.privacy.controller';
 import { AdminController } from './controllers/admin.manage.orders.controller';
 
 // modules
 import { EmailModule } from '../common/email/email.module';
 import { AccountModule } from 'src/account/account.module';
-import { PlansModule } from 'src/plans/plans.module';
 import { PaginationModule } from 'src/common/pagination/pagination.module';
 
 // services and repository
@@ -30,24 +28,23 @@ import { AdminSiteAnalysisController } from './controllers/admin.site-analysis.c
 
 
 @Module({
-  controllers: [AdminController, AdminPrivacyController, AdminManagePlansController, AdminSiteAnalysisController],
-  providers: [
-    AdminService,
-    CourseReviewRepository,
-    ApproveTransaction,
-    RejectTransaction,
-    OrdersService,
-    OrdersProvider,
-    BacklogOrdersProvider,
-    AdminPrivacyService,
-  ],
-  imports: [
-    TypeOrmModule.forFeature([Order, OrderBacklog, CourseReview]),
-    forwardRef(() => AccountModule),
-    EmailModule,
-    PlansModule,
-    PaginationModule,
-  ],
-  exports: [AdminService, OrdersService],
+    controllers: [AdminController, AdminPrivacyController, AdminSiteAnalysisController],
+    providers: [
+        AdminService,
+        CourseReviewRepository,
+        ApproveTransaction,
+        RejectTransaction,
+        OrdersService,
+        OrdersProvider,
+        BacklogOrdersProvider,
+        AdminPrivacyService,
+    ],
+    imports: [
+        TypeOrmModule.forFeature([Order, OrderBacklog, CourseReview]),
+        forwardRef(() => AccountModule),
+        EmailModule,
+        PaginationModule,
+    ],
+    exports: [AdminService, OrdersService],
 })
 export class AdminModule { }
