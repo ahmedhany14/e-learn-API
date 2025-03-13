@@ -5,6 +5,7 @@ import { CourseReviewEnum } from '../enums/course.review.enum';
 
 // import course entity to create one-to-one relation
 import { Course } from '../../../courses/entities/course.entity';
+import { Account } from '../../../account/entity/account.entity';
 
 @Entity('course_review')
 @Unique(['state', 'course'])
@@ -33,4 +34,14 @@ export class CourseReview {
     })
     @JoinColumn()
     course: Course;
+
+    // relation with an account, who is the reviewer of the course
+    @ManyToOne(() => Account, (account) => account.course_reviews, {
+        eager: true,
+        nullable: true,
+    })
+    @JoinColumn({
+        name: 'reviewer_id',
+    })
+    reviewer: Account;
 }
