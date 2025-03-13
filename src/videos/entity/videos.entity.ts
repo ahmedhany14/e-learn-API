@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique }
 import { Section } from '../../sections/entity/sections.entity';
 
 @Entity()
-@Unique(['order', 'section'])
+//@Unique(['order', 'section'])
 @Unique(['video_url', 'section'])
 export class Videos {
     @PrimaryGeneratedColumn()
@@ -26,8 +26,8 @@ export class Videos {
     })
     video_url: string;
 
-    @Column({ type: 'varchar', unique: true })
-    order: string;
+    @Column({ type: 'int' })
+    order: number;
 
     @ManyToOne(() => Section, (section) => section.videos, {
         cascade: true,

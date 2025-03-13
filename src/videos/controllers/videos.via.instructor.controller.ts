@@ -32,13 +32,9 @@ import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
-// entities
-import { Videos } from '../entity/videos.entity';
-
 // enums
 import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
-import { VideoEnum } from 'src/videos/entity/videos.enums';
-import { KeyGeneratorService } from '../../common/key.generator/key.generator.service';
+import { VideoEnum, VideoRelations } from 'src/videos/entity/videos.enums';
 import * as console from 'node:console';
 
 @ROLE(RoleEnum.INSTRUCTOR)
@@ -52,12 +48,12 @@ export class VideosViaInstructorController {
         private readonly videosService: VideosInstructorService,
         @Inject()
         private readonly sectionsService: SectionsInstructorService,
-        @Inject()
-        private readonly keyGeneratorService: KeyGeneratorService<Videos>,
-    ) {}
+        //        @Inject()
+        //        private readonly keyGeneratorService: KeyGeneratorService<Videos>,
+    ) { }
 
     @UseGuards(IsYourSectionGuard)
-    @Post('add-video/:course_id/:section_id')
+    @Post('add-video/:section_id')
     async addVideo(
         @Param('section_id', ParseIntPipe) section_id: number,
         @Body() addVideoDto: AddVideoDto,
@@ -71,11 +67,16 @@ export class VideosViaInstructorController {
 
         const section = await this.sectionsService.findSectionById(select, relations, section_id);
 
-        const all_videos = await section.videos;
-        all_videos.sort((a, b) => a.order.localeCompare(b.order));
+        const all_videos = await this.videosService.findAllVideosInSection(
+            [VideoEnum.ID, VideoEnum.ORDER],
+            section_id,
+        )
 
-        const order = await this.keyGeneratorService.generateNewKey(all_videos);
+        console.log('all_videos', all_videos);
 
+        //const order = await this.keyGeneratorService.generateNewKey(all_videos);
+
+        const order = all_videos.length + 1;
         const video = await this.videosService.createVideo(addVideoDto, section.id, order);
 
         return {
@@ -127,7 +128,7 @@ export class VideosViaInstructorController {
     ) {
         const section_id = request.section_id;
 
-        const all_videos = await this.videosService.findAllVideosInSection(
+        let all_videos = await this.videosService.findAllVideosInSection(
             [VideoEnum.ID, VideoEnum.ORDER],
             section_id,
         );
@@ -146,12 +147,13 @@ export class VideosViaInstructorController {
             this.logger.log(
                 `moving video with id: ${video_id} to new order: ${reOrderingDto.new_order}`,
             );
-            const order = await this.keyGeneratorService.generator(
+
+            all_videos = await this.videosService.updateVideosOrder(
                 all_videos,
                 video_id,
                 reOrderingDto.new_order,
             );
-            await this.videosService.updateOrder(video_id, order);
+
         }
 
         return {
@@ -173,13 +175,12 @@ export class VideosViaInstructorController {
             `moving video with id: ${video_id} to new section with id: ${new_section_id}`,
         );
 
+
         const all_videos = await this.videosService.findAllVideosInSection(
             [VideoEnum.ID, VideoEnum.ORDER],
             new_section_id,
         );
 
-        console.log('all_videos', all_videos.length + 1);
-        console.log('reOrderingDto.new_order', reOrderingDto.new_order);
         if (reOrderingDto.new_order > all_videos.length + 1) {
             throw new ConflictException({
                 message: 'Invalid new order',
@@ -187,13 +188,12 @@ export class VideosViaInstructorController {
             });
         }
 
-        const order = await this.keyGeneratorService.generator(
-            all_videos,
+        await this.videosService.moveVideosFromSectionToSection(
             video_id,
+            new_section_id,
             reOrderingDto.new_order,
         );
 
-        await this.videosService.moveToNewSection(video_id, new_section_id, order);
         return {
             response: {
                 message: 'video moved successfully',

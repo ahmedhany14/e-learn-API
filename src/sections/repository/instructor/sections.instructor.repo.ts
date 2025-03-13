@@ -59,7 +59,7 @@ export class SectionsInstructorRepo {
 
     async createSection(
         title: string,
-        order: string,
+        order: number,
         course_id: number,
     ): Promise<Section> {
         try {
@@ -81,7 +81,7 @@ export class SectionsInstructorRepo {
     }
 
     async editSection(
-        section_id: number,
+        section_id: Section['id'],
         editSectionDto: EditSectionDto,
     ): Promise<Section> {
         try {
@@ -104,7 +104,7 @@ export class SectionsInstructorRepo {
         }
     }
 
-    async deleteSection(section_id: number): Promise<void> {
+    async deleteSection(section_id: Section['id']): Promise<void> {
         try {
             await this.sectionRepository.delete({
                 id: section_id,
@@ -117,23 +117,43 @@ export class SectionsInstructorRepo {
         }
     }
 
-    async updateOrder(section_id: number, new_order: string): Promise<Section> {
+    async updateSectionsOrder(sections: Section[], section_id: Section['id'], new_order: number): Promise<Section[]> {
         try {
-            let section = await this.findSectionById(
-                [SectionEnum.ID, SectionEnum.ORDER],
-                [],
-                section_id,
-            );
+            const section = sections.find((section) => section.id === section_id);
 
-            section = {
-                ...section,
-                order: new_order,
-            };
+            // remove section from list 
+            sections = sections.filter((section) => section.id !== section_id);
 
-            return await this.sectionRepository.save(section);
+            // add section to the new order
+            sections.splice(new_order - 1, 0, section);
+
+            // update the order of each section
+            sections = sections.map((section, index) => {
+                section.order = index + 1;
+                return section;
+            });
+
+            return await this.sectionRepository.save(sections)
         } catch (error) {
             throw new InternalServerErrorException({
-                message: `Error while updating order for section with id ${section_id}`,
+                message: `Error while updating sections order for section with id ${section_id}`,
+                details: error.message,
+            });
+        }
+    }
+
+    async setTemporaryOrders(course_id: number): Promise<void> {
+        try{
+            const sections = await this.getCourseSections(course_id);
+
+            // flip them to negative
+            sections.forEach((section) => {
+                section.order = section.order * -1;
+            });
+            await this.sectionRepository.save(sections);
+        }catch(error){
+            throw new InternalServerErrorException({
+                message: `Error while updating sections order`,
                 details: error.message,
             });
         }

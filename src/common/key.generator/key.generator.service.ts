@@ -10,7 +10,7 @@ export class KeyGeneratorService<T extends DataI> {
     constructor(
         @Inject()
         private readonly factoryKeyGeneratorProvider: FactoryKeyGeneratorProvider<T>,
-    ) {}
+    ) { }
 
     determineKeyType(target_order: number, n: number): KeyTypeEnum {
         if (target_order === 1) return KeyTypeEnum.FIRST;
@@ -24,6 +24,7 @@ export class KeyGeneratorService<T extends DataI> {
 
         switch (keyType) {
             case KeyTypeEnum.FIRST:
+                if (n === 0) return await this.generateNewKey(data);
                 return await this.insertFirstKey(data, data[0].order);
             case KeyTypeEnum.LAST:
                 return await this.insertLastKey(data, data[n - 1].order);

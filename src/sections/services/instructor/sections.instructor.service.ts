@@ -6,6 +6,8 @@ import { SectionsInstructorRepo } from '../../repository/instructor/sections.ins
 // dto
 import { EditSectionDto } from '../../dtos/edit.section.dto';
 import { SectionEnum, SectionRelations } from '../../entity/sections.enums';
+import { Section } from 'src/sections/entity/sections.entity';
+import { Course } from 'src/courses/entities/course.entity';
 
 @Injectable()
 export class SectionsInstructorService {
@@ -26,23 +28,25 @@ export class SectionsInstructorService {
         );
     }
 
-    async createSection(title: string, order: string, course_id: number) {
+    async createSection(title: string, order: number, course_id: number) {
         return await this.SectionsRepo.createSection(title, order, course_id);
     }
 
-    async editSection(section_id: number, editSectionDto: EditSectionDto) {
+    async editSection(section_id: Section['id'], editSectionDto: EditSectionDto) {
         return await this.SectionsRepo.editSection(section_id, editSectionDto);
     }
 
-    async deleteSection(section_id: number) {
+    async deleteSection(section_id: Section['id']) {
         await this.SectionsRepo.deleteSection(section_id);
     }
 
-    async getCourseSections(course_id: number) {
+    async getCourseSections(course_id: Course['id']) {
         return await this.SectionsRepo.getCourseSections(course_id);
     }
 
-    async updateOrder(section_id: number, new_order: string) {
-        return await this.SectionsRepo.updateOrder(section_id, new_order);
+
+    async updateSectionsOrder(sections: Section[], section_id: Section['id'], new_order: number): Promise<Section[]> {
+        return await this.SectionsRepo.updateSectionsOrder(sections, section_id, new_order);
     }
+
 }
