@@ -53,6 +53,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
+import { ReviewCoursesModule } from './administration/review-courses/review-courses.module';
+import { AdministrationModule } from './administration/administration.module';
 
 
 @Module({
@@ -123,6 +125,10 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
         VideosModule,
 
         SectionsModule,
+
+        ReviewCoursesModule,
+
+        AdministrationModule,
 
         // KeyGeneratorModule,
 
