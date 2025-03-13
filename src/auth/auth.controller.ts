@@ -26,7 +26,7 @@ import { ForgetDto } from './dto/forget.dto';
 import { ResetPasswordDto } from './dto/reset.password.dto';
 import { GoogleAuthDto } from './dto/google.signup.dto';
 
-// decorators and enums
+// decorators and types
 import { AUTH } from './decorators/auth.decorator';
 import { ROLE } from './decorators/role.decorator';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';

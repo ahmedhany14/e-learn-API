@@ -38,6 +38,19 @@ export class CourseRepo {
         }
     }
 
+    async getTotalCourses(filter: any): Promise<number> {
+        try {
+            return await this.courseRepository.count({
+                where: filter,
+            });
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error while fetching total courses',
+                details: error.message,
+            });
+        }
+    }
+
     async findOneById(
         select: CourseEnum[],
         relation: CourseRelations[],
@@ -87,10 +100,6 @@ export class CourseRepo {
         queryDto: QueryDto,
     ) {
         try {
-            console.log('filter', filter);
-            console.log('queryDto', queryDto);
-            console.log('select', select);
-
             const data = await this.courseRepository.find({
                 where: filter,
                 select: select as FindOptionsSelect<Course>,

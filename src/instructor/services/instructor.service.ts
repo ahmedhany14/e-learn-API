@@ -10,6 +10,7 @@ import { UpdatePaymentsDto } from '../dtos/update.payments.dto';
 import { CourseService } from 'src/courses/service/course.service';
 import { QueryDto } from '../../courses/dtos/my.courses.query.dto';
 import { AdminService } from 'src/admin/sevices/admin.service';
+import {ReviewCoursesService} from "../../administration/review-courses/services/review-courses.service";
 
 @Injectable()
 export class InstructorService {
@@ -21,7 +22,7 @@ export class InstructorService {
         private readonly courseService: CourseService,
 
         @Inject()
-        private readonly adminService: AdminService,
+        private readonly reviewCoursesService: ReviewCoursesService,
     ) { }
 
     async getPayments(account_id: number) {
@@ -41,6 +42,6 @@ export class InstructorService {
     }
 
     async pushCourseForReview(course_id: number) {
-        return await this.adminService.pushCourseToReview(course_id);
+        return await this.reviewCoursesService.pushCourseToReview(course_id);
     }
 }
