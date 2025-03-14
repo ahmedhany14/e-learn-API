@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { StripeService } from './stripe.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigurationsModule } from 'src/configurations/configurations.module';
 
 @Module({
-    imports: [ConfigModule],
+    imports: [ConfigurationsModule],
     providers: [StripeService]
 })
 export class StripeModule { }

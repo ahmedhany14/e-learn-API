@@ -53,7 +53,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
 import { ReviewCoursesModule } from './administration/review-courses/review-courses.module';
 import { AdministrationModule } from './administration/administration.module';
-import { StripeModule } from './payments/stripe/stripe.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
     imports: [
@@ -123,7 +123,7 @@ import { StripeModule } from './payments/stripe/stripe.module';
 
         AdministrationModule,
 
-        StripeModule,
+        PaymentsModule,
 
         // KeyGeneratorModule,
 
