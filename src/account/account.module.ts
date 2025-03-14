@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { AccountController } from './account.controller';
 
 // Module
-import { AdminModule } from '../admin/admin.module';
 import { EmailModule } from '../common/email/email.module';
 import { AppModule } from '../app.module';
 import { AuthModule } from '../auth/auth.module';
@@ -17,16 +16,15 @@ import { Account } from './entity/account.entity';
 import { Plan_Account } from './entity/account.plan.entity';
 
 @Module({
-  controllers: [AccountController],
-  exports: [AccountService],
-  providers: [AccountService, AccountRepository],
-  imports: [
-    TypeOrmModule.forFeature([Account, Plan_Account]),
-    forwardRef(() => AuthModule),
-    forwardRef(() => AppModule),
-    forwardRef(() => AdminModule),
-    EmailModule,
-    RedisModule
-  ],
+    controllers: [AccountController],
+    exports: [AccountService],
+    providers: [AccountService, AccountRepository],
+    imports: [
+        TypeOrmModule.forFeature([Account, Plan_Account]),
+        forwardRef(() => AuthModule),
+        forwardRef(() => AppModule),
+        EmailModule,
+        RedisModule,
+    ],
 })
-export class AccountModule { }
+export class AccountModule {}
