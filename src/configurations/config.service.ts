@@ -30,4 +30,7 @@ export class ConfigService {
         return this.configService.get<Config['redis']>('redis');
     }
 
+    get stripeConfig(): Config['stripe'] {
+        return this.configService.get<Config['stripe']>('stripe');
+    }
 }
