@@ -12,20 +12,24 @@ export class CloseCourseTransaction {
 
     constructor(private readonly dataSource: DataSource) {}
 
-    async closeCourse(admin_id: number, course_id: number) {
-        this.logger.log(`Closing course with id: ${course_id}`);
+    async closeCourse(admin_id: number, review_course_id: number) {
+        this.logger.log(`Closing course with id: ${review_course_id}`);
 
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            await queryRunner.manager.update(Course, course_id, {
+            const reviewCourse = await queryRunner.manager.findOne(CourseReview, {
+                where: { id: review_course_id },
+            });
+
+            await queryRunner.manager.update(Course, reviewCourse.course.id, {
                 state: CourseStatusEnum.DRAFT,
             });
 
             await queryRunner.manager.update(
                 CourseReview,
-                { course: { id: course_id } },
+                { id: review_course_id },
                 {
                     state: CourseReviewEnum.CLOSED,
                     reviewer: { id: admin_id },

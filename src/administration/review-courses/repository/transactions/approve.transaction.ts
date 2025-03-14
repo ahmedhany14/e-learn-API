@@ -12,18 +12,22 @@ export class ApproveCourseTransaction {
 
     constructor(private readonly dataSource: DataSource) {}
 
-    async approveCourse(admin_id: number, course_id: number) {
+    async approveCourse(admin_id: number, review_course_id: number) {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            await queryRunner.manager.update(Course, course_id, {
+            const reviewCourse = await queryRunner.manager.findOne(CourseReview, {
+                where: { id: review_course_id },
+            });
+
+            await queryRunner.manager.update(Course, reviewCourse.course.id, {
                 state: CourseStatusEnum.PUBLISHED,
             });
 
             await queryRunner.manager.update(
                 CourseReview,
-                { course: { id: course_id } },
+                { id: review_course_id },
                 {
                     state: CourseReviewEnum.APPROVED,
                     reviewer: { id: admin_id },

@@ -3,6 +3,8 @@ import {
     Controller,
     Get,
     Inject,
+    Logger,
+    NotFoundException,
     Param,
     ParseIntPipe,
     Post,
@@ -23,19 +25,24 @@ import { ROLE } from '../../auth/decorators/role.decorator';
 import { RoleEnum } from '../../auth/enums/role.enum';
 import { ExtractAccountData } from '../../common/decorators/request.extractData.decorator';
 import { IsReadyForReviewGuard } from './guards/is.ready.for.review.guard';
+import * as console from 'node:console';
+import { FeedbackDto } from './dtos/feedback.dto';
 
 ROLE(RoleEnum.ADMIN);
 
 @AUTH(AuthEnum.BEARER)
 @Controller('admin/review-courses')
 export class ReviewCoursesController {
+    private readonly logger = new Logger(ReviewCoursesController.name);
+
     constructor(
         @Inject()
         private readonly reviewCoursesService: ReviewCoursesService,
     ) {}
 
-    @Get('pushed-course-to-review')
+    @Get('pushed-courses-to-review')
     async getPushed(@Query() reviewStateDto: ReviewStateDto) {
+        console.log(reviewStateDto);
         const filter = reviewStateDto.state ? { state: reviewStateDto.state } : {};
 
         return {
@@ -43,13 +50,39 @@ export class ReviewCoursesController {
         };
     }
 
+    @Get('pushed-course-to-review/:review_course_id')
+    async getPushedCourse(@Param('review_course_id', ParseIntPipe) review_course_id: number) {
+        let review_course = await this.reviewCoursesService.getPushedCourse(review_course_id);
+
+        if (!review_course) {
+            throw new NotFoundException({
+                message: 'Course not found',
+            });
+        }
+
+        const course = review_course.course;
+
+        const sections = await course.sections;
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            (await section.videos).sort((a, b) => a.order - b.order);
+        }
+        sections.sort((a, b) => a.order - b.order);
+
+        return {
+            response: {
+                course,
+            },
+        };
+    }
+
     @UseGuards(IsReadyForReviewGuard)
-    @Post('approve-course/:course_id')
+    @Post('approve-course/:review_course_id')
     async approveCourse(
         @ExtractAccountData('id') admin_id: number,
-        @Param('course_id', ParseIntPipe) course_id: number,
+        @Param('review_course_id', ParseIntPipe) review_course_id: number,
     ) {
-        await this.reviewCoursesService.approveCourse(admin_id, course_id);
+        await this.reviewCoursesService.approveCourse(admin_id, review_course_id);
 
         // send email to instructor that course is approved
         /*
@@ -62,37 +95,38 @@ export class ReviewCoursesController {
     }
 
     @UseGuards(IsReadyForReviewGuard)
-    @Post('reject-course/:course_id')
+    @Post('reject-course/:review_course_id')
     async rejectCourse(
         @ExtractAccountData('id') admin_id: number,
-        @Param('course_id', ParseIntPipe) course_id: number,
+        @Param('review_course_id', ParseIntPipe) review_course_id: number,
     ) {
-        await this.reviewCoursesService.rejectCourse(course_id, admin_id);
+        await this.reviewCoursesService.rejectCourse(admin_id, review_course_id);
 
         // email instructor that course is rejected
         /*
          will be implemented soon
          */
         return {
-            response: 'wll be implemented soon',
+            response: 'Course rejected successfully',
         };
     }
 
     @UseGuards(IsReadyForReviewGuard)
-    @Post('reverse-course-and-send-feedback/:course_id')
+    @Post('reverse-course-and-send-feedback/:review_course_id')
     async sendFeedback(
         @ExtractAccountData('id') admin_id: number,
-        @Param('course_id', ParseIntPipe) course_id: number,
-        @Body() feedback: string,
+        @Param('review_course_id', ParseIntPipe) review_course_id: number,
+        @Body() feedback: FeedbackDto,
     ) {
-        await this.reviewCoursesService.closeReview(course_id, admin_id);
+        await this.reviewCoursesService.closeReview(admin_id, review_course_id);
 
+        this.logger.log(`feedback: ${feedback.feedback}`);
         /*
          send to instructor that course is reversed
          to draft state to make changes that satisfy the requirements with the feedback
          */
         return {
-            response: 'wll be implemented soon',
+            response: 'course reversed and feedback sent successfully',
         };
     }
 }

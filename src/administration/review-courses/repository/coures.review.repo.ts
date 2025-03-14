@@ -19,10 +19,10 @@ export class CourseReviewRepository {
         private readonly dataSource: DataSource,
     ) {}
 
-    async getCourseReview(course_id: number, filter: any): Promise<CourseReview> {
+    async getCourseReview(review_course_id: number, filter: any): Promise<CourseReview> {
         try {
             return this.courseReviewRepository.findOne({
-                where: { course: { id: course_id }, ...filter },
+                where: { id: review_course_id, ...filter },
             });
         } catch (error) {
             this.logger.error(`Error while fetching course review, ${error.message}`);
@@ -74,7 +74,9 @@ export class CourseReviewRepository {
 
     async getReviewCourses(filter: any): Promise<CourseReview[]> {
         try {
-            return this.courseReviewRepository.find(filter);
+            return this.courseReviewRepository.find({
+                where: filter,
+            });
         } catch (error) {
             this.logger.error(`Error while fetching courses, ${error.message}`);
             throw new InternalServerErrorException({
@@ -84,5 +86,15 @@ export class CourseReviewRepository {
         }
     }
 
-    async closeReview(admin_id: number, course_id: number) {}
+    async getReviewCourse(review_course_id: number): Promise<CourseReview> {
+        try {
+            return this.courseReviewRepository.findOne({ where: { id: review_course_id } });
+        } catch (error) {
+            this.logger.error(`Error while fetching course, ${error.message}`);
+            throw new InternalServerErrorException({
+                message: 'Error while fetching course, please try again',
+                details: error.message,
+            });
+        }
+    }
 }

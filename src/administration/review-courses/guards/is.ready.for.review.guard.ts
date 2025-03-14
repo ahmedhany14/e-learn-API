@@ -3,6 +3,7 @@ import {
     ExecutionContext,
     Inject,
     Injectable,
+    Logger,
     NotFoundException,
 } from '@nestjs/common';
 
@@ -15,6 +16,8 @@ import { CourseReviewEnum } from '../enums/course.review.enum';
 
 @Injectable()
 export class IsReadyForReviewGuard implements CanActivate {
+    private readonly logger = new Logger(IsReadyForReviewGuard.name);
+
     constructor(
         @Inject()
         private readonly reviewCoursesService: ReviewCoursesService,
@@ -23,11 +26,26 @@ export class IsReadyForReviewGuard implements CanActivate {
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const courseId = context.switchToHttp().getRequest().params.course_id;
+        const review_course_id = context.switchToHttp().getRequest().params.review_course_id;
+
+        const courseReview = await this.reviewCoursesService.getCourseReview(review_course_id, {});
+
+        if (!courseReview) {
+            throw new NotFoundException({
+                message: 'Course review not found',
+            });
+        }
+
+        if (courseReview.state !== CourseReviewEnum.PENDING) {
+            throw new NotFoundException({
+                message: 'Course review is not pending, cannot be reviewed',
+            });
+        }
+
         const course = await this.courseService.getCourse(
             [CourseEnum.ID, CourseEnum.STATE],
             [CourseRelations.INSTRUCTOR],
-            courseId,
+            courseReview.course.id,
         );
 
         if (!course) {
@@ -42,21 +60,8 @@ export class IsReadyForReviewGuard implements CanActivate {
             });
         }
 
-        const courseReview = await this.reviewCoursesService.getCourseReview(courseId, {
-            state: CourseReviewEnum.PENDING,
-        });
+        this.logger.log(`passed guard`);
 
-        if (!courseReview) {
-            throw new NotFoundException({
-                message: 'Course review not found',
-            });
-        }
-
-        if (courseReview.state !== CourseReviewEnum.PENDING) {
-            throw new NotFoundException({
-                message: 'Course review is not pending, cannot be reviewed',
-            });
-        }
         return true;
     }
 }

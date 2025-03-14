@@ -21,8 +21,8 @@ export class ReviewCoursesService {
         private readonly closeTransaction: CloseCourseTransaction,
     ) {}
 
-    async getCourseReview(course_id: number, filter: any) {
-        return this.courseReviewRepository.getCourseReview(course_id, filter);
+    async getCourseReview(review_course_id: number, filter: any) {
+        return this.courseReviewRepository.getCourseReview(review_course_id, filter);
     }
 
     async pushCourseToReview(course_id: number) {
@@ -33,14 +33,17 @@ export class ReviewCoursesService {
         return this.courseReviewRepository.getReviewCourses(filter);
     }
 
-    async approveCourse(admin_id: number, course_id: number) {
-        return this.approveTransaction.approveCourse(admin_id, course_id);
+    async getPushedCourse(review_course_id: number) {
+        return this.courseReviewRepository.getReviewCourse(review_course_id);
+    }
+    async approveCourse(admin_id: number, review_course_id: number) {
+        return this.approveTransaction.approveCourse(admin_id, review_course_id);
     }
 
-    async rejectCourse(admin_id: number, course_id: number) {
-        return this.rejectTransaction.rejectCourse(admin_id, course_id);
+    async rejectCourse(admin_id: number, review_course_id: number) {
+        return this.rejectTransaction.rejectCourse(admin_id, review_course_id);
     }
-    async closeReview(admin_id: number, course_id: number) {
-        return this.closeTransaction.closeCourse(admin_id, course_id);
+    async closeReview(admin_id: number, review_course_id: number) {
+        return this.closeTransaction.closeCourse(admin_id, review_course_id);
     }
 }
