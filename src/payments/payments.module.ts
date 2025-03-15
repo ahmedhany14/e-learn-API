@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentsHistory } from './entities/payments.history.entity';
 
 import { PaymentsService } from './payments.service';
-import { PaymentsRepositoyService } from './payments.repositoy.service';
+import { PaymentsRepositoryService } from './payments.repositoy.service';
 import { CoursesModule } from 'src/courses/courses.module';
 import { ChargebackMonitorService } from './schedulers/chargeback-monitor.service';
 
@@ -16,7 +16,7 @@ import { ChargebackMonitorService } from './schedulers/chargeback-monitor.servic
         forwardRef(() => EnrollCoursesModule),
         CoursesModule,
     ],
-    providers: [PaymentsService, PaymentsRepositoyService, ChargebackMonitorService],
+    providers: [PaymentsService, PaymentsRepositoryService, ChargebackMonitorService],
     exports: [PaymentsService],
 })
 export class PaymentsModule {}
