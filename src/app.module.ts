@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -42,7 +43,6 @@ import { CommentsModule } from './blog-system/comments/comments.module';
 import { RepliesModule } from './blog-system/replies/replies.module';
 import { VideosModule } from './videos/videos.module';
 import { SectionsModule } from './sections/sections.module';
-//import { KeyGeneratorModule } from './common/key.generator/key.generator.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -57,6 +57,7 @@ import { PaymentsModule } from './payments/payments.module';
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         // ORM and Database
         TypeOrmModule.forRootAsync({
             imports: [ConfigurationsModule],
