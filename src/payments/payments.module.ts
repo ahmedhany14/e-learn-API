@@ -4,7 +4,6 @@ import { EnrollCoursesModule } from './enroll-courses/enroll-courses.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentsHistory } from './entities/payments.history.entity';
 
-import { FacadePatternProcessPaymentsService } from './patterns/facade.pattern.process.payments.service';
 import { PaymentsService } from './payments.service';
 import { PaymentsRepositoyService } from './payments.repositoy.service';
 import { CoursesModule } from 'src/courses/courses.module';
@@ -18,7 +17,7 @@ import { CoursesModule } from 'src/courses/courses.module';
         forwardRef(() => EnrollCoursesModule),
         CoursesModule
     ],
-    providers: [FacadePatternProcessPaymentsService, PaymentsService, PaymentsRepositoyService],
-    exports: [FacadePatternProcessPaymentsService]
+    providers: [PaymentsService, PaymentsRepositoyService],
+    exports: [PaymentsService]
 })
 export class PaymentsModule { }
