@@ -4,6 +4,7 @@ import { ConfigurationsModule } from 'src/configurations/configurations.module';
 
 @Module({
     imports: [ConfigurationsModule],
-    providers: [StripeService]
+    providers: [StripeService],
+    exports: [StripeService]
 })
 export class StripeModule { }
