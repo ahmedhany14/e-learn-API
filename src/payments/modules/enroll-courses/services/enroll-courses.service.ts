@@ -21,11 +21,9 @@ export class EnrollCoursesService {
 
     constructor(
         @Inject()
-        private readonly entollCoursesRepo: EntollCoursesRepo,
-
+        private readonly enrollCoursesRepo: EntollCoursesRepo,
         @Inject()
         private readonly stripeService: StripeService,
-
         @Inject()
         private readonly paymentsService: PaymentsService,
         @Inject()
@@ -33,7 +31,7 @@ export class EnrollCoursesService {
     ) {}
 
     createNewEnrolledCourse(account_id: number, course_id: number) {
-        return this.entollCoursesRepo.createNewEnrolledCourse(account_id, course_id);
+        return this.enrollCoursesRepo.createNewEnrolledCourse(account_id, course_id);
     }
 
     async enrollCoursesByVisa(
@@ -83,7 +81,6 @@ export class EnrollCoursesService {
             );
             latest_charge = paymentIntent.latest_charge as string;
 
-            await this.paymentsService.createPaymentHistory({ status: 'failed' }, account_id);
             if (paymentIntent.status !== 'succeeded') {
                 this.logger.log('Payment not succeeded');
                 throw new BadRequestException({
@@ -102,6 +99,18 @@ export class EnrollCoursesService {
                 await this.stripeService.refundPayment(latest_charge);
                 this.logger.log('Payment refunded');
             }
+
+            await this.paymentsService.createPaymentHistory(
+                {
+                    amount: 0,
+                    country: visaPaymentDataDto.country,
+                    currency: 'usd',
+                    status: 'failed',
+                    failed_reason: e.message,
+                    payment_method: visaPaymentDataDto.payment_method,
+                },
+                account_id,
+            );
 
             throw new BadRequestException({
                 message: 'Process payment failed',

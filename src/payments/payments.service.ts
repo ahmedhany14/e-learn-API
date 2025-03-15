@@ -1,16 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PaymentsRepositoyService } from './payments.repositoy.service';
+import { PaymentsRepositoryService } from './payments.repositoy.service';
+import { PaymentHistoryI } from './interfaces/payment.history.interface';
 
 @Injectable()
 export class PaymentsService {
-
     constructor(
         @Inject()
-        private readonly paymentsRepositoyService: PaymentsRepositoyService
-    ) { }
+        private readonly paymentsRepositoryService: PaymentsRepositoryService,
+    ) {}
 
-    createPaymentHistory(data: any, account_id: number) {
-        return this.paymentsRepositoyService.createPaymentHistory(data, account_id);
+    createPaymentHistory(data: PaymentHistoryI, account_id: number) {
+        return this.paymentsRepositoryService.createPaymentHistory(data, account_id);
     }
-
 }
