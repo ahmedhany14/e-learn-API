@@ -4,7 +4,7 @@ import { BadRequestException, Inject, Injectable, Logger, NotFoundException } fr
 import { EntollCoursesRepo } from '../repository/entoll-courses.repo';
 
 // services
-import { StripeService } from 'src/payments/stripe/stripe.service';
+import { StripeService } from 'src/payments/modules/stripe/stripe.service';
 import { ViasPaymentDataDto } from '../dto/payment.data.dto';
 import { CourseStatusEnum } from 'src/courses/enums/course.status.enum';
 import { DataSource } from 'typeorm';
@@ -14,7 +14,6 @@ import { PaymentsHistory } from 'src/payments/entities/payments.history.entity';
 import { PaymentsService } from 'src/payments/payments.service';
 
 // enums and dtos
-
 
 @Injectable()
 export class EnrollCoursesService {
@@ -30,16 +29,18 @@ export class EnrollCoursesService {
         @Inject()
         private readonly paymentsService: PaymentsService,
         @Inject()
-        private readonly dataSource: DataSource
-
-    ) { }
+        private readonly dataSource: DataSource,
+    ) {}
 
     createNewEnrolledCourse(account_id: number, course_id: number) {
         return this.entollCoursesRepo.createNewEnrolledCourse(account_id, course_id);
     }
 
-    async enrollCoursesByVisa(course_id: number, visaPaymentDataDto: ViasPaymentDataDto, account_id: number) {
-
+    async enrollCoursesByVisa(
+        course_id: number,
+        visaPaymentDataDto: ViasPaymentDataDto,
+        account_id: number,
+    ) {
         this.logger.log('Processing payment');
 
         const queryRunner = this.dataSource.createQueryRunner();
@@ -64,7 +65,6 @@ export class EnrollCoursesService {
                 course: { id: course_id },
             });
 
-
             this.logger.log('Payment history created');
             const paymentsHistory = await queryRunner.manager.insert(PaymentsHistory, {
                 amount: course.price,
@@ -75,19 +75,15 @@ export class EnrollCoursesService {
                 account: { id: account_id },
             });
 
-
             this.logger.log('Course found, processing payment');
             // process payment
             const paymentIntent = await this.stripeService.processPayment(
                 course.price,
-                visaPaymentDataDto.paymentMethodId
+                visaPaymentDataDto.paymentMethodId,
             );
             latest_charge = paymentIntent.latest_charge as string;
 
-            await this.paymentsService.createPaymentHistory(
-                { status: 'failed' },
-                account_id
-            );
+            await this.paymentsService.createPaymentHistory({ status: 'failed' }, account_id);
             if (paymentIntent.status !== 'succeeded') {
                 this.logger.log('Payment not succeeded');
                 throw new BadRequestException({
@@ -97,10 +93,8 @@ export class EnrollCoursesService {
             }
             await queryRunner.commitTransaction();
 
-
             this.logger.log('Payment process completed');
-        }
-        catch (e) {
+        } catch (e) {
             this.logger.log('Payment process failed');
             await queryRunner.rollbackTransaction();
 
@@ -118,5 +112,4 @@ export class EnrollCoursesService {
             this.logger.log('Payment process completed');
         }
     }
-
 }
