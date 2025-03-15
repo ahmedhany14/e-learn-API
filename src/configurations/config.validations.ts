@@ -49,4 +49,8 @@ export default Joi.object({
     // google configurations validation
     GOOGLE_CLIENT_ID: Joi.string().required(),
     GOOGLE_CLIENT_SECRET: Joi.string().required(),
+
+    // stripe configurations validation
+    STRIPE_SECRET_KEY: Joi.string().required(),
+    STRIPE_PUBLIC_KEY: Joi.string().required(),
 });

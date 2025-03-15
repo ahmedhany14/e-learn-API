@@ -11,6 +11,8 @@ import { Plan_Account } from './account.plan.entity';
 import { Course } from '../../courses/entities/course.entity';
 import { Tags } from '../../tags/entity/tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
+import { PaymentsHistory } from '../../payments/entities/payments.history.entity';
+import { EnrolledCourses } from 'src/payments/enroll-courses/entity/enrolled.courses.entity';
 
 @Entity({
     name: 'accounts',
@@ -132,4 +134,16 @@ export class Account {
         lazy: true,
     })
     course_reviews: Promise<CourseReview[]>;
+
+    // each account can have multiple
+    @OneToMany(() => PaymentsHistory, (payments_history) => payments_history.account, {
+        lazy: true,
+    })
+    payments_history: Promise<PaymentsHistory[]>;
+
+    // each account can enroll in multiple
+    @OneToMany(() => EnrolledCourses, (enrolledCourses) => enrolledCourses.course, {
+        lazy: true,
+    })
+    enrolled_courses: Promise<EnrolledCourses[]>;
 }
