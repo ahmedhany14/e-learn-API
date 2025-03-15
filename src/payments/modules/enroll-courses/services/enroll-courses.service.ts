@@ -102,7 +102,11 @@ export class EnrollCoursesService {
 
             await this.paymentsService.createPaymentHistory(
                 {
+                    amount: 0,
+                    country: visaPaymentDataDto.country,
+                    currency: 'usd',
                     status: 'failed',
+                    failed_reason: e.message,
                     payment_method: visaPaymentDataDto.payment_method,
                 },
                 account_id,
