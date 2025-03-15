@@ -30,8 +30,8 @@ export class EnrollCoursesController {
 
         // enroll courses
         await this.enrollCoursesService.enrollCoursesByVisa(course_id, visaPaymentDataDto, account_id);
-        // redirect to course page with all course details (video, sections, etc)
-        return 'Enroll courses';
-
+        return {
+            response: 'Course enrolled successfully'
+        };
     }
 }

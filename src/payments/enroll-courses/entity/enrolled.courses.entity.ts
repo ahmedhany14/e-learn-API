@@ -1,9 +1,10 @@
 import { Account } from 'src/account/entity/account.entity';
 import { Course } from 'src/courses/entities/course.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique } from 'typeorm';
 
 
 @Entity()
+@Unique(['course', 'account'])
 export class EnrolledCourses {
     @PrimaryGeneratedColumn()
     id: number;

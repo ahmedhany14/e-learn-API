@@ -42,4 +42,22 @@ export class StripeService {
             });
         }
     }
+
+    async refundPayment(chargeId: string): Promise<Stripe.Refund> {
+        try {
+
+            const refund = await this.stripe.refunds.create({
+                charge: chargeId,
+                reason: 'requested_by_customer',
+            });
+
+            return refund;
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Refund payment failed',
+                details: error.message,
+            });
+        }
+    }
+
 }

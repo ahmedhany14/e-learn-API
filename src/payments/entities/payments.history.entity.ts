@@ -10,18 +10,21 @@ export class PaymentsHistory {
         type: 'decimal',
         precision: 10,
         scale: 2,
+        nullable: true
     })
     amount: number;
 
     @Column({
         type: 'varchar',
-        length: 5
+        length: 5,
+        nullable: true
     })
     country: string;
 
     @Column({
         type: 'varchar',
-        length: 3
+        length: 3,
+        nullable: true
     })
     currency: string;
 
@@ -30,6 +33,19 @@ export class PaymentsHistory {
         enum: ['success', 'failed']
     })
     status: string;
+
+    @Column({
+        type: 'enum',
+        default: 'stripe',
+        enum: ['visa', 'mastercard', 'paypal', 'stripe']
+    })
+    payment_method: string;
+
+    @Column({
+        type: 'time with time zone',
+        default: () => 'CURRENT_TIMESTAMP AT TIME ZONE'
+    })
+    payment_date: Date;
 
     @ManyToOne(() => Account, account => account.payments_history, {
         eager: true,
