@@ -9,7 +9,6 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 // services
 import { EnrollCoursesService } from './services/enroll-courses.service';
 import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
-import { FacadePatternProcessPaymentsService } from '../patterns/facade.pattern.process.payments.service';
 
 @Controller('enroll-courses')
 export class EnrollCoursesController {
@@ -17,8 +16,7 @@ export class EnrollCoursesController {
 
     constructor(
         @Inject()
-        private readonly facadePatternProcessPaymentsService: FacadePatternProcessPaymentsService
-
+        private readonly enrollCoursesService: EnrollCoursesService
     ) {
     }
 
@@ -30,12 +28,10 @@ export class EnrollCoursesController {
         @ExtractAccountData('id') account_id: number
     ) {
 
-        this.facadePatternProcessPaymentsService.enrollCoursesByVisa(
-            course_id, visaPaymentDataDto, account_id
-        );
-
-        // redirect to course page with all course details (video, sections, etc)
-        return 'Enroll courses';
-
+        // enroll courses
+        await this.enrollCoursesService.enrollCoursesByVisa(course_id, visaPaymentDataDto, account_id);
+        return {
+            response: 'Course enrolled successfully'
+        };
     }
 }

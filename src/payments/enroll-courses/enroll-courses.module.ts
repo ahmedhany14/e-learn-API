@@ -1,7 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 
 // modules
-import { CoursesModule } from 'src/courses/courses.module';
 import { StripeModule } from '../stripe/stripe.module';
 import { PaymentsModule } from '../payments.module';
 
@@ -20,7 +19,6 @@ import { EntollCoursesRepo } from './repository/entoll-courses.repo';
 @Module({
     imports: [
         TypeOrmModule.forFeature([EnrolledCourses]),
-        CoursesModule,
         StripeModule,
         forwardRef(() => PaymentsModule),
     ],
