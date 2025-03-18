@@ -56,5 +56,13 @@ export default (): Config => ({
     stripe: {
         secretKey: process.env.STRIPE_SECRET_KEY,
         publicKey: process.env.STRIPE_PUBLIC_KEY,
+    },
+
+    aws: {
+        bucket_name: process.env.AWS_BUCKET_NAME,
+        region: process.env.AWS_REGION,
+        access_key: process.env.AWS_ACCESS_KEY,
+        secret_key: process.env.AWS_SECRET_KEY,
+        cloudfront_url: process.env.AWS_CLOUD_FRONT_URL
     }
 });
