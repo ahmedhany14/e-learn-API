@@ -40,6 +40,7 @@ export class FileController {
         private readonly profileService: ProfileService,
     ) { }
 
+    /*
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -64,9 +65,8 @@ export class FileController {
                 fileName: filename,
             },
         };
-    }
+    }*/
 
-    @ROLE(RoleEnum.USER, RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
     @Post('upload-profile-image')
     @UseInterceptors(FileInterceptor('profile-image'))
@@ -74,14 +74,13 @@ export class FileController {
         @UploadedFile() file: Express.Multer.File,
         @ExtractAccountData('id') account_id: number,
     ) {
-        const filename = await this.fileService.resizeAndOptimize(
+        const filename = await this.fileService.uploadImage(
             file,
             'profile',
-            account_id,
         );
 
         // add it to the DB
-        await this.profileService.updateProfileImage(account_id, filename);
+        //await this.profileService.updateProfileImage(account_id, filename);
         return {
             response: {
                 message: 'Profile image uploaded successfully',

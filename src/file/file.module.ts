@@ -2,8 +2,8 @@ import { BadRequestException, Module } from '@nestjs/common';
 
 // modules
 import { CoursesModule } from '../courses/courses.module';
-import { ConfigModule } from '@nestjs/config';
 import { ProfileModule } from '../profile/profile.module';
+import { ConfigurationsModule } from '../configurations/configurations.module';
 
 // file upload packages
 import * as path from 'path';
@@ -18,6 +18,7 @@ import { FileController } from './file.controller';
 // services
 import { FileService } from './file.service';
 import { S3Provider } from './aws-s3/s3.provider';
+import { ImageProcessingProvider } from './image-processing/image.processing.provider';
 
 @Module({
     imports: [
@@ -55,11 +56,11 @@ import { S3Provider } from './aws-s3/s3.provider';
 
         CoursesModule,
 
-        ConfigModule,
+        ProfileModule,
 
-        ProfileModule
+        ConfigurationsModule,
     ],
     controllers: [FileController],
-    providers: [FileService, S3Provider],
+    providers: [FileService, S3Provider, ImageProcessingProvider],
 })
 export class FileModule { }
