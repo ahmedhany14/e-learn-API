@@ -53,4 +53,12 @@ export default Joi.object({
     // stripe configurations validation
     STRIPE_SECRET_KEY: Joi.string().required(),
     STRIPE_PUBLIC_KEY: Joi.string().required(),
+
+
+    // aws configurations validation
+    AWS_BUCKET_NAME: Joi.string().required(),
+    AWS_REGION: Joi.string().required(),
+    AWS_ACCESS_KEY: Joi.string().required(),
+    AWS_SECRET_KEY: Joi.string().required(),
+    AWS_CLOUD_FRONT_URL: Joi.string().required(),
 });

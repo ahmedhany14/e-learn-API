@@ -17,48 +17,49 @@ import { FileController } from './file.controller';
 
 // services
 import { FileService } from './file.service';
+import { S3Provider } from './aws-s3/s3.provider';
 
 @Module({
-  imports: [
-    MulterModule.register({
-      storage: multer.memoryStorage(),
-      limits: { fileSize: 5 * 1024 * 1024 },
-      fileFilter: async (
-        request: Request,
-        file: Express.Multer.File,
-        cb: Function,
-      ) => {
-        const allowedMimeTypes = ['image/jpeg', 'image/png'];
-        if (!allowedMimeTypes.includes(file.mimetype)) {
-          return cb(
-            new BadRequestException(
-              'Only JPEG, PNG and JPG image files are allowed!',
-            ),
-            false,
-          );
-        }
+    imports: [
+        MulterModule.register({
+            storage: multer.memoryStorage(),
+            limits: { fileSize: 5 * 1024 * 1024 },
+            fileFilter: async (
+                request: Request,
+                file: Express.Multer.File,
+                cb: Function,
+            ) => {
+                const allowedMimeTypes = ['image/jpeg', 'image/png'];
+                if (!allowedMimeTypes.includes(file.mimetype)) {
+                    return cb(
+                        new BadRequestException(
+                            'Only JPEG, PNG and JPG image files are allowed!',
+                        ),
+                        false,
+                    );
+                }
 
-        const allowedExtensions = ['.jpeg', '.jpg', '.png'];
-        const fileExtension = path.extname(file.originalname).toLowerCase();
-        if (!allowedExtensions.includes(fileExtension)) {
-          return cb(
-            new BadRequestException(
-              'Invalid file extension! Allowed extensions: .jpeg, .jpg, .png, .gif',
-            ),
-            false,
-          );
-        }
-        cb(null, true);
-      },
-    }),
+                const allowedExtensions = ['.jpeg', '.jpg', '.png'];
+                const fileExtension = path.extname(file.originalname).toLowerCase();
+                if (!allowedExtensions.includes(fileExtension)) {
+                    return cb(
+                        new BadRequestException(
+                            'Invalid file extension! Allowed extensions: .jpeg, .jpg, .png, .gif',
+                        ),
+                        false,
+                    );
+                }
+                cb(null, true);
+            },
+        }),
 
-    CoursesModule,
+        CoursesModule,
 
-    ConfigModule,
+        ConfigModule,
 
-    ProfileModule
-  ],
-  controllers: [FileController],
-  providers: [FileService],
+        ProfileModule
+    ],
+    controllers: [FileController],
+    providers: [FileService, S3Provider],
 })
-export class FileModule {}
+export class FileModule { }
