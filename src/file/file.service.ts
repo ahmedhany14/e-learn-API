@@ -46,5 +46,6 @@ export class FileService {
 
 
     async deleteImage(key: string): Promise<void> {
+        await this.s3Provider.deleteImage(key);
     }
 }

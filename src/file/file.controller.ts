@@ -28,6 +28,8 @@ import { ExtractAccountData } from '../common/decorators/request.extractData.dec
 import { ProfileService } from '../profile/services/profile.service';
 import { CourseEnum, CourseRelations } from 'src/courses/entities/course.enums';
 import { IsYourCourseGuard } from 'src/courses/guards/is.your.course.guard';
+import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
+import { Course } from 'src/courses/entities/course.entity';
 
 @Controller('file')
 export class FileController {
@@ -40,7 +42,6 @@ export class FileController {
         private readonly profileService: ProfileService,
     ) { }
 
-    /*
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -49,13 +50,17 @@ export class FileController {
     async uploadCourseImage(
         @UploadedFile() file: Express.Multer.File,
         @Param('course_id', ParseIntPipe) course_id: number,
+        @ExtractCourseDate() course: Course,
     ) {
-
-        const filename = await this.fileService.resizeAndOptimize(
+        const path = `courses/${course.title.trim().replace(/\s/g, '-')}/course_image`;
+        const fileKey = course.image_url.split('/').pop();
+        if (fileKey !== 'default.jpg') {
+            await this.fileService.deleteImage(`${path}/${fileKey}`);
+        }
+        const filename = await this.fileService.uploadImage(
             file,
-            'course',
-            course_id,
-        );
+            path,
+        )
 
         await this.courseService.updateImageName(course_id, filename);
 
@@ -65,7 +70,7 @@ export class FileController {
                 fileName: filename,
             },
         };
-    }*/
+    }
 
     @AUTH(AuthEnum.BEARER)
     @Post('upload-profile-image')
@@ -74,6 +79,8 @@ export class FileController {
         @UploadedFile() file: Express.Multer.File,
         @ExtractAccountData('id') account_id: number,
     ) {
+        const profile = await this.profileService.findByAccountId(account_id);
+        if (profile.profile_image) await this.fileService.deleteImage(`profile/${profile.profile_image}`);
         const filename = await this.fileService.uploadImage(
             file,
             'profile',

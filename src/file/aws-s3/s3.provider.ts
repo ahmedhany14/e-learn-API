@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { ConfigService } from '../../configurations/config.service';
 
@@ -29,5 +29,16 @@ export class S3Provider {
     }
 
     async deleteImage(key: string): Promise<void> {
+        try {
+            await this.s3.deleteObject({
+                Bucket: this.configService.awsConfig.bucket_name,
+                Key: key,
+            }).promise();
+        } catch {
+            throw new ForbiddenException({
+                message: 'Error deleting image',
+                details: `Failed to delete image with key: ${key} from S3`
+            })
+        }
     }
 }
