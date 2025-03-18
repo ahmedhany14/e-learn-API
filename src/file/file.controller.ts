@@ -79,8 +79,7 @@ export class FileController {
             'profile',
         );
 
-        // add it to the DB
-        //await this.profileService.updateProfileImage(account_id, filename);
+        await this.profileService.updateProfileImage(account_id, filename);
         return {
             response: {
                 message: 'Profile image uploaded successfully',
