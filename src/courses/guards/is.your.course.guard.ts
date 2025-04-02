@@ -19,9 +19,8 @@ export class IsYourCourseGuard implements CanActivate {
         const instructor_id: number = request.accountId;
         const course_id: number = parseInt(request.params.course_id);
 
-        console.log('course_id', course_id);
         const course = await this.courseService.getCourse(
-            [CourseEnum.ID, CourseEnum.STATE],
+            [CourseEnum.ID, CourseEnum.STATE, CourseEnum.TITLE, CourseEnum.IMAGE_URL],
             [CourseRelations.INSTRUCTOR],
             course_id,
         );

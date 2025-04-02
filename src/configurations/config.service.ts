@@ -33,4 +33,8 @@ export class ConfigService {
     get stripeConfig(): Config['stripe'] {
         return this.configService.get<Config['stripe']>('stripe');
     }
+
+    get awsConfig(): Config['aws'] {
+        return this.configService.get<Config['aws']>('aws');
+    }
 }

@@ -54,6 +54,16 @@ export interface StripeConfig {
     secretKey: string;
     publicKey: string;
 }
+
+
+export interface awsConfig {
+    bucket_name: string;
+    region: string;
+    access_key: string;
+    secret_key: string;
+    cloudfront_url: string;
+}
+
 export interface Config {
     app: AppConfig;
     database: DatabaseConfig;
@@ -62,4 +72,5 @@ export interface Config {
     jwt: JwtConfig;
     redis: RedisConfig;
     stripe: StripeConfig;
+    aws: awsConfig;
 }

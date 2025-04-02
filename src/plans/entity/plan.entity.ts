@@ -1,11 +1,4 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToOne,
-    JoinColumn,
-    OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Plan_Account } from '../../account/entity/account.plan.entity';
 
@@ -35,7 +28,6 @@ export class Plan {
         default: 0,
     })
     plan_duration: number;
-
 
     @Column({
         type: 'text',
@@ -77,7 +69,7 @@ export class Plan {
 
     // each plan can be updated by an admin, and multiple plans can be updated by the same admin
     @ManyToOne(() => Account, (account) => account.plans_updated, {
-        nullable: false,
+        //nullable: false,
     })
     @JoinColumn({ name: 'updated_by_id' })
     updated_by: Account;
