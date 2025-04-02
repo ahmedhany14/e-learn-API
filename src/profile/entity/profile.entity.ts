@@ -75,6 +75,13 @@ export class Profile {
     twitter: string;
 
     @Column({
+        type: 'boolean',
+        default: true,
+        comment: 'Profile visibility',
+    })
+    visible: boolean;
+
+    @Column({
         type: 'time with time zone',
         default: () => 'CURRENT_TIMESTAMP',
         comment: 'Profile creation date',

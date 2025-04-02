@@ -25,7 +25,7 @@ export class ProfileController {
     ) {}
 
     @AUTH(AuthEnum.BEARER)
-    @Get('')
+    @Get('my-profile')
     async getProfile(
         @ExtractAccountData('id') accountId: number,
         @Query('acc') with_account: boolean,
@@ -47,7 +47,8 @@ export class ProfileController {
         ];
         const relation = [];
 
-        if (with_account) relation.push(ProfileRelations.ACCOUNT);
+        // if (with_account)
+        relation.push(ProfileRelations.ACCOUNT);
 
         const profile = await this.profileService.findByAccountId(accountId, select, relation);
 
@@ -70,6 +71,19 @@ export class ProfileController {
         await this.profileService.updateProfile(accountId, updateProfileDto);
         return {
             response: 'Profile updated successfully',
+        };
+    }
+
+    @ROLE(RoleEnum.USER)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('visibility')
+    async changeVisibility(@ExtractAccountData('id') account_id: number) {
+        this.logger.log('Changing profile visibility');
+
+        await this.profileService.changeVisibility(account_id);
+
+        return {
+            response: 'Profile visibility changed successfully',
         };
     }
 }
