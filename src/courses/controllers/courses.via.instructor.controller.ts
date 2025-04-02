@@ -24,7 +24,7 @@ import { ExtractAccountData } from 'src/common/decorators/request.extractData.de
 // services and providers
 import { CourseService } from 'src/courses/service/course.service';
 
-// dto and enums
+// dto and types
 import { QueryDto } from '../dtos/my.courses.query.dto';
 import { UpdateCourseDto } from '../dtos/update.course.dto';
 import { CourseEnum } from 'src/courses/entities/course.enums';

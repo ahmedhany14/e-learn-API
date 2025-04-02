@@ -15,10 +15,18 @@ export class TagsService {
     constructor(
         @Inject()
         private readonly tagsRepo: TagsRepository,
-    ) {}
+    ) { }
 
-    async getAllTags() {
-        return await this.tagsRepo.getAllTags();
+    async getAllTags(
+        select: TagsEnum[],
+        relations: TagsRelations[],
+        filter = {},
+    ) {
+        return await this.tagsRepo.getAllTags(
+            select,
+            relations,
+            filter,
+        );
     }
 
     async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {

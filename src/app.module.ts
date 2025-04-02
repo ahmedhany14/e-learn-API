@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -25,7 +26,6 @@ import { ProfileModule } from './profile/profile.module';
 import { EmailModule } from './common/email/email.module';
 import { DbModule } from './db/db.module';
 import { PlansModule } from './plans/plans.module';
-import { AdminModule } from './admin/admin.module';
 import { AccountModule } from './account/account.module';
 import { AuthModule } from './auth/auth.module';
 import { InstructorModule } from './instructor/instructor.module';
@@ -37,14 +37,12 @@ import { RedisModule } from './redis/redis.module';
 import { ConfigService } from './configurations/config.service';
 import { ConfigurationsModule } from './configurations/configurations.module';
 import { JwtModule } from '@nestjs/jwt';
-import { OrdersModule } from './orders/orders.module';
 import { BlogModule } from './blog-system/blog/blog.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentsModule } from './blog-system/comments/comments.module';
 import { RepliesModule } from './blog-system/replies/replies.module';
 import { VideosModule } from './videos/videos.module';
 import { SectionsModule } from './sections/sections.module';
-//import { KeyGeneratorModule } from './common/key.generator/key.generator.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -53,10 +51,13 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
-
+import { ReviewCoursesModule } from './administration/review-courses/review-courses.module';
+import { AdministrationModule } from './administration/administration.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         // ORM and Database
         TypeOrmModule.forRootAsync({
             imports: [ConfigurationsModule],
@@ -79,10 +80,9 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
             imports: [ConfigurationsModule],
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => ({
-                uri: configService.databaseConfig.url
-            })
+                uri: configService.databaseConfig.url,
+            }),
         }),
-
 
         AuthModule,
 
@@ -91,8 +91,6 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
         ProfileModule,
 
         EmailModule,
-
-        AdminModule,
 
         InstructorModule,
 
@@ -112,8 +110,6 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
 
         JwtModule,
 
-        OrdersModule,
-
         BlogModule,
 
         CommentsModule,
@@ -123,6 +119,12 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
         VideosModule,
 
         SectionsModule,
+
+        ReviewCoursesModule,
+
+        AdministrationModule,
+
+        PaymentsModule,
 
         // KeyGeneratorModule,
 

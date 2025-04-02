@@ -12,7 +12,7 @@ import { Reflector } from '@nestjs/core';
 // Guards
 import { AccessTokenGuard } from './access_token.guard';
 
-// enums and constants
+// types and constants
 import { AUTH_TYPE_KEY } from '../../common/constants/auth.constants';
 import { AuthEnum } from '../enums/auth.enum';
 

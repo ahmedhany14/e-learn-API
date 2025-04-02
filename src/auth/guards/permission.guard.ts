@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 import { Reflector } from '@nestjs/core';
 
-// enums and constants
+// types and constants
 import { RoleEnum } from '../enums/role.enum';
 import { ROLE_TYPE_KEY } from '../../common/constants/role.constants';
 

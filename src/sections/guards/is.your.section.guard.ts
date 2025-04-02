@@ -1,5 +1,6 @@
 import {
     CanActivate,
+    ConflictException,
     ExecutionContext,
     Injectable,
     Logger,
@@ -11,11 +12,9 @@ import {
 import { SectionsInstructorService } from '../../sections/services/instructor/sections.instructor.service';
 import { CourseService } from '../../courses/service/course.service';
 // entities
-import {
-    SectionEnum,
-    SectionRelations,
-} from 'src/sections/entity/sections.enums';
+import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 import { CourseRelations } from 'src/courses/entities/course.enums';
+import { CourseStatusEnum } from '../../courses/enums/course.status.enum';
 
 @Injectable()
 export class IsYourSectionGuard implements CanActivate {
@@ -24,7 +23,7 @@ export class IsYourSectionGuard implements CanActivate {
     constructor(
         private readonly sectionsService: SectionsInstructorService,
         private readonly courseService: CourseService,
-    ) { }
+    ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -42,11 +41,7 @@ export class IsYourSectionGuard implements CanActivate {
 
         const relations: SectionRelations[] = [SectionRelations.COURSE];
 
-        const section = await this.sectionsService.findSectionById(
-            select,
-            relations,
-            section_id,
-        );
+        const section = await this.sectionsService.findSectionById(select, relations, section_id);
 
         if (!section) {
             throw new NotFoundException({
@@ -68,6 +63,12 @@ export class IsYourSectionGuard implements CanActivate {
             });
         }
 
+        if (course.state !== CourseStatusEnum.DRAFT) {
+            throw new ConflictException({
+                message: 'Conflict',
+                details: `You can only add videos to draft courses`,
+            });
+        }
         return true;
     }
 }

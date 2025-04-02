@@ -50,6 +50,10 @@ export interface RedisConfig {
     active_token_expiration: number;
 }
 
+export interface StripeConfig {
+    secretKey: string;
+    publicKey: string;
+}
 export interface Config {
     app: AppConfig;
     database: DatabaseConfig;
@@ -57,4 +61,5 @@ export interface Config {
     google: GoogleConfig;
     jwt: JwtConfig;
     redis: RedisConfig;
+    stripe: StripeConfig;
 }

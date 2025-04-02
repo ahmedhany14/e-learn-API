@@ -1,14 +1,18 @@
 import { Check, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+// Enums
+import { RoleEnum } from '../../auth/enums/role.enum';
+
+// Entity
 import { Profile } from '../../profile/entity/profile.entity';
-import { Order } from '../../orders/entity/order.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
-import { OrderBacklog } from '../../orders/entity/order.backlog.entity';
 import { Plan } from '../../plans/entity/plan.entity';
 import { Plan_Account } from './account.plan.entity';
-import { RoleEnum } from '../../auth/enums/role.enum';
 import { Course } from '../../courses/entities/course.entity';
 import { Tags } from '../../tags/entity/tags.entity';
+import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
+import { PaymentsHistory } from '../../payments/entities/payments.history.entity';
+import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
 
 @Entity({
     name: 'accounts',
@@ -107,26 +111,14 @@ export class Account {
     })
     tags: Promise<Tags[]>;
 
-    // each user can have one order to be instructor
-    @OneToMany(() => Order, (order) => order.account, {
-        lazy: true,
-    })
-    order: Promise<Order[]>;
-
     // each account can have multiple plans, but if the account activates a plan, he can't activate it again until it expires
     @OneToMany(() => Plan_Account, (plan_account) => plan_account.account, {
         lazy: true,
     })
     plans_account: Promise<Plan_Account[]>;
 
-    // each admin can review multiple orders and add them to the backlog
-    @OneToMany(() => OrderBacklog, (orderBacklog) => orderBacklog.admin, {
-        lazy: true,
-    })
-    backlog: Promise<OrderBacklog[]>;
-
     // each admin can create multiple plans
-    @OneToMany(() => Plan, (plan) => plan.admin_id, {
+    @OneToMany(() => Plan, (plan) => plan.admin, {
         lazy: true,
     })
     plans: Promise<Plan[]>;
@@ -136,4 +128,22 @@ export class Account {
         lazy: true,
     })
     plans_updated: Promise<Plan[]>;
+
+    // each account can review multiple courses
+    @OneToMany(() => CourseReview, (course_review) => course_review.reviewer, {
+        lazy: true,
+    })
+    course_reviews: Promise<CourseReview[]>;
+
+    // each account can have multiple
+    @OneToMany(() => PaymentsHistory, (payments_history) => payments_history.account, {
+        lazy: true,
+    })
+    payments_history: Promise<PaymentsHistory[]>;
+
+    // each account can enroll in multiple
+    @OneToMany(() => EnrolledCourses, (enrolledCourses) => enrolledCourses.course, {
+        lazy: true,
+    })
+    enrolled_courses: Promise<EnrolledCourses[]>;
 }

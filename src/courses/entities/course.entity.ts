@@ -1,8 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CourseStatusEnum } from '../enums/course.status.enum';
 import { Account } from 'src/account/entity/account.entity';
 import { Section } from '../../sections/entity/sections.entity';
-import { CourseTags } from './course.tags.entity';
+import { CourseTags } from '../../tags/entity/course.tags.entity';
+import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
+import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
 
 @Entity()
 export class Course {
@@ -47,7 +57,7 @@ export class Course {
 
     @Column({
         type: 'enum',
-        default: 'draft',
+        default: CourseStatusEnum.DRAFT,
         enum: CourseStatusEnum,
     })
     state: CourseStatusEnum;
@@ -97,9 +107,25 @@ export class Course {
      * Many to Many, where a course can be assigned to many tags and a tag can be assigned to many courses
      * Need normalization
      */
-    // tags (later)
     @OneToMany(() => CourseTags, (courseTag) => courseTag.course, {
         lazy: true,
     })
     course_tags: Promise<CourseTags[]>;
+
+    /*
+     * one course can have many reviews
+     * it seems strange, but it is possible
+     * when course reviewed, and it is not approved, and the instructor updated the course.
+     * There will be a new review, so the course can have many reviews
+     */
+    @OneToMany(() => CourseReview, (courseReview) => courseReview.course, {
+        lazy: true,
+    })
+    course_review: Promise<CourseReview[]>;
+
+    // one course can be enrolled by many accounts
+    @OneToMany(() => EnrolledCourses, (enrolledCourses) => enrolledCourses.course, {
+        lazy: true,
+    })
+    enrolled_courses: Promise<EnrolledCourses[]>;
 }

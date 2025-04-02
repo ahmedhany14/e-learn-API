@@ -32,7 +32,7 @@ import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
-// enums
+// types
 import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 import { VideoEnum, VideoRelations } from 'src/videos/entity/videos.enums';
 import * as console from 'node:console';

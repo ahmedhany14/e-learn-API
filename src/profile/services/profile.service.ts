@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Profile } from '../entity/profile.entity';
 import { ProfileRepository } from '../repository/profile.repo';
 
-// DTOs enums and types
+// DTOs types and types
 import { UpdateProfileDto } from '../dtos/update.profile.dto';
 import { ProfileColumns, ProfileRelations } from '../entity/profile.enum';
 
