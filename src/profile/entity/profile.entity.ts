@@ -57,6 +57,31 @@ export class Profile {
     phone_number: string;
 
     @Column({
+        type: 'varchar',
+        nullable: true,
+    })
+    linkedin: string;
+
+    @Column({
+        type: 'varchar',
+        nullable: true,
+    })
+    github: string;
+
+    @Column({
+        type: 'varchar',
+        nullable: true,
+    })
+    twitter: string;
+
+    @Column({
+        type: 'boolean',
+        default: true,
+        comment: 'Profile visibility',
+    })
+    visible: boolean;
+
+    @Column({
         type: 'time with time zone',
         default: () => 'CURRENT_TIMESTAMP',
         comment: 'Profile creation date',

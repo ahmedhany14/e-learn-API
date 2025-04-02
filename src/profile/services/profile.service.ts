@@ -14,18 +14,14 @@ export class ProfileService {
     constructor(
         @Inject()
         private profileRepository: ProfileRepository,
-    ) { }
+    ) {}
 
     async findByPhoneNumber(
         phone_number: string,
         select: string[] = [ProfileColumns.ID, ProfileColumns.PHONE_NUMBER],
         relation: string[] = [ProfileRelations.ACCOUNT],
     ): Promise<Profile> {
-        return await this.profileRepository.findByPhoneNumber(
-            phone_number,
-            select,
-            relation,
-        );
+        return await this.profileRepository.findByPhoneNumber(phone_number, select, relation);
     }
 
     async findById(
@@ -55,11 +51,7 @@ export class ProfileService {
         ],
         relation: string[] = [],
     ): Promise<Profile> {
-        return await this.profileRepository.findByAccountId(
-            accountId,
-            select,
-            relation,
-        );
+        return await this.profileRepository.findByAccountId(accountId, select, relation);
     }
 
     async updateProfile(
@@ -74,10 +66,7 @@ export class ProfileService {
         ],
         relation = [ProfileRelations.ACCOUNT],
     ): Promise<void> {
-        let profile = await this.profileRepository.findByAccountId(
-            accountId,
-            select,
-        );
+        let profile = await this.profileRepository.findByAccountId(accountId, select);
 
         profile = { ...profile, ...updateProfileDto } as Profile;
         this.logger.log(`Profile updated: ${JSON.stringify(profile, null, 2)}`);
@@ -90,13 +79,15 @@ export class ProfileService {
         image: string,
         select: string[] = [ProfileColumns.ID, ProfileColumns.PROFILE_IMAGE],
     ): Promise<void> {
-        let profile = await this.profileRepository.findByAccountId(
-            accountId,
-            select,
-            [ProfileRelations.ACCOUNT]
-        );
+        let profile = await this.profileRepository.findByAccountId(accountId, select, [
+            ProfileRelations.ACCOUNT,
+        ]);
 
         profile.profile_image = image;
         return await this.profileRepository.updateProfile(profile);
+    }
+
+    async changeVisibility(account_id: number) {
+        await this.profileRepository.changeVisibility(account_id);
     }
 }

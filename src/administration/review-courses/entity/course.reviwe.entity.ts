@@ -30,7 +30,7 @@ export class CourseReview {
     // relation with course, which course will be reviewed, one-to-one relation
     @ManyToOne(() => Course, (course) => course.course_review, {
         eager: true,
-        nullable: false,
+        //nullable: false,
     })
     @JoinColumn()
     course: Course;

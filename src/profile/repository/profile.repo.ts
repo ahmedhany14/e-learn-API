@@ -1,8 +1,4 @@
-import {
-    Injectable,
-    InternalServerErrorException,
-    Logger,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 // entity and orm
 import { Profile } from '../entity/profile.entity';
@@ -17,13 +13,9 @@ export class ProfileRepository {
     constructor(
         @InjectRepository(Profile)
         private profileRepository: Repository<Profile>,
-    ) { }
+    ) {}
 
-    async findById(
-        id: number,
-        select: string[] = [],
-        relation: string[] = [],
-    ): Promise<Profile> {
+    async findById(id: number, select: string[] = [], relation: string[] = []): Promise<Profile> {
         try {
             return await this.profileRepository.findOne({
                 where: { id },
@@ -86,6 +78,23 @@ export class ProfileRepository {
             throw new InternalServerErrorException({
                 message: 'Un expected error occurred while updating profile',
                 details: "Couldn't update profile",
+            });
+        }
+    }
+
+    async changeVisibility(accountId: number): Promise<void> {
+        try {
+            const profile = await this.profileRepository.findOne({
+                where: { account: { id: accountId } },
+            });
+
+            profile.visible = !profile.visible;
+
+            await this.profileRepository.update(profile.id, profile);
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'An unexpected error occurred',
+                error: error.message,
             });
         }
     }
