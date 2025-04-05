@@ -5,13 +5,13 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
-    Unique,
 } from 'typeorm';
 import { Course } from '../../courses/entities/course.entity';
 import { Videos } from '../../videos/entity/videos.entity';
+import {AbstractEntity} from "y/abstract.db/abstract.entity";
 
 @Entity()
-export class Section {
+export class Section extends AbstractEntity<Section>{
     @PrimaryGeneratedColumn()
     id: number;
 

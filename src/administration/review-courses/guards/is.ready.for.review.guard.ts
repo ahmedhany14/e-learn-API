@@ -10,7 +10,6 @@ import {
 // services and providers
 import { ReviewCoursesService } from '../services/review-courses.service';
 import { CourseService } from '../../../courses/service/course.service';
-import { CourseEnum, CourseRelations } from '../../../courses/entities/course.enums';
 import { CourseStatusEnum } from '../../../courses/enums/course.status.enum';
 import { CourseReviewEnum } from '../enums/course.review.enum';
 

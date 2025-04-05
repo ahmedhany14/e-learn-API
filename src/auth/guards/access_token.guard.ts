@@ -13,7 +13,6 @@ import { TokenProvider } from '../providers/token.provider';
 import { AccountService } from '../../account/service/account.service';
 // dto and interfaces
 import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
-import { AccountEnum } from '../../account/entity/account.enum';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {

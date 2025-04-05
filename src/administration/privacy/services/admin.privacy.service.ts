@@ -1,7 +1,6 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AccountService } from 'src/account/service/account.service';
 
-import { AccountEnum } from 'src/account/entity/account.enum';
 
 @Injectable()
 export class AdminPrivacyService {

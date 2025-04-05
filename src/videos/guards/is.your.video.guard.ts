@@ -11,9 +11,6 @@ import { CourseService } from 'src/courses/service/course.service';
 import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 import { VideosInstructorService } from 'src/videos/services/instructor/videos.instructor.service';
 
-// entities and enums
-import { VideoEnum, VideoRelations } from '../entity/videos.enums';
-import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 
 @Injectable()
 export class IsYourVideoGuard implements CanActivate {
@@ -44,12 +41,7 @@ export class IsYourVideoGuard implements CanActivate {
             });
         }
 
-        const section_select: SectionEnum[] = [SectionEnum.ID];
-        const section_relations: SectionRelations[] = [SectionRelations.COURSE];
-
         const section = await this.sectionsService.findSectionById(
-            section_select,
-            section_relations,
             video.section.id,
         );
 

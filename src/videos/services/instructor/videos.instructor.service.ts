@@ -6,7 +6,6 @@ import { MoveVideosFromSectionToSectionTransaction } from '../../repository/tran
 
 // dto
 import { AddVideoDto } from '../../dtos/add.video.dto';
-import { VideoEnum, VideoRelations } from '../../entity/videos.enums';
 import { UpdateVideoDto } from '../../dtos/update.video.dto';
 
 // entities

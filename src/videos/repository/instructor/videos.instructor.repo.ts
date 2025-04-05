@@ -3,11 +3,9 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { AddVideoDto } from '../../dtos/add.video.dto';
 
 // orm and entities
-import { EntityManager, FindOptionsSelect, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Videos } from '../../entity/videos.entity';
-import { VideoEnum, VideoRelations } from '../../entity/videos.enums';
-import { UpdateVideoDto } from '../../dtos/update.video.dto';
 import { AbstractRepoService } from 'y/abstract.db';
 
 @Injectable()

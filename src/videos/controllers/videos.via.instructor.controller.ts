@@ -32,10 +32,6 @@ import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
-// types
-import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
-import { VideoEnum } from 'src/videos/entity/videos.enums';
-import * as console from 'node:console';
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
@@ -60,10 +56,7 @@ export class VideosViaInstructorController {
             `adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`,
         );
 
-        const select: SectionEnum[] = [];
-        const relations: SectionRelations[] = [];
-
-        const section = await this.sectionsService.findSectionById(select, relations, section_id);
+        const section = await this.sectionsService.findSectionById( section_id);
 
         const all_videos = await this.videosService.findAllVideosInSection(section_id);
 

@@ -3,7 +3,6 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 // Repository
 import { AccountRepository } from '../repository/account.repository';
 import { Account } from '../entity/account.entity';
-import { AccountEnum } from '../entity/account.enum';
 import { PaymentAccountDetailsDto } from '../dtos/payment.account.details.dto';
 import { RoleEnum } from '../../auth/enums/role.enum';
 

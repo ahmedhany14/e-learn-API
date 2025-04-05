@@ -29,15 +29,14 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { AUTH } from 'src/auth/decorators/auth.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 
-import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
-
 @Controller('sections-via-instructor')
 export class SectionsViaInstructorController {
     private readonly logger = new Logger(SectionsViaInstructorController.name);
+
     constructor(
         @Inject()
         private readonly sectionService: SectionsInstructorService,
-    ) { }
+    ) {}
 
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
@@ -51,8 +50,7 @@ export class SectionsViaInstructorController {
             `adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`,
         );
 
-        const sections = await this.sectionService.getCourseSections(course_id);
-
+        const sections = await this.sectionService.findCourseSections(course_id);
 
         const order = sections.length + 1;
         console.log('newOrder', order);
@@ -70,6 +68,7 @@ export class SectionsViaInstructorController {
             },
         };
     }
+
     @UseGuards(IsYourSectionGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -82,7 +81,7 @@ export class SectionsViaInstructorController {
             `editing section with id: ${section_id}, with properties: ${JSON.stringify(editSectionDto)}`,
         );
 
-        const section = await this.sectionService.editSection(section_id, editSectionDto);
+        const section = await this.sectionService.updateSection(section_id, editSectionDto);
 
         return {
             response: {
@@ -99,10 +98,7 @@ export class SectionsViaInstructorController {
     async deleteSection(@Param('section_id', ParseIntPipe) section_id: number) {
         this.logger.log(`deleting section with id: ${section_id}`);
 
-        const select: SectionEnum[] = [SectionEnum.ID];
-        const relations: SectionRelations[] = [];
-
-        const section = await this.sectionService.findSectionById(select, relations, section_id);
+        const section = await this.sectionService.findSectionById(section_id);
 
         const videos = await section.videos;
 
@@ -131,7 +127,7 @@ export class SectionsViaInstructorController {
         @Param('course_id', ParseIntPipe) course_id: number,
         @Body() reOrderSectionsDto: ReOrderingDto,
     ) {
-        let all_sections = await this.sectionService.getCourseSections(course_id);
+        let all_sections = await this.sectionService.findCourseSections(course_id);
 
         if (
             reOrderSectionsDto.new_order < 1 ||
@@ -151,7 +147,6 @@ export class SectionsViaInstructorController {
                 `moving section with id: ${section_id} to new order: ${reOrderSectionsDto.new_order}`,
             );
 
-
             all_sections = await this.sectionService.updateSectionsOrder(
                 all_sections,
                 section_id,
@@ -162,6 +157,7 @@ export class SectionsViaInstructorController {
         return {
             response: {
                 message: 'Section moved successfully',
+                all_sections,
             },
         };
     }

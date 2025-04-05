@@ -12,7 +12,6 @@ import { SectionsInstructorService } from '../services/instructor/sections.instr
 import { CourseService } from '../../courses/service/course.service';
 
 // entities
-import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
 import { CourseStatusEnum } from '../../courses/enums/course.status.enum';
 
 @Injectable()
@@ -35,11 +34,8 @@ export class IsYourSectionGuard implements CanActivate {
         section_id: number,
         instructor_id: number,
     ): Promise<boolean> {
-        const select: SectionEnum[] = [SectionEnum.ID];
 
-        const relations: SectionRelations[] = [SectionRelations.COURSE];
-
-        const section = await this.sectionsService.findSectionById(select, relations, section_id);
+        const section = await this.sectionsService.findSectionById( section_id);
 
         if (!section) {
             throw new NotFoundException({

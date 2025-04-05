@@ -5,7 +5,6 @@ import { ProfileRepository } from '../repository/profile.repo';
 
 // DTOs types and types
 import { UpdateProfileDto } from '../dtos/update.profile.dto';
-import { ProfileColumns, ProfileRelations } from '../entity/profile.enum';
 
 @Injectable()
 export class ProfileService {

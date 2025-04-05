@@ -26,7 +26,6 @@ import { RoleEnum } from '../auth/enums/role.enum';
 // decorators
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { ProfileService } from '../profile/services/profile.service';
-import { CourseEnum, CourseRelations } from 'src/courses/entities/course.enums';
 import { IsYourCourseGuard } from 'src/courses/guards/is.your.course.guard';
 import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
 import { Course } from 'src/courses/entities/course.entity';
