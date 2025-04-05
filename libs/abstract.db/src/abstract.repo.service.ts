@@ -4,7 +4,7 @@ import {
     Logger,
     NotFoundException,
 } from '@nestjs/common';
-import { AbstractEntity } from 'y/abstract.db/abstract.entity';
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -40,6 +40,7 @@ export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
             });
         }
     }
+
     async findOne(where: FindOptionsWhere<T>): Promise<T> {
         this.logger.log('Finding one entity');
         try {
@@ -93,6 +94,46 @@ export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
         } catch (error) {
             throw new InternalServerErrorException({
                 message: 'Error finding and deleting entity',
+                error: error.message,
+            });
+        }
+    }
+
+    async paginate<T>(
+        where: FindOptionsWhere<T>,
+        repository: Repository<T>,
+        page = 1,
+        limit = 10,
+        baseUrl = '',
+    ) {
+        try {
+            const [items, total] = await repository.findAndCount({
+                where: where,
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+
+            const totalPages = Math.round((1.0 * total) / limit),
+                hasMore = page < totalPages;
+
+            return {
+                response: items,
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages,
+                    hasMore,
+                    firstPage: `${baseUrl}?page=1&limit=${limit}`,
+                    lastPage: `${baseUrl}?page=${totalPages}&limit=${limit}`,
+                    previous: page > 1 ? `${baseUrl}?page=${page - 1}&limit=${limit}` : null,
+                    next: hasMore ? `${baseUrl}?page=${page + 1}&limit=${limit}` : null,
+                    current: `${baseUrl}?page=${page}&limit=${limit}`,
+                },
+            };
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error paginating entities',
                 error: error.message,
             });
         }
