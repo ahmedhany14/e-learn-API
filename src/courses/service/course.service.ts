@@ -36,20 +36,8 @@ export class CourseService {
         );
     }
 
-    async getMyCourses(
-        select: CourseEnum[] = [
-            CourseEnum.ID,
-            CourseEnum.TITLE,
-            CourseEnum.DESCRIPTION,
-            CourseEnum.PRICE,
-            CourseEnum.IMAGE_URL,
-            CourseEnum.STATE,
-        ],
-        relation: CourseRelations[] = [],
-        filter: any,
-        queryDto: QueryDto,
-    ) {
-        return await this.courserRepo.getMyCourses(select, relation, filter, queryDto);
+    async getMyCourses(filter: any, queryDto: QueryDto) {
+        return await this.courserRepo.findAll(filter, queryDto);
     }
 
     async getTotalCourses(filter: any) {

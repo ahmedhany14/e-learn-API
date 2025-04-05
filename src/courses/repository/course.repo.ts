@@ -96,4 +96,14 @@ export class CourseRepo extends AbstractRepoService<Course> {
             });
         }
     }
+
+    async findAll(filter: any, queryDto: QueryDto) {
+        return await this.paginate(
+            filter,
+            this.courseRepository,
+            'http://localhost:3000/courses/my-courses',
+            queryDto.page,
+            queryDto.limit,
+        );
+    }
 }

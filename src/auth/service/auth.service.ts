@@ -25,6 +25,7 @@ import { ResetPasswordDto } from '../dto/reset.password.dto';
 import { AccountResetPasswordDto } from '../dto/account.reset-password.dto';
 import { ForgetDto } from '../dto/forget.dto';
 import { Account } from '../../account/entity/account.entity';
+import * as console from 'node:console';
 
 @Injectable()
 export class AuthService {
@@ -51,6 +52,7 @@ export class AuthService {
     async login(accountLoginDto: AccountLoginDto) {
         this.logger.log('login attempt');
         const account = await this.accountService.findByEmail(accountLoginDto.email);
+        console.log(account);
         if (!account) throw new NotFoundException('Account not found');
         if (!account.is_active) throw new GoneException('Account is not active');
         if (!(await this.hashing.compare(accountLoginDto.password, account.password)))

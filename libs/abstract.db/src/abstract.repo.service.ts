@@ -102,9 +102,9 @@ export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
     async paginate<T>(
         where: FindOptionsWhere<T>,
         repository: Repository<T>,
+        baseUrl = '',
         page = 1,
         limit = 10,
-        baseUrl = '',
     ) {
         try {
             const [items, total] = await repository.findAndCount({

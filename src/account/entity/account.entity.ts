@@ -41,7 +41,7 @@ export class Account extends AbstractEntity<Account> {
         length: 124,
         nullable: true,
         comment: "User's password",
-        select: false,
+        // select: false,
     })
     password: string;
 
