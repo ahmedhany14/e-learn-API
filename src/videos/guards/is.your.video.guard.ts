@@ -36,10 +36,7 @@ export class IsYourVideoGuard implements CanActivate {
         instructor_id: number,
         request,
     ): Promise<boolean> {
-        const video_select: VideoEnum[] = [VideoEnum.ID];
-        const video_relations: VideoRelations[] = [VideoRelations.SECTION];
-
-        const video = await this.videosService.findOneById(video_select, video_relations, video_id);
+        const video = await this.videosService.findOneById(video_id);
 
         if (!video) {
             throw new NotFoundException({

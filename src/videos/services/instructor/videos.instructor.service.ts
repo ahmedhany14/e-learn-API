@@ -18,49 +18,47 @@ export class VideosInstructorService {
     constructor(
         @Inject()
         private readonly videosRepo: VideosInstructorRepo,
-
         @Inject()
         private readonly moveTransaction: MoveVideosFromSectionToSectionTransaction,
-    ) { }
-
-    async findOneById(
-        select: VideoEnum[] = [],
-        relations: VideoRelations[] = [],
-        video_id: Videos['id'],
-    ) {
-        return await this.videosRepo.findOneById(select, relations, video_id);
-    }
+    ) {}
 
     async createVideo(addVideoToSectionDto: AddVideoDto, section_id: Section['id'], order: number) {
-        return await this.videosRepo.createVideo(addVideoToSectionDto, section_id, order);
+        return await this.videosRepo.create(
+            await this.videosRepo.newVideo(addVideoToSectionDto, section_id, order),
+        );
     }
 
-    async deleteVideo(video_id: Videos['id']) {
-        return await this.videosRepo.deleteVideo(video_id);
+    async findOneById(id: Videos['id']) {
+        return await this.videosRepo.findOne({ id });
     }
 
-    async updateVideo(video_id: Videos['id'], updateVideoDto: UpdateVideoDto) {
-        return await this.videosRepo.updateVideo(video_id, updateVideoDto);
+    async deleteVideo(id: Videos['id']) {
+        return await this.videosRepo.findOneAndDelete({ id: id });
     }
 
-    async findAllVideosInSection(select: VideoEnum[] = [], section_id: Section['id']) {
-        return await this.videosRepo.findAllVideosInSection(select, section_id);
+    async updateVideo(id: Videos['id'], updateVideoDto: UpdateVideoDto) {
+        await this.videosRepo.findOneAndUpdate({ id }, updateVideoDto);
     }
 
-    /*
-    async updateOrder(video_id: number, new_order: number) {
-        return await this.videosRepo.updateOrder(video_id, new_order);
-    }
-*/
-    async moveToNewSection(video_id: number, new_section_id: number, new_order: string) {
-        await this.moveToNewSection(video_id, new_section_id, new_order);
+    async findAllVideosInSection(section_id: Section['id']) {
+        return await this.videosRepo.find(
+            { section: { id: section_id } },
+        )
     }
 
     async updateVideosOrder(videos: Videos[], video_id: Videos['id'], new_order: number) {
         return await this.videosRepo.updateVideosOrder(videos, video_id, new_order);
     }
 
-    async moveVideosFromSectionToSection(video_id: number, new_section_id: number, new_order: number) {
-        return await this.moveTransaction.moveVideosFromSectionToSection(video_id, new_section_id, new_order);
+    async moveVideosFromSectionToSection(
+        video_id: number,
+        new_section_id: number,
+        new_order: number,
+    ) {
+        return await this.moveTransaction.moveVideosFromSectionToSection(
+            video_id,
+            new_section_id,
+            new_order,
+        );
     }
 }
