@@ -70,6 +70,15 @@ export class Account {
     })
     has_been_banned: boolean;
 
+
+    @Column({
+        type: 'varchar',
+        nullable: true,
+        default: () => 'false',
+    })
+    payment_account_details: string;
+
+
     @Column({
         type: 'timestamp with time zone',
         nullable: false,

@@ -6,7 +6,6 @@ import {
     Get,
     Inject,
     Logger,
-    NotFoundException,
     Param,
     ParseIntPipe,
     Patch,
@@ -16,7 +15,7 @@ import {
 } from '@nestjs/common';
 
 // dto
-import { UpgradeToInstructorDto } from './dtos/upgrade.to.instructor.dto';
+import { PaymentAccountDetailsDto } from './dtos/payment.account.details.dto';
 
 // service
 import { AccountService } from './service/account.service';
@@ -46,6 +45,8 @@ import {
     SafeDeleteAccount,
     SafeUpgradeToInstructor,
 } from './interfaces/accounts.interface';
+
+// guards
 import { IsUniqueEmailGuard } from './guards/is.unique.email.guard';
 
 @UseInterceptors(ExtractAccountInterceptor)
@@ -57,7 +58,7 @@ export class AccountController {
         @Inject() private readonly accountService: AccountService,
         @Inject() private readonly tokenProvider: TokenProvider,
         @Inject() private readonly email: Email,
-    ) {}
+    ) { }
 
     @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.EMAIL, AccountEnum.ROLE, AccountEnum.IS_ACTIVE)
     @AUTH(AuthEnum.BEARER)
@@ -144,6 +145,25 @@ export class AccountController {
                 message: 'Token reset successfully',
                 url,
             },
+        };
+    }
+
+
+    @ROLE(RoleEnum.USER)
+    @AUTH(AuthEnum.BEARER)
+    @Post('upgrade-to-instructor')
+    async upgradeToInstructor(
+        @ExtractAccountData('id') account_id: number,
+        @Body() paymentAccountDetailsDto: PaymentAccountDetailsDto
+    ) {
+
+        await this.accountService.upgradeToInstructor(
+            account_id,
+            paymentAccountDetailsDto
+        );
+
+        return {
+            response: 'Upgrade to instructor requested successfully',
         };
     }
 }
