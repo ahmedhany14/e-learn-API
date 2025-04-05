@@ -1,9 +1,21 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "y/common/(.*)": "<rootDir>/../libs/common/src/$1",
+    "y/common": "<rootDir>/../libs/common/src",
+    "yesy/abstarct.db/(.*)": "<rootDir>/../libs/abstarct.db/src/$1",
+    "yesy/abstarct.db": "<rootDir>/../libs/abstarct.db/src",
+    "y/abstract.db/(.*)": "<rootDir>/../libs/abstract.db/src/$1",
+    "y/abstract.db": "<rootDir>/../libs/abstract.db/src"
   }
 }

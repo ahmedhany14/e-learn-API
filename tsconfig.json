@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["es2021"],
+    "lib": [
+      "es2021"
+    ],
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -17,6 +19,26 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "y/common": [
+        "libs/common/src"
+      ],
+      "y/common/*": [
+        "libs/common/src/*"
+      ],
+      "yesy/abstarct.db": [
+        "libs/abstarct.db/src"
+      ],
+      "yesy/abstarct.db/*": [
+        "libs/abstarct.db/src/*"
+      ],
+      "y/abstract.db": [
+        "libs/abstract.db/src"
+      ],
+      "y/abstract.db/*": [
+        "libs/abstract.db/src/*"
+      ]
+    }
   }
 }
