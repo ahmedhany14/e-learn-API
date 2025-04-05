@@ -27,7 +27,6 @@ import { CourseService } from 'src/courses/service/course.service';
 // dto and types
 import { QueryDto } from '../dtos/my.courses.query.dto';
 import { UpdateCourseDto } from '../dtos/update.course.dto';
-import { CourseEnum } from 'src/courses/entities/course.enums';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';

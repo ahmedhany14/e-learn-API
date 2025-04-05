@@ -6,7 +6,6 @@ import { CourseRepo } from '../repository/course.repo';
 // dto
 import { QueryDto } from 'src/courses/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/courses/dtos/update.course.dto';
-import { CourseEnum, CourseRelations } from '../entities/course.enums';
 
 @Injectable()
 export class CourseService {

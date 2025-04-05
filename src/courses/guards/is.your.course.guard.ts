@@ -6,7 +6,6 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { CourseEnum, CourseRelations } from 'src/courses/entities/course.enums';
 import { CourseService } from 'src/courses/service/course.service';
 
 @Injectable()
