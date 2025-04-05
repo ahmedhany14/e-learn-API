@@ -4,13 +4,14 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AccountRepository } from '../repository/account.repository';
 import { Account } from '../entity/account.entity';
 import { AccountEnum } from '../entity/account.enum';
+import { PaymentAccountDetailsDto } from '../dtos/payment.account.details.dto';
 
 @Injectable()
 export class AccountService {
     constructor(
         @Inject()
         private readonly accountRepository: AccountRepository,
-    ) {}
+    ) { }
 
     async findByEmail(
         email: string,
@@ -58,5 +59,12 @@ export class AccountService {
 
     async getTotalInstructors(filter: any) {
         return await this.accountRepository.getTotalInstructors(filter);
+    }
+
+    async upgradeToInstructor(
+        account_id: number,
+        paymentAccountDetailsDto: PaymentAccountDetailsDto,
+    ) {
+        await this.accountRepository.upgradeToInstructor(account_id, paymentAccountDetailsDto);
     }
 }
