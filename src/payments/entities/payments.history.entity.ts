@@ -53,6 +53,15 @@ export class PaymentsHistory {
     })
     failed_reason: string;
 
+    @Column({ type: 'varchar', nullable: true })
+    payment_intent_id: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    latest_charge_id: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    payment_method_id: string;
+
     @ManyToOne(() => Account, (account) => account.payments_history, {
         eager: true,
     })

@@ -1,6 +1,6 @@
 import { Body, Controller, Inject, Logger, Param, ParseIntPipe, Post } from '@nestjs/common';
 
-import { ViasPaymentDataDto } from './dto/payment.data.dto';
+import { VisaPaymentDataDto } from './dto/payment.data.dto';
 
 // auth
 import { AUTH } from 'src/auth/decorators/auth.decorator';
@@ -16,22 +16,24 @@ export class EnrollCoursesController {
 
     constructor(
         @Inject()
-        private readonly enrollCoursesService: EnrollCoursesService
-    ) {
-    }
+        private readonly enrollCoursesService: EnrollCoursesService,
+    ) {}
 
     @AUTH(AuthEnum.BEARER)
     @Post('visa-checkout/:course_id')
     async enrollCourses(
-        @Body() visaPaymentDataDto: ViasPaymentDataDto,
+        @Body() visaPaymentDataDto: VisaPaymentDataDto,
         @Param('course_id', ParseIntPipe) course_id: number,
-        @ExtractAccountData('id') account_id: number
+        @ExtractAccountData('id') account_id: number,
     ) {
-
         // enroll courses
-        await this.enrollCoursesService.enrollCoursesByVisa(course_id, visaPaymentDataDto, account_id);
+        await this.enrollCoursesService.enrollCoursesByVisa(
+            course_id,
+            visaPaymentDataDto,
+            account_id,
+        );
         return {
-            response: 'Course enrolled successfully'
+            response: 'Course enrolled successfully',
         };
     }
 }
