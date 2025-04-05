@@ -32,8 +32,6 @@ import { ROLE } from './decorators/role.decorator';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
 import { RoleEnum } from './enums/role.enum';
 import { AuthEnum } from './enums/auth.enum';
-import { AccountEnum } from '../account/entity/account.enum';
-import { ACCOUNT_SELECT } from '../account/decorators/account.select.decorator';
 
 // interfaces
 import { SafeResetAccountPassword } from '../account/interfaces/accounts.interface';
@@ -105,7 +103,6 @@ export class AuthController {
         return { response: 'Sign out' };
     }
 
-    @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.PASSWORD, AccountEnum.IS_ACTIVE)
     @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
     @AUTH(AuthEnum.BEARER)
     @Post('reset-password')

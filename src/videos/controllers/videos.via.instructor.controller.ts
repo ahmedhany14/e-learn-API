@@ -32,10 +32,6 @@ import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
-// types
-import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
-import { VideoEnum, VideoRelations } from 'src/videos/entity/videos.enums';
-import * as console from 'node:console';
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
@@ -48,9 +44,7 @@ export class VideosViaInstructorController {
         private readonly videosService: VideosInstructorService,
         @Inject()
         private readonly sectionsService: SectionsInstructorService,
-        //        @Inject()
-        //        private readonly keyGeneratorService: KeyGeneratorService<Videos>,
-    ) { }
+    ) {}
 
     @UseGuards(IsYourSectionGuard)
     @Post('add-video/:section_id')
@@ -62,19 +56,11 @@ export class VideosViaInstructorController {
             `adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`,
         );
 
-        const select: SectionEnum[] = [];
-        const relations: SectionRelations[] = [];
+        const section = await this.sectionsService.findSectionById( section_id);
 
-        const section = await this.sectionsService.findSectionById(select, relations, section_id);
-
-        const all_videos = await this.videosService.findAllVideosInSection(
-            [VideoEnum.ID, VideoEnum.ORDER],
-            section_id,
-        )
+        const all_videos = await this.videosService.findAllVideosInSection(section_id);
 
         console.log('all_videos', all_videos);
-
-        //const order = await this.keyGeneratorService.generateNewKey(all_videos);
 
         const order = all_videos.length + 1;
         const video = await this.videosService.createVideo(addVideoDto, section.id, order);
@@ -128,10 +114,7 @@ export class VideosViaInstructorController {
     ) {
         const section_id = request.section_id;
 
-        let all_videos = await this.videosService.findAllVideosInSection(
-            [VideoEnum.ID, VideoEnum.ORDER],
-            section_id,
-        );
+        let all_videos = await this.videosService.findAllVideosInSection(section_id);
 
         if (reOrderingDto.new_order > all_videos.length) {
             throw new ConflictException({
@@ -153,7 +136,6 @@ export class VideosViaInstructorController {
                 video_id,
                 reOrderingDto.new_order,
             );
-
         }
 
         return {
@@ -175,11 +157,7 @@ export class VideosViaInstructorController {
             `moving video with id: ${video_id} to new section with id: ${new_section_id}`,
         );
 
-
-        const all_videos = await this.videosService.findAllVideosInSection(
-            [VideoEnum.ID, VideoEnum.ORDER],
-            new_section_id,
-        );
+        const all_videos = await this.videosService.findAllVideosInSection(new_section_id);
 
         if (reOrderingDto.new_order > all_videos.length + 1) {
             throw new ConflictException({

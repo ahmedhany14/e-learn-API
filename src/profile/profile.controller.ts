@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Logger, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, Patch, UseGuards } from '@nestjs/common';
 import { ProfileService } from './services/profile.service';
 
 // decorators and types
@@ -7,7 +7,6 @@ import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { AuthEnum } from '../auth/enums/auth.enum';
 import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
-import { ProfileColumns, ProfileRelations } from './entity/profile.enum';
 
 // dto
 import { UpdateProfileDto } from './dtos/update.profile.dto';
@@ -28,29 +27,11 @@ export class ProfileController {
     @Get('my-profile')
     async getProfile(
         @ExtractAccountData('id') accountId: number,
-        @Query('acc') with_account: boolean,
     ) {
         this.logger.log('Fetching profile');
 
-        const select = [
-            ProfileColumns.ID,
-            ProfileColumns.PROFILE_IMAGE,
-            ProfileColumns.FIRST_NAME,
-            ProfileColumns.LAST_NAME,
-            ProfileColumns.BIO,
-            ProfileColumns.LINKEDIN,
-            ProfileColumns.GITHUB,
-            ProfileColumns.TWITTER,
-            ProfileColumns.PHONE_NUMBER,
-            ProfileColumns.CREATED_AT,
-            ProfileColumns.UPDATED_AT,
-        ];
-        const relation = [];
 
-        // if (with_account)
-        relation.push(ProfileRelations.ACCOUNT);
-
-        const profile = await this.profileService.findByAccountId(accountId, select, relation);
+        const profile = await this.profileService.findByAccountId(accountId);
 
         return {
             response: {

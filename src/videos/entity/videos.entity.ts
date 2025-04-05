@@ -1,10 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Section } from '../../sections/entity/sections.entity';
+import { AbstractEntity } from 'y/abstract.db/abstract.entity';
 
 @Entity()
 //@Unique(['order', 'section'])
 @Unique(['video_url', 'section'])
-export class Videos {
+export class Videos extends AbstractEntity<Videos> {
     @PrimaryGeneratedColumn()
     id: number;
 
