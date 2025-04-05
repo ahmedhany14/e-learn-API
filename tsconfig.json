@@ -21,10 +21,10 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "y/abstract.db": [
+      "@app/abstract.db": [
         "libs/abstract.db/src"
       ],
-      "y/abstract.db/*": [
+      "@app/abstract.db/*": [
         "libs/abstract.db/src/*"
       ]
     }

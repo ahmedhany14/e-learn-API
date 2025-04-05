@@ -1,17 +1,10 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Course } from '../../courses/entities/course.entity';
 import { Videos } from '../../videos/entity/videos.entity';
-import {AbstractEntity} from "y/abstract.db/abstract.entity";
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity()
-export class Section extends AbstractEntity<Section>{
+export class Section extends AbstractEntity<Section> {
     @PrimaryGeneratedColumn()
     id: number;
 

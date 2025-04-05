@@ -6,7 +6,7 @@ import { AddVideoDto } from '../../dtos/add.video.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Videos } from '../../entity/videos.entity';
-import { AbstractRepoService } from 'y/abstract.db';
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
 export class VideosInstructorRepo extends AbstractRepoService<Videos> {
@@ -20,7 +20,7 @@ export class VideosInstructorRepo extends AbstractRepoService<Videos> {
         super(videosRepository, entityManager);
     }
 
-    async newVideo(video: AddVideoDto, section_id: number, order: number) : Promise<Videos> {
+    async newVideo(video: AddVideoDto, section_id: number, order: number): Promise<Videos> {
         try {
             return this.videosRepository.create({
                 ...video,

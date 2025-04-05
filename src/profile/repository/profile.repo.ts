@@ -4,7 +4,7 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { Profile } from '../entity/profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { AbstractRepoService } from 'y/abstract.db';
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
 export class ProfileRepository extends AbstractRepoService<Profile> {

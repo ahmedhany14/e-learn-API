@@ -1,13 +1,6 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    OneToOne,
-    JoinColumn,
-    Unique,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, Unique } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { AbstractEntity } from 'y/abstract.db/abstract.entity';
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity()
 //@Check(`"phone_number" SIMILAR TO '^[0-9]{10,16}$'`) // will validate phone number, it should be between 10 and 16 digits

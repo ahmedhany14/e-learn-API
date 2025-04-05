@@ -16,6 +16,8 @@
     "yesy/abstarct.db/(.*)": "<rootDir>/../libs/abstarct.db/src/$1",
     "yesy/abstarct.db": "<rootDir>/../libs/abstarct.db/src",
     "y/abstract.db/(.*)": "<rootDir>/../libs/abstract.db/src/$1",
-    "y/abstract.db": "<rootDir>/../libs/abstract.db/src"
+    "y/abstract.db": "<rootDir>/../libs/abstract.db/src",
+    "@app/pagination/(.*)": "<rootDir>/../libs/pagination/src/$1",
+    "@app/pagination": "<rootDir>/../libs/pagination/src"
   }
 }

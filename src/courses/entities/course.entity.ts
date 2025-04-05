@@ -13,7 +13,7 @@ import { Section } from '../../sections/entity/sections.entity';
 import { CourseTags } from '../../tags/entity/course.tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
 import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
-import {AbstractEntity} from "y/abstract.db/abstract.entity";
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity()
 export class Course extends AbstractEntity<Course> {
@@ -101,7 +101,6 @@ export class Course extends AbstractEntity<Course> {
         lazy: true,
     })
     sections: Promise<Section[]>;
-
 
     /*
      * Many to Many, where a course can be assigned to many tags and a tag can be assigned to many courses

@@ -115,9 +115,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^y/common(|/.*)$": "<rootDir>/libs/common/src/$1",
-      "^yesy/abstarct.db(|/.*)$": "<rootDir>/libs/abstarct.db/src/$1",
-      "^y/abstract.db(|/.*)$": "<rootDir>/libs/abstract.db/src/$1"
+      "^@app/abstract.db(|/.*)$": "<rootDir>/libs/abstract.db/src/$1",
+      "^@app/pagination(|/.*)$": "<rootDir>/libs/pagination/src/$1"
     }
   }
 }

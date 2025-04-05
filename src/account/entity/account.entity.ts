@@ -13,7 +13,7 @@ import { Tags } from '../../tags/entity/tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
 import { PaymentsHistory } from '../../payments/entities/payments.history.entity';
 import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
-import {AbstractEntity} from "y/abstract.db/abstract.entity";
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity({
     name: 'accounts',
@@ -23,8 +23,7 @@ import {AbstractEntity} from "y/abstract.db/abstract.entity";
     comment: 'User accounts',
 })
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
-export class Account extends AbstractEntity<Account>{
-
+export class Account extends AbstractEntity<Account> {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -72,14 +71,12 @@ export class Account extends AbstractEntity<Account>{
     })
     has_been_banned: boolean;
 
-
     @Column({
         type: 'varchar',
         nullable: true,
         default: () => 'false',
     })
     payment_account_details: string;
-
 
     @Column({
         type: 'timestamp with time zone',

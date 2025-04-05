@@ -6,7 +6,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { Account } from '../entity/account.entity';
 
 // Abstract repository
-import { AbstractRepoService } from 'y/abstract.db';
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
 export class AccountRepository extends AbstractRepoService<Account> {

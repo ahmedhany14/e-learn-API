@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Section } from '../../sections/entity/sections.entity';
-import { AbstractEntity } from 'y/abstract.db/abstract.entity';
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity()
 //@Unique(['order', 'section'])

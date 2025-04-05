@@ -9,7 +9,7 @@ import { Course } from '../entities/course.entity';
 import { QueryDto } from 'src/courses/dtos/my.courses.query.dto';
 
 import { CourseEnum, CourseRelations } from '../entities/course.enums';
-import { AbstractRepoService } from 'y/abstract.db';
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
 export class CourseRepo extends AbstractRepoService<Course> {
