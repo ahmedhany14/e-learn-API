@@ -10,7 +10,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 @Injectable()
 export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
-    private readonly logger = new Logger('AbstractRepoService');
+    protected abstract readonly logger: Logger;
 
     protected constructor(
         private readonly entityRepository: Repository<T>,
@@ -29,6 +29,17 @@ export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
         }
     }
 
+    async save(entity: T): Promise<T> {
+        this.logger.log('Saving entity');
+        try {
+            return await this.entityRepository.save(entity);
+        } catch (error) {
+            throw new InternalServerErrorException({
+                message: 'Error saving entity',
+                error: error.message,
+            });
+        }
+    }
     async findOne(where: FindOptionsWhere<T>): Promise<T> {
         this.logger.log('Finding one entity');
         try {
