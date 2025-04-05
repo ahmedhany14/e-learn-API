@@ -1,18 +1,18 @@
 import {
     Entity,
     Column,
-    Check,
     PrimaryGeneratedColumn,
     OneToOne,
     JoinColumn,
     Unique,
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
+import { AbstractEntity } from 'y/abstract.db/abstract.entity';
 
 @Entity()
 //@Check(`"phone_number" SIMILAR TO '^[0-9]{10,16}$'`) // will validate phone number, it should be between 10 and 16 digits
 @Unique(['account']) // add unique constraint to the phone_number column
-export class Profile {
+export class Profile extends AbstractEntity<Profile> {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -98,6 +98,7 @@ export class Profile {
 
     // One profile can have one account
     @OneToOne(() => Account, (account) => account.profile, {
+        eager: true,
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
         nullable: false,
