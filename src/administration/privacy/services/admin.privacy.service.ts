@@ -8,11 +8,7 @@ export class AdminPrivacyService {
     constructor(@Inject() private readonly accountService: AccountService) {}
 
     async bannedAccount(account_id: number) {
-        const account = await this.accountService.findById(account_id, [
-            AccountEnum.ID,
-            AccountEnum.HAS_BEEN_BANNED,
-            AccountEnum.EMAIL,
-        ]);
+        const account = await this.accountService.findById(account_id);
         if (!account) {
             throw new NotFoundException({
                 message: 'Account not found',
@@ -30,11 +26,7 @@ export class AdminPrivacyService {
     }
 
     async deactivateAccount(account_id: number) {
-        const account = await this.accountService.findById(account_id, [
-            AccountEnum.ID,
-            AccountEnum.IS_ACTIVE,
-            AccountEnum.EMAIL,
-        ]);
+        const account = await this.accountService.findById(account_id);
         if (!account) {
             throw new NotFoundException({
                 message: 'Account not found',
@@ -50,11 +42,7 @@ export class AdminPrivacyService {
     }
 
     async activateAccount(account_id: number) {
-        const account = await this.accountService.findById(account_id, [
-            AccountEnum.ID,
-            AccountEnum.IS_ACTIVE,
-            AccountEnum.EMAIL,
-        ]);
+        const account = await this.accountService.findById(account_id);
         if (!account) {
             throw new NotFoundException({
                 message: 'Account not found',

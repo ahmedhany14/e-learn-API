@@ -21,18 +21,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "y/common": [
-        "libs/common/src"
-      ],
-      "y/common/*": [
-        "libs/common/src/*"
-      ],
-      "yesy/abstarct.db": [
-        "libs/abstarct.db/src"
-      ],
-      "yesy/abstarct.db/*": [
-        "libs/abstarct.db/src/*"
-      ],
       "y/abstract.db": [
         "libs/abstract.db/src"
       ],

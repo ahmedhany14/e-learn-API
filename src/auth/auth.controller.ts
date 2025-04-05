@@ -1,16 +1,16 @@
 import {
-  Controller,
-  Post,
-  Get,
-  Inject,
-  Body,
-  InternalServerErrorException,
-  NotFoundException,
-  GoneException,
-  BadRequestException,
-  Logger,
-  Param,
-  UseInterceptors,
+    Controller,
+    Post,
+    Get,
+    Inject,
+    Body,
+    InternalServerErrorException,
+    NotFoundException,
+    GoneException,
+    BadRequestException,
+    Logger,
+    Param,
+    UseInterceptors,
 } from '@nestjs/common';
 
 // services and providers
@@ -37,126 +37,121 @@ import { ACCOUNT_SELECT } from '../account/decorators/account.select.decorator';
 
 // interfaces
 import { SafeResetAccountPassword } from '../account/interfaces/accounts.interface';
-import { ExtractAccountInterceptor } from '../account/interceptors/extract.account.interceptor';
 import { GooglePayload } from './interfaces/google.payload.interface';
 
-@UseInterceptors(ExtractAccountInterceptor)
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
+    private readonly logger = new Logger(AuthController.name);
 
-  constructor(
-    @Inject() private readonly authService: AuthService,
-    @Inject() private readonly googleService: GoogleService,
-  ) {}
+    constructor(
+        @Inject() private readonly authService: AuthService,
+        @Inject() private readonly googleService: GoogleService,
+    ) {}
 
-  @AUTH(AuthEnum.NONE)
-  @Post('sign-in')
-  async login(@Body() accountLoginDto: AccountLoginDto) {
-    this.logger.log('login attempt');
+    @AUTH(AuthEnum.NONE)
+    @Post('sign-in')
+    async login(@Body() accountLoginDto: AccountLoginDto) {
+        this.logger.log('login attempt');
 
-    return { response: await this.authService.login(accountLoginDto) };
-  }
+        return { response: await this.authService.login(accountLoginDto) };
+    }
 
-  @AUTH(AuthEnum.NONE)
-  @Post('sign-up')
-  async signUp(@Body() accountSignupDto: AccountSignupDto) {
-    this.logger.log('sign up attempt');
+    @AUTH(AuthEnum.NONE)
+    @Post('sign-up')
+    async signUp(@Body() accountSignupDto: AccountSignupDto) {
+        this.logger.log('sign up attempt');
 
-    const url = await this.authService.signUp(accountSignupDto);
-    //await this.email.sendActiveEmail(accountSignupDto.email, url);
+        const url = await this.authService.signUp(accountSignupDto);
+        //await this.email.sendActiveEmail(accountSignupDto.email, url);
 
-    return {
-      response: {
-        message: 'Account created successfully',
-        url,
-      },
-    };
-  }
+        return {
+            response: {
+                message: 'Account created successfully',
+                url,
+            },
+        };
+    }
 
-  @Post('google-sign-up')
-  async googleSignUp(@Body() googleAuthDto: GoogleAuthDto) {
-    this.logger.log('google sign up attempt');
+    @Post('google-sign-up')
+    async googleSignUp(@Body() googleAuthDto: GoogleAuthDto) {
+        this.logger.log('google sign up attempt');
 
-    const payload = await this.googleService.verifyGoogleToken(googleAuthDto);
+        const payload = await this.googleService.verifyGoogleToken(googleAuthDto);
 
-    const account: GooglePayload = {
-      email: payload.email || '',
-      first_name: payload.given_name || '',
-      last_name: payload.family_name || '',
-      img_url: payload.picture || '',
-    };
+        const account: GooglePayload = {
+            email: payload.email || '',
+            first_name: payload.given_name || '',
+            last_name: payload.family_name || '',
+            img_url: payload.picture || '',
+        };
 
-    const response = await this.googleService.googleSignUp(account);
+        const response = await this.googleService.googleSignUp(account);
 
-    //await this.email.sendActiveEmail(accountSignupDto.email, url);
+        //await this.email.sendActiveEmail(accountSignupDto.email, url);
 
-    return {
-      response,
-    };
-  }
+        return {
+            response,
+        };
+    }
 
-  @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
-  @AUTH(AuthEnum.BEARER)
-  @Post('sign-out')
-  async signOut() {
-    /*
-    Not implemented yet
-     */
+    @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
+    @AUTH(AuthEnum.BEARER)
+    @Post('sign-out')
+    async signOut() {
+        /*
+         Not implemented yet
+         */
 
-    return { response: 'Sign out' };
-  }
+        return { response: 'Sign out' };
+    }
 
-  @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.PASSWORD, AccountEnum.IS_ACTIVE)
-  @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
-  @AUTH(AuthEnum.BEARER)
-  @Post('reset-password')
-  async resetPassword(
-    @Body() resetPasswordDto: AccountResetPasswordDto,
-    @ExtractAccountData() account: SafeResetAccountPassword,
-  ) {
-    this.logger.log('reset password attempt');
-    console.log(account);
-    return {
-      response: await this.authService.resetPassword(resetPasswordDto, account),
-    };
-  }
+    @ACCOUNT_SELECT(AccountEnum.ID, AccountEnum.PASSWORD, AccountEnum.IS_ACTIVE)
+    @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
+    @AUTH(AuthEnum.BEARER)
+    @Post('reset-password')
+    async resetPassword(
+        @Body() resetPasswordDto: AccountResetPasswordDto,
+        @ExtractAccountData() account: SafeResetAccountPassword,
+    ) {
+        this.logger.log('reset password attempt');
+        console.log(account);
+        return {
+            response: await this.authService.resetPassword(resetPasswordDto, account),
+        };
+    }
 
-  @Post('forgot-password')
-  @AUTH(AuthEnum.NONE)
-  async forgotPassword(@Body() forgetDto: ForgetDto) {
-    const reset_token = await this.authService.forgotPassword(forgetDto);
-    return {
-      response: {
-        message: 'email sent',
-        reset_token,
-      },
-    };
-  }
+    @Post('forgot-password')
+    @AUTH(AuthEnum.NONE)
+    async forgotPassword(@Body() forgetDto: ForgetDto) {
+        const reset_token = await this.authService.forgotPassword(forgetDto);
+        return {
+            response: {
+                message: 'email sent',
+                reset_token,
+            },
+        };
+    }
 
-  @Post('reset-password/:token')
-  @AUTH(AuthEnum.NONE)
-  async resetPasswordWithToken(
-    @Param('token') token: string,
-    @Body() resetPasswordDto: ResetPasswordDto,
-  ) {
-    this.logger.log('reset password with token attempt');
+    @Post('reset-password/:token')
+    @AUTH(AuthEnum.NONE)
+    async resetPasswordWithToken(
+        @Param('token') token: string,
+        @Body() resetPasswordDto: ResetPasswordDto,
+    ) {
+        this.logger.log('reset password with token attempt');
 
-    return {
-      response: await this.authService.resetPasswordWithToken(
-        token,
-        resetPasswordDto,
-      ),
-    };
-  }
+        return {
+            response: await this.authService.resetPasswordWithToken(token, resetPasswordDto),
+        };
+    }
 
-  @AUTH(AuthEnum.NONE)
-  @Post('refreshToken')
-  async refreshToken(@Body() refreshToken: RefreshTokenDto) {
-    this.logger.log('refresh token attempt');
+    @AUTH(AuthEnum.NONE)
+    @Post('refreshToken')
+    async refreshToken(@Body() refreshToken: RefreshTokenDto) {
+        this.logger.log('refresh token attempt');
 
-    return {
-      response: await this.authService.refreshToken(refreshToken),
-    };
-  }
+        return {
+            response: await this.authService.refreshToken(refreshToken),
+        };
+    }
 }

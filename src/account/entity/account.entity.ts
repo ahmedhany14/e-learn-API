@@ -13,6 +13,7 @@ import { Tags } from '../../tags/entity/tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
 import { PaymentsHistory } from '../../payments/entities/payments.history.entity';
 import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
+import {AbstractEntity} from "y/abstract.db/abstract.entity";
 
 @Entity({
     name: 'accounts',
@@ -22,7 +23,8 @@ import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enro
     comment: 'User accounts',
 })
 @Check(`"email" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'`)
-export class Account {
+export class Account extends AbstractEntity<Account>{
+
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -1,13 +1,7 @@
-import {
-  Injectable,
-  OnModuleInit,
-  Inject,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, OnModuleInit, Inject, Logger } from '@nestjs/common';
 
 // Google Auth
 import { OAuth2Client } from 'google-auth-library';
-
 
 // DTOs and Interfaces
 import { GoogleAuthDto } from '../dto/google.signup.dto';
@@ -21,61 +15,52 @@ import { ConfigService } from 'src/configurations/config.service';
 
 @Injectable()
 export class GoogleService implements OnModuleInit {
-  private oauth2Client: OAuth2Client;
-  private readonly logger = new Logger(GoogleService.name);
-  constructor(
-    @Inject()
-    private readonly signupProvider: SignupProvider,
+    private oauth2Client: OAuth2Client;
+    private readonly logger = new Logger(GoogleService.name);
 
-    @Inject()
-    private readonly accountService: AccountService,
+    constructor(
+        @Inject()
+        private readonly signupProvider: SignupProvider,
+        @Inject()
+        private readonly accountService: AccountService,
+        @Inject()
+        private readonly tokenProvider: TokenProvider,
+        @Inject()
+        private readonly configService: ConfigService,
+    ) {}
 
-    @Inject()
-    private readonly tokenProvider: TokenProvider,
-
-    @Inject()
-    private readonly configService: ConfigService
-  ) { }
-  onModuleInit(): any {
-    this.oauth2Client = new OAuth2Client({
-      clientId: this.configService.googleConfig.googleClientId,
-      clientSecret: this.configService.googleConfig.googleClientSecret,
-    });
-  }
-
-  async verifyGoogleToken(googleAuthDto: GoogleAuthDto) {
-    const ticket = await this.oauth2Client.verifyIdToken({
-      idToken: googleAuthDto.googleToken,
-    });
-
-    this.logger.log('ticket payload', ticket.getPayload());
-
-    return ticket.getPayload();
-  }
-
-  async googleSignUp(googlePayload: GooglePayload) {
-    const account = await this.accountService.findByEmail(googlePayload.email, [
-      'id',
-      'email',
-      'role',
-    ]);
-
-    if (account) {
-      const { accessToken, refreshToken } =
-        await this.tokenProvider.generateToken(account);
-
-      return {
-        accessToken,
-        refreshToken,
-      };
+    onModuleInit(): any {
+        this.oauth2Client = new OAuth2Client({
+            clientId: this.configService.googleConfig.googleClientId,
+            clientSecret: this.configService.googleConfig.googleClientSecret,
+        });
     }
 
-    const { account: create_account } =
-      await this.signupProvider.googleSignup(googlePayload);
-    const { url } = await this.tokenProvider.generate_active_token(
-      create_account.id,
-    );
+    async verifyGoogleToken(googleAuthDto: GoogleAuthDto) {
+        const ticket = await this.oauth2Client.verifyIdToken({
+            idToken: googleAuthDto.googleToken,
+        });
 
-    return url;
-  }
+        this.logger.log('ticket payload', ticket.getPayload());
+
+        return ticket.getPayload();
+    }
+
+    async googleSignUp(googlePayload: GooglePayload) {
+        const account = await this.accountService.findByEmail(googlePayload.email);
+
+        if (account) {
+            const { accessToken, refreshToken } = await this.tokenProvider.generateToken(account);
+
+            return {
+                accessToken,
+                refreshToken,
+            };
+        }
+
+        const { account: create_account } = await this.signupProvider.googleSignup(googlePayload);
+        const { url } = await this.tokenProvider.generate_active_token(create_account.id);
+
+        return url;
+    }
 }
