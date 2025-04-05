@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AbstractDbService } from './abstract.db.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigurationsModule } from '../../../src/configurations/configurations.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -26,8 +25,7 @@ import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-clas
             }),
         }),
     ],
-    providers: [AbstractDbService, AbstractRepoService],
-    exports: [AbstractDbService],
+    exports: [AbstractRepoService],
 })
 export class AbstractDbModule {
     static forFeature(schemas: EntityClassOrSchema[]) {
