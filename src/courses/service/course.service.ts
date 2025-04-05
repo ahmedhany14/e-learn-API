@@ -13,26 +13,27 @@ export class CourseService {
     constructor(
         @Inject()
         private readonly courserRepo: CourseRepo,
-    ) { }
+    ) {}
 
-    async createCourse(account_id: number) {
-        return await this.courserRepo.createCourse(account_id);
+    async createCourse(instructor_id: number) {
+        return await this.courserRepo.create(this.courserRepo.newCourse(instructor_id));
     }
 
-    async getTotalCourses(filter: any) {
-        return await this.courserRepo.getTotalCourses(filter);
+    async getCourse(id: number) {
+        return await this.courserRepo.findOne({ id });
     }
 
-    async getCourse(
-        select: CourseEnum[] = [CourseEnum.ID, CourseEnum.STATE],
-        relation: CourseRelations[] = [],
-        id: number,
-    ) {
-        return await this.courserRepo.findOneById(select, relation, id);
+    async updateImageName(course_id: number, image_url: string) {
+        return await this.courserRepo.findOneAndUpdate({ id: course_id }, { image_url });
     }
 
-    async updateImageName(course_id: number, image_name: string) {
-        return await this.courserRepo.updateImageName(course_id, image_name);
+    async updateCourseData(course_id: number, updateCourseDto: UpdateCourseDto) {
+        return await this.courserRepo.findOneAndUpdate(
+            { id: course_id },
+            {
+                ...updateCourseDto,
+            },
+        );
     }
 
     async getMyCourses(
@@ -48,30 +49,10 @@ export class CourseService {
         filter: any,
         queryDto: QueryDto,
     ) {
-        return await this.courserRepo.getMyCourses(
-            select,
-            relation,
-            filter,
-            queryDto,
-        );
+        return await this.courserRepo.getMyCourses(select, relation, filter, queryDto);
     }
 
-    async updateCourseData(
-        select: CourseEnum[] = [
-            CourseEnum.ID,
-            CourseEnum.TITLE,
-            CourseEnum.DESCRIPTION,
-            CourseEnum.PRICE,
-        ],
-        relation: CourseRelations[] = [],
-        course_id: number,
-        updateCourseDto: UpdateCourseDto,
-    ) {
-        return await this.courserRepo.updateCourseData(
-            select,
-            relation,
-            course_id,
-            updateCourseDto,
-        );
+    async getTotalCourses(filter: any) {
+        return await this.courserRepo.getTotalCourses(filter);
     }
 }

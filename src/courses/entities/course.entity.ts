@@ -13,9 +13,10 @@ import { Section } from '../../sections/entity/sections.entity';
 import { CourseTags } from '../../tags/entity/course.tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
 import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
+import {AbstractEntity} from "y/abstract.db/abstract.entity";
 
 @Entity()
-export class Course {
+export class Course extends AbstractEntity<Course> {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -85,6 +86,7 @@ export class Course {
     rate: number;
 
     @ManyToOne(() => Account, (account) => account.courses, {
+        eager: true,
         cascade: true,
         onDelete: 'CASCADE',
     })
@@ -95,13 +97,11 @@ export class Course {
     instructor: Course;
 
     // one course can have many sections
-
     @OneToMany(() => Section, (section) => section.course, {
         lazy: true,
     })
     sections: Promise<Section[]>;
 
-    // plans (later)
 
     /*
      * Many to Many, where a course can be assigned to many tags and a tag can be assigned to many courses
@@ -128,4 +128,6 @@ export class Course {
         lazy: true,
     })
     enrolled_courses: Promise<EnrolledCourses[]>;
+
+    // plans (later)
 }

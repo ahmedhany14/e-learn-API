@@ -1,35 +1,33 @@
-import {
-    Injectable,
-    InternalServerErrorException,
-    Logger,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 // orm and entity
-import { FindOptionsSelect, Repository } from 'typeorm';
+import { EntityManager, FindOptionsSelect, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from '../entities/course.entity';
+
 // dto
 import { QueryDto } from 'src/courses/dtos/my.courses.query.dto';
-import { UpdateCourseDto } from 'src/courses/dtos/update.course.dto';
 
 import { CourseEnum, CourseRelations } from '../entities/course.enums';
+import { AbstractRepoService } from 'y/abstract.db';
 
 @Injectable()
-export class CourseRepo {
-    private readonly logger = new Logger(CourseRepo.name);
+export class CourseRepo extends AbstractRepoService<Course> {
+    protected readonly logger: Logger = new Logger(CourseRepo.name);
 
     constructor(
         @InjectRepository(Course)
         private readonly courseRepository: Repository<Course>,
-    ) { }
+        entityManager: EntityManager,
+    ) {
+        super(courseRepository, entityManager);
+    }
 
-    async createCourse(account_id: number): Promise<Course> {
+    newCourse(instructor_id: number): Course {
         try {
-            const course = this.courseRepository.create({
-                instructor: { id: account_id },
+            return this.courseRepository.create({
+                instructor: { id: instructor_id },
             });
-
-            return await this.courseRepository.save(course);
         } catch (error) {
             throw new InternalServerErrorException({
                 message: 'Error while creating course',
@@ -46,48 +44,6 @@ export class CourseRepo {
         } catch (error) {
             throw new InternalServerErrorException({
                 message: 'Error while fetching total courses',
-                details: error.message,
-            });
-        }
-    }
-
-    async findOneById(
-        select: CourseEnum[],
-        relation: CourseRelations[],
-        id: number,
-    ): Promise<Course> {
-        try {
-            return await this.courseRepository.findOne({
-                where: { id },
-                select: select as FindOptionsSelect<Course>,
-                relations: relation,
-            });
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException({
-                message: 'Error while fetching course',
-                details: error.message,
-            });
-        }
-    }
-
-    async updateImageName(
-        course_id: number,
-        image_name: string,
-    ): Promise<string> {
-        try {
-            const course = await this.courseRepository.findOne({
-                where: { id: course_id },
-                select: [CourseEnum.ID, CourseEnum.IMAGE_URL],
-            });
-
-            course.image_url = image_name;
-
-            await this.courseRepository.save(course);
-            return image_name;
-        } catch (error) {
-            throw new InternalServerErrorException({
-                message: 'Error while updating image name',
                 details: error.message,
             });
         }
@@ -112,7 +68,7 @@ export class CourseRepo {
                 where: filter,
             });
 
-            const totalPages = Math.ceil((totalCourses * 1.0) / queryDto.limit);
+            const totalPages = Math.ceil(totalCourses / queryDto.limit);
             const hasMore = queryDto.page < totalPages;
 
             return {
@@ -129,9 +85,7 @@ export class CourseRepo {
                         queryDto.page > 1
                             ? `?page=${queryDto.page - 1}&limit=${queryDto.limit}`
                             : null,
-                    next: hasMore
-                        ? `?page=${queryDto.page + 1}&limit=${queryDto.limit}`
-                        : null,
+                    next: hasMore ? `?page=${queryDto.page + 1}&limit=${queryDto.limit}` : null,
                     current: `?page=${queryDto.page}&limit=${queryDto.limit}`,
                 },
             };
@@ -140,30 +94,6 @@ export class CourseRepo {
                 message: 'Error while fetching courses',
                 details: error.message,
             });
-        }
-    }
-
-    async updateCourseData(
-        select: CourseEnum[],
-        relation: CourseRelations[],
-        course_id: number,
-        updateCourseDto: UpdateCourseDto,
-    ): Promise<Course> {
-        try {
-            let course = await this.courseRepository.findOne({
-                where: { id: course_id },
-                select: select as FindOptionsSelect<Course>,
-                relations: relation,
-            });
-            course = {
-                ...course,
-                ...updateCourseDto,
-            };
-            return await this.courseRepository.save(course);
-        } catch (error) {
-            throw new InternalServerErrorException(
-                'Error while updating course data',
-            );
         }
     }
 }

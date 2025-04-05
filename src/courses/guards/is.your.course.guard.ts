@@ -11,7 +11,7 @@ import { CourseService } from 'src/courses/service/course.service';
 
 @Injectable()
 export class IsYourCourseGuard implements CanActivate {
-    constructor(private readonly courseService: CourseService) { }
+    constructor(private readonly courseService: CourseService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -19,21 +19,12 @@ export class IsYourCourseGuard implements CanActivate {
         const instructor_id: number = request.accountId;
         const course_id: number = parseInt(request.params.course_id);
 
-        const course = await this.courseService.getCourse(
-            [CourseEnum.ID, CourseEnum.STATE, CourseEnum.TITLE, CourseEnum.IMAGE_URL],
-            [CourseRelations.INSTRUCTOR],
-            course_id,
-        );
+        const course = await this.courseService.getCourse(course_id);
 
-        if (!course)
-            throw new NotFoundException(
-                `Course with ID ${course_id} does not exist.`,
-            );
+        if (!course) throw new NotFoundException(`Course with ID ${course_id} does not exist.`);
 
         if (course.instructor.id !== instructor_id)
-            throw new ForbiddenException(
-                `You are not authorized to access this resource`,
-            );
+            throw new ForbiddenException(`You are not authorized to access this resource`);
 
         if (course.state !== 'draft') {
             throw new ConflictException({
