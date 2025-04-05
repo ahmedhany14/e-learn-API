@@ -42,11 +42,7 @@ export class IsReadyForReviewGuard implements CanActivate {
             });
         }
 
-        const course = await this.courseService.getCourse(
-            [CourseEnum.ID, CourseEnum.STATE],
-            [CourseRelations.INSTRUCTOR],
-            courseReview.course.id,
-        );
+        const course = await this.courseService.getCourse(courseReview.course.id);
 
         if (!course) {
             throw new NotFoundException({

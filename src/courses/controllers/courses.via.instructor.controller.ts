@@ -68,7 +68,7 @@ export class CoursesViaInstructorController {
         @ExtractAccountData('id') account_id: number,
     ) {
         this.logger.log(
-            `Getting courses for the instuctor account_id: ${account_id}`,
+            `Getting courses for the instructor account_id: ${account_id}`,
         );
 
         const select: CourseEnum[] = [
@@ -105,24 +105,10 @@ export class CoursesViaInstructorController {
     @Get('course/:course_id')
     async getCourse(
         @Param('course_id', ParseIntPipe) course_id: number,
-        @ExtractAccountData('id') account_id: number,
     ) {
         this.logger.log(`Getting course with course_id: ${course_id}`);
 
-        const select: CourseEnum[] = [
-            CourseEnum.ID,
-            CourseEnum.TITLE,
-            CourseEnum.DESCRIPTION,
-            CourseEnum.REQUIREMENTS,
-            CourseEnum.WHAT_YOU_LEARN,
-            CourseEnum.PRICE,
-            CourseEnum.STATE,
-            CourseEnum.IMAGE_URL,
-            CourseEnum.VIEWS,
-            CourseEnum.RATE,
-        ];
-
-        const course = await this.courseService.getCourse(select, [], course_id);
+        const course = await this.courseService.getCourse(course_id);
 
         return {
             response: {
@@ -142,18 +128,7 @@ export class CoursesViaInstructorController {
     ) {
         this.logger.log(`Updating course metadata for course_id: ${course_id}`);
 
-        const select: CourseEnum[] = [
-            CourseEnum.ID,
-            CourseEnum.TITLE,
-            CourseEnum.DESCRIPTION,
-            CourseEnum.REQUIREMENTS,
-            CourseEnum.WHAT_YOU_LEARN,
-            CourseEnum.PRICE,
-        ];
-
         const course = await this.courseService.updateCourseData(
-            select,
-            [],
             course_id,
             updateCourseDataDto,
         );

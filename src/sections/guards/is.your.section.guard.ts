@@ -3,22 +3,20 @@ import {
     ConflictException,
     ExecutionContext,
     Injectable,
-    Logger,
     NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
 
 // services
-import { SectionsInstructorService } from '../../sections/services/instructor/sections.instructor.service';
+import { SectionsInstructorService } from '../services/instructor/sections.instructor.service';
 import { CourseService } from '../../courses/service/course.service';
+
 // entities
 import { SectionEnum, SectionRelations } from 'src/sections/entity/sections.enums';
-import { CourseRelations } from 'src/courses/entities/course.enums';
 import { CourseStatusEnum } from '../../courses/enums/course.status.enum';
 
 @Injectable()
 export class IsYourSectionGuard implements CanActivate {
-    private readonly logger = new Logger(IsYourSectionGuard.name);
 
     constructor(
         private readonly sectionsService: SectionsInstructorService,
@@ -50,11 +48,7 @@ export class IsYourSectionGuard implements CanActivate {
             });
         }
 
-        const course = await this.courseService.getCourse(
-            [],
-            [CourseRelations.INSTRUCTOR],
-            section.course.id,
-        );
+        const course = await this.courseService.getCourse(section.course.id);
 
         if (course.instructor.id !== instructor_id) {
             throw new UnauthorizedException({
