@@ -30,6 +30,8 @@ import { UpdateCourseDto } from '../dtos/update.course.dto';
 
 // guards
 import { IsYourCourseGuard } from '../guards/is.your.course.guard';
+import { CommitedChangesDto } from '../dtos/commited.changes.dto';
+import { CanCommitChangesGuard } from '../guards/can.commit.changes.guard';
 
 @Controller('courses-via-instructor')
 export class CoursesViaInstructorController {
@@ -38,7 +40,7 @@ export class CoursesViaInstructorController {
     constructor(
         @Inject()
         private readonly courseService: CourseService,
-    ) {}
+    ) { }
 
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -63,7 +65,7 @@ export class CoursesViaInstructorController {
         this.logger.log(`Getting courses for the instructor account_id: ${account_id}`);
 
         const filter = {
-            instructor: account_id,
+            instructor: { id: account_id },
             state: queryDto.state,
         };
 
@@ -113,4 +115,34 @@ export class CoursesViaInstructorController {
             },
         };
     }
+
+    /**
+     * 
+     * @param course_id 
+     * @param commitedChangesDto 
+     * @returns the course with the commited changes
+     * @description this endpoint is used to commit the changes made to the course
+     * @description the changes are made in the course_commits_review table
+     */
+
+    @UseGuards(CanCommitChangesGuard)
+    @ROLE(RoleEnum.INSTRUCTOR)
+    @AUTH(AuthEnum.BEARER)
+    @Patch('commit-changes/:course_id')
+    async commitChanges(
+        @Param('course_id', ParseIntPipe) course_id: number,
+        @Body() commitedChangesDto: CommitedChangesDto,
+    ) {
+        this.logger.log(`Committing changes for course_id: ${course_id}`);
+
+        if (Object.keys(commitedChangesDto).length !== 0)
+            await this.courseService.commitChanges(course_id, commitedChangesDto);
+
+        return {
+            response: {
+                message: 'Course changes committed successfully',
+            },
+        };
+    }
+
 }

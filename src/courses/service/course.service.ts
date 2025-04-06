@@ -6,13 +6,18 @@ import { CourseRepo } from '../repository/course.repo';
 // dto
 import { QueryDto } from 'src/courses/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/courses/dtos/update.course.dto';
+import { CommitedChangesDto } from '../dtos/commited.changes.dto';
+import { CourseCommitsService } from '../../administration/course_commits/course_commits.service';
 
 @Injectable()
 export class CourseService {
     constructor(
         @Inject()
         private readonly courserRepo: CourseRepo,
-    ) {}
+
+        @Inject()
+        private readonly courseCommitsService: CourseCommitsService,
+    ) { }
 
     async createCourse(instructor_id: number) {
         return await this.courserRepo.create(this.courserRepo.newCourse(instructor_id));
@@ -41,5 +46,15 @@ export class CourseService {
 
     async getTotalCourses(filter: any) {
         return await this.courserRepo.getTotalCourses(filter);
+    }
+
+    async commitChanges(
+        course_id: number,
+        commitedChangesDto: CommitedChangesDto,
+    ) {
+        await this.courseCommitsService.create(
+            course_id,
+            commitedChangesDto,
+        )
     }
 }
