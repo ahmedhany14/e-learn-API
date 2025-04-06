@@ -1,14 +1,32 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseIntPipe } from '@nestjs/common';
+import { PlanRepository } from './repository/plan.repo';
 
 @Controller('plans')
 export class PlansController {
+    constructor(
+        @Inject()
+        private readonly planRepository: PlanRepository,
+    ) {}
+
     @Get()
     async findAll() {
-        return 'This action returns all plans';
+        const plans = await this.planRepository.find({});
+        return {
+            response: {
+                message: 'Success',
+                data: plans,
+            },
+        };
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string) {
-        return `This action returns a #${id} plan`;
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        const plan = await this.planRepository.findOne({ id });
+        return {
+            response: {
+                message: 'Success',
+                data: plan,
+            },
+        };
     }
 }
