@@ -5,7 +5,7 @@ import { CoursesModule } from '../../courses/courses.module';
 import { ReviewCoursesController } from './review-courses.controller';
 
 // orm and entities
-import { CourseCommitsReview } from './entity/course.commits.review.entity';
+import { CourseCommitsReview } from '../course_commits/entity/course.commits.review.entity';
 import { CourseReview } from './entity/course.reviwe.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

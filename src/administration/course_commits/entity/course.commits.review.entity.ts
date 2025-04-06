@@ -1,6 +1,6 @@
 import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 import { Course } from 'src/courses/entities/course.entity';
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 
 export enum CourseCommitsReviewStateEnum {
     REJECTED = 'REJECTED',
@@ -53,7 +53,6 @@ export class CourseCommitsReview extends AbstractEntity<CourseCommitsReview> {
 
     @ManyToOne(() => Course, (course) => course.course_commits_review, {
         onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
         eager: true,
     })
     @JoinColumn({ name: 'course_id' })
