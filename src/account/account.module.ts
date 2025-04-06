@@ -13,14 +13,13 @@ import { AccountRepository } from './repository/account.repository';
 // Entity and ORM
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './entity/account.entity';
-import { Plan_Account } from './entity/account.plan.entity';
 
 @Module({
     controllers: [AccountController],
     exports: [AccountService],
     providers: [AccountService, AccountRepository],
     imports: [
-        TypeOrmModule.forFeature([Account, Plan_Account]),
+        TypeOrmModule.forFeature([Account]),
         forwardRef(() => AuthModule),
         forwardRef(() => AppModule),
         EmailModule,
