@@ -54,6 +54,9 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
 import { ReviewCoursesModule } from './administration/review-courses/review-courses.module';
 import { AdministrationModule } from './administration/administration.module';
 import { PaymentsModule } from './payments/payments.module';
+import { VideosEngagementAndInteractionModule } from './videos-engagement-and-interaction/videos-engagement-and-interaction.module';
+import { NotesModule } from './videos-engagement-and-interaction/notes/notes.module';
+import { CommentsModule } from './videos-engagement-and-interaction/comments/comments.module';
 
 @Module({
     imports: [
@@ -125,6 +128,10 @@ import { PaymentsModule } from './payments/payments.module';
         AdministrationModule,
 
         PaymentsModule,
+
+        VideosEngagementAndInteractionModule,
+
+        NotesModule,
 
         // KeyGeneratorModule,
 
