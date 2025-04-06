@@ -8,11 +8,12 @@ import { PlansViaAdminsController } from './controllers/plans-via-admins.control
 import { PlansViaInstructorsController } from './controllers/plans.via.instructors.controller';
 import { PlansViaInstructorsService } from './service/plans.via.instructors.service';
 import { CoursesModule } from '../courses/courses.module';
+import { PlansController } from './plans.controller';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Plan, CoursePlans]), CoursesModule],
     providers: [PlansViaAdminService, PlanRepository, PlansViaInstructorsService],
     exports: [PlansViaAdminService, PlanRepository],
-    controllers: [PlansViaAdminsController, PlansViaInstructorsController],
+    controllers: [PlansViaAdminsController, PlansViaInstructorsController, PlansController],
 })
 export class PlansModule {}
