@@ -8,44 +8,36 @@ import { TagsRepository } from '../repository/tags.repo';
 import { GetByThree } from '../interfaces/tags.interfases';
 import { Tags } from '../entity/tags.entity';
 import { UpdateTagDto } from '../dtos/update.tag.dto';
-import { TagsEnum, TagsRelations } from '../entity/tags.enum';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class TagsService {
     constructor(
         @Inject()
         private readonly tagsRepo: TagsRepository,
-    ) { }
+    ) {}
 
-    async getAllTags(
-        select: TagsEnum[],
-        relations: TagsRelations[],
-        filter = {},
-    ) {
-        return await this.tagsRepo.getAllTags(
-            select,
-            relations,
-            filter,
-        );
+    async createTag(createTagDto: CreateTagDto, admin_id: number) {
+        return await this.tagsRepo.create(this.tagsRepo.newTag(createTagDto, admin_id));
     }
 
-    async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
-        return await this.tagsRepo.getTagById(select, relations, id);
+    async findOneTag(id: number) {
+        return await this.tagsRepo.findOne({ id });
     }
 
-    async deleteTagById(id: number) {
-        return await this.tagsRepo.deleteTagById(id);
+    async findAllTags(filter: FindOptionsWhere<Tags>) {
+        return await this.tagsRepo.find(filter);
     }
 
-    async getOneTageByThree(getByThree: GetByThree) {
-        return await this.tagsRepo.getOneTageByThree(getByThree);
+    async findOneTagWithAllFields(getByThree: GetByThree) {
+        return this.tagsRepo.findOne({ ...getByThree });
     }
 
-    async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
-        return await this.tagsRepo.createNewTage(createTagDto, admin_id);
+    async deleteTag(id: number) {
+        return await this.tagsRepo.findOneAndDelete({ id });
     }
 
-    async updateTagById(tag: Tags, updateTagDto: UpdateTagDto) {
-        return await this.tagsRepo.updateTagById(tag, updateTagDto);
+    async updateTag(id: number, updateTagDto: UpdateTagDto) {
+        return await this.tagsRepo.findOneAndUpdate({ id }, { ...updateTagDto });
     }
 }

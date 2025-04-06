@@ -9,10 +9,11 @@ import {
 } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { CourseTags } from './course.tags.entity';
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity()
 @Unique(['category', 'subcategory', 'tag'])
-export class Tags {
+export class Tags extends AbstractEntity<Tags> {
     @PrimaryGeneratedColumn()
     id: number;
 

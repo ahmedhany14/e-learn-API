@@ -1,107 +1,37 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 // orm and entity
 import { Tags } from '../entity/tags.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsSelect, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 // dto and interfaces
 import { CreateTagDto } from '../dtos/create.tag.dto';
-import { GetByThree } from '../interfaces/tags.interfases';
-import { UpdateTagDto } from '../dtos/update.tag.dto';
-import { TagsEnum, TagsRelations } from '../entity/tags.enum';
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
-export class TagsRepository {
+export class TagsRepository extends AbstractRepoService<Tags> {
+    protected readonly logger: Logger = new Logger(TagsRepository.name);
+
     constructor(
         @InjectRepository(Tags)
         private readonly tagsRepository: Repository<Tags>,
-    ) { }
-
-    async getTagById(select: TagsEnum[], relations: TagsRelations[], id: number) {
-        try {
-            return await this.tagsRepository.findOne({
-                where: { id },
-                select: select as FindOptionsSelect<Tags>,
-                relations: relations as string[],
-            });
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException({
-                message: 'Error while fetching tag',
-                details: error.message,
-            });
-        }
+        entityManager: EntityManager,
+    ) {
+        super(tagsRepository, entityManager);
     }
 
-    async createNewTage(createTagDto: CreateTagDto, admin_id: number) {
+    newTag(createTagDto: CreateTagDto, admin_id: number) {
         try {
-            const tag = this.tagsRepository.create({
+            return this.tagsRepository.create({
                 ...createTagDto,
                 tag_creator: { id: admin_id },
             });
-
-            return await this.tagsRepository.save(tag);
         } catch (error) {
+            this.logger.error('Error while creating new tag', error);
             throw new InternalServerErrorException({
-                message: 'Error while creating tag',
+                message: 'Error while creating new tag',
                 details: error.message,
-            });
-        }
-    }
-
-    async deleteTagById(id: number) {
-        try {
-            await this.tagsRepository.delete(id);
-        } catch (error) {
-            throw new InternalServerErrorException({
-                message: 'Error while deleting tag',
-                details: error.message,
-            });
-        }
-    }
-
-    async getOneTageByThree(getByThree: GetByThree) {
-        try {
-            return await this.tagsRepository.findOne({
-                where: { ...getByThree },
-            });
-        } catch (error) {
-            throw new InternalServerErrorException({
-                message: 'Error while fetching tags',
-                details: error.message,
-            });
-        }
-    }
-
-    async getAllTags(
-        select: TagsEnum[],
-        relations: TagsRelations[],
-        filter: any = {},
-    ) {
-        try {
-            return await this.tagsRepository.find({
-                select: select as FindOptionsSelect<Tags>,
-                relations: relations as string[],
-                where: filter,
-            });
-        } catch (error) {
-            throw new InternalServerErrorException({
-                message: 'Error while fetching tags',
-            });
-        }
-    }
-
-    async updateTagById(tag: Tags, updateTagDto: UpdateTagDto) {
-        try {
-            tag = {
-                ...tag,
-                ...updateTagDto,
-            };
-            return await this.tagsRepository.save(tag);
-        } catch (error) {
-            throw new InternalServerErrorException({
-                message: 'Error while updating tag',
             });
         }
     }

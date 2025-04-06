@@ -12,13 +12,7 @@ import { RemoveTagsFromCourseDto } from '../dtos/remove.tags.from.course.dto';
 export class CourseTagsRepoService {
     private readonly logger = new Logger(CourseTagsRepoService.name);
 
-    constructor(
-        @InjectRepository(CourseTags)
-        private readonly courseTagsRepo: Repository<CourseTags>,
-
-        private readonly dataSource: DataSource,
-    ) { }
-
+    constructor(private readonly dataSource: DataSource) {}
 
     async addTagsToCourse(course_id: number, tags: AddTagsToCourseDto): Promise<void> {
         const queryRunner = this.dataSource.createQueryRunner();
@@ -28,7 +22,7 @@ export class CourseTagsRepoService {
 
         try {
             for (let i = 0; i < tags.tag_ids.length; i++) {
-                const tag_course = await queryRunner.manager.create(CourseTags, {
+                const tag_course = queryRunner.manager.create(CourseTags, {
                     course: { id: course_id },
                     tag: { id: tags.tag_ids[i] },
                 });
@@ -43,13 +37,12 @@ export class CourseTagsRepoService {
             throw new InternalServerErrorException({
                 message: 'Error adding tag to course',
                 details: error.message,
-            })
+            });
         } finally {
             this.logger.log('all tags added to course');
             await queryRunner.release();
         }
     }
-
 
     async removeTagsFromCourse(course_id: number, tags: RemoveTagsFromCourseDto): Promise<void> {
         const queryRunner = this.dataSource.createQueryRunner();
@@ -72,7 +65,7 @@ export class CourseTagsRepoService {
             throw new InternalServerErrorException({
                 message: 'Error removing tag from course',
                 details: error.message,
-            })
+            });
         } finally {
             this.logger.log('all tags removed from course');
             await queryRunner.release();

@@ -26,9 +26,6 @@ import { UpdateTagDto } from '../dtos/update.tag.dto';
 // services
 import { TagsService } from '../services/tags.service';
 
-// types
-import { TagsEnum, TagsRelations } from '../entity/tags.enum';
-
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
 @Controller('tags-via-admins')
@@ -36,19 +33,11 @@ export class TagsViaAdminsController {
     constructor(
         @Inject()
         private readonly tagsService: TagsService,
-    ) { }
+    ) {}
 
     @Get('one-tag/:tag_id')
     async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
-        const select = [
-            TagsEnum.ID,
-            TagsEnum.CATEGORY,
-            TagsEnum.SUBCATEGORY,
-            TagsEnum.TAG,
-            TagsEnum.DESCRIPTION,
-        ];
-        const relations = [TagsRelations.TAG_CREATOR];
-        const tag = await this.tagsService.getTagById(select, relations, tag_id);
+        const tag = await this.tagsService.findOneTag(tag_id);
         if (!tag) {
             throw new NotFoundException({
                 message: 'Tag not found',
@@ -71,15 +60,7 @@ export class TagsViaAdminsController {
 
     @Get('all-tags')
     async getAllTagsWithDetails() {
-        const select = [
-            TagsEnum.ID,
-            TagsEnum.CATEGORY,
-            TagsEnum.SUBCATEGORY,
-            TagsEnum.TAG,
-            TagsEnum.DESCRIPTION,
-        ]
-        const relations = [TagsRelations.TAG_CREATOR];
-        const tags = await this.tagsService.getAllTags(select, relations);
+        const tags = await this.tagsService.findAllTags({});
         return {
             response: {
                 message: 'all Tags fetched successfully',
@@ -93,7 +74,7 @@ export class TagsViaAdminsController {
         @Body() createTagDto: CreateTagDto,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        const tagExists = await this.tagsService.getOneTageByThree({
+        const tagExists = await this.tagsService.findOneTagWithAllFields({
             category: createTagDto.category,
             subcategory: createTagDto.subcategory,
             tag: createTagDto.tag,
@@ -105,7 +86,7 @@ export class TagsViaAdminsController {
             });
         }
 
-        const tag = await this.tagsService.createNewTage(createTagDto, admin_id);
+        const tag = await this.tagsService.createTag(createTagDto, admin_id);
 
         return {
             response: {
@@ -120,15 +101,7 @@ export class TagsViaAdminsController {
         @Param('tag_id', ParseIntPipe) tag_id: number,
         @Body() updateTagDto: UpdateTagDto,
     ) {
-        const select = [
-            TagsEnum.ID,
-            TagsEnum.CATEGORY,
-            TagsEnum.SUBCATEGORY,
-            TagsEnum.TAG,
-            TagsEnum.DESCRIPTION,
-        ];
-
-        const tag = await this.tagsService.getTagById(select, [], tag_id);
+        const tag = await this.tagsService.findOneTag(tag_id);
         if (!tag) {
             throw new NotFoundException({
                 message: 'Tag not found',
@@ -136,7 +109,7 @@ export class TagsViaAdminsController {
             });
         }
 
-        const updatedTag = await this.tagsService.updateTagById(tag, updateTagDto);
+        const updatedTag = await this.tagsService.updateTag(tag_id, updateTagDto);
 
         return {
             response: {
@@ -148,8 +121,7 @@ export class TagsViaAdminsController {
 
     @Delete('tag/:tag_id')
     async deleteTag(@Param('tag_id', ParseIntPipe) tag_id: number) {
-        const select = [TagsEnum.ID];
-        const tag = await this.tagsService.getTagById(select, [], tag_id);
+        const tag = await this.tagsService.findOneTag(tag_id);
         if (!tag) {
             throw new ConflictException({
                 message: 'Tag not found',
@@ -157,7 +129,7 @@ export class TagsViaAdminsController {
             });
         }
 
-        await this.tagsService.deleteTagById(tag_id);
+        await this.tagsService.deleteTag(tag_id);
 
         return {
             response: {

@@ -1,10 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { Tags } from './tags.entity';
 import { Course } from '../../courses/entities/course.entity';
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity()
 @Unique(['course', 'tag'])
-export class CourseTags {
+export class CourseTags extends AbstractEntity<CourseTags> {
     @PrimaryGeneratedColumn()
     id: number;
 
