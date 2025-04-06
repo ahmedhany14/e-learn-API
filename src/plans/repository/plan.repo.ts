@@ -1,27 +1,27 @@
-import {
-    Injectable,
-    Inject,
-    InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 // orm
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptions, FindOptionsSelect, Repository } from 'typeorm';
+import { Repository, EntityManager } from 'typeorm';
 import { Plan } from '../entity/plan.entity';
 import { CreatePlanDto } from '../dtos/create.plan.dto';
 
 // dtos
-import { PlanColumnEnum, PlanRelationEnum } from '../entity/plan.enum';
-
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
-export class PlanRepository {
+export class PlanRepository extends AbstractRepoService<Plan> {
+    protected readonly logger = new Logger(PlanRepository.name);
+
     constructor(
         @InjectRepository(Plan)
         private readonly planRepository: Repository<Plan>,
-    ) { }
+        entityManager: EntityManager,
+    ) {
+        super(planRepository, entityManager);
+    }
 
-    async createPlan(plan: CreatePlanDto, admin_id: number) {
+    newPlan(plan: CreatePlanDto, admin_id: number) {
         try {
             const newPlan = this.planRepository.create({
                 ...plan,
@@ -29,60 +29,11 @@ export class PlanRepository {
                 updated_by: { id: admin_id },
             });
 
-            return await this.planRepository.save(newPlan);
+            return newPlan;
         } catch (error) {
             throw new InternalServerErrorException({
-                message: 'Error creating plan',
+                message: 'Error creating new plan',
                 details: error.message,
-            });
-        }
-    }
-
-    async getAllPlans(
-        select: string[],
-        filter: any,
-        relations: string[],
-    ) {
-        try {
-            return await this.planRepository.find({
-                select: select as FindOptionsSelect<Plan>,
-                where: filter,
-                relations,
-            });
-        } catch (err) {
-            throw new InternalServerErrorException({
-                message: 'Error fetching plans',
-                details: err.message,
-            });
-        }
-    }
-
-    async getPlanById(
-        select: PlanColumnEnum[],
-        relations: PlanRelationEnum[],
-        id: number
-    ) {
-        try {
-            return await this.planRepository.findOne({
-                where: { id },
-                select: select as FindOptionsSelect<Plan>,
-                relations,
-            });
-        } catch (err) {
-            throw new InternalServerErrorException({
-                message: 'Error fetching plan',
-                details: err.message,
-            });
-        }
-    }
-
-    async save(plan: Plan) {
-        try {
-            return await this.planRepository.save(plan);
-        } catch (err) {
-            throw new InternalServerErrorException({
-                message: 'Error saving plan',
-                details: err.message,
             });
         }
     }

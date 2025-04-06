@@ -1,5 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Logger, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
-
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Logger,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+} from '@nestjs/common';
 
 // Auth and Role decorators
 import { AUTH } from 'src/auth/decorators/auth.decorator';
@@ -9,16 +19,14 @@ import { RoleEnum } from 'src/auth/enums/role.enum';
 
 // decorators and validators
 import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
-import { IsExistPlan } from '../../plans/pip_validators/is.exist.plan.decorator';
+import { IsExistPlan } from '../pip_validators/is.exist.plan.decorator';
 
 // services
 import { PlansViaAdminService } from 'src/plans/service/plans.via.admin.service';
 
 // dtos
 import { CreatePlanDto } from 'src/plans/dtos/create.plan.dto';
-import { PlansPaginationDto } from 'src/plans/dtos/plans.pagination.dto';
 import { UpdatePlanDto } from 'src/plans/dtos/update.plan.dto';
-import { PlanColumnEnum, PlanRelationEnum } from '../entity/plan.enum';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
@@ -29,7 +37,7 @@ export class PlansViaAdminsController {
     constructor(
         @Inject()
         private readonly plansViaAdminService: PlansViaAdminService,
-    ) { }
+    ) {}
 
     @Post('new-plan')
     async createPlan(
@@ -49,70 +57,30 @@ export class PlansViaAdminsController {
     }
 
     @Get('plans')
-    async getAllPlans(
-        @Query('is_active') is_active: boolean,
-    ) {
+    async getAllPlans(@Query('is_active') is_active: boolean) {
         this.logger.log('Get all plans');
-
-        const select = [
-            PlanColumnEnum.ID,
-            PlanColumnEnum.PLAN_NAME,
-            PlanColumnEnum.PLAN_PRICE,
-            PlanColumnEnum.PLAN_DURATION,
-            PlanColumnEnum.PLAN_DESCRIPTION,
-            PlanColumnEnum.IS_ACTIVE,
-            PlanColumnEnum.CREATED_AT,
-            PlanColumnEnum.UPDATED_AT,
-        ];
-
-        const relations = [
-            PlanRelationEnum.ADMIN,
-            PlanRelationEnum.UPDATED_BY
-        ];
-
         const filter = {
-            is_active
+            is_active,
         };
 
-        const plans = await this.plansViaAdminService.getAllPlans(
-            select,
-            filter,
-            relations,
-        );
+        const plans = await this.plansViaAdminService.findAllPlans(filter);
 
         return {
             response: {
                 message: 'All plans fetched successfully',
-                plans
-            }
+                plans,
+            },
         };
     }
 
     @Get('plan/:plan_id')
     async getPlan(@Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number) {
         this.logger.log(`Get plan with id: ${plan_id}`);
-
-        const plan = await this.plansViaAdminService.getPlanById(
-            [
-                PlanColumnEnum.ID,
-                PlanColumnEnum.PLAN_NAME,
-                PlanColumnEnum.PLAN_PRICE,
-                PlanColumnEnum.PLAN_DURATION,
-                PlanColumnEnum.PLAN_DESCRIPTION,
-                PlanColumnEnum.IS_ACTIVE,
-                PlanColumnEnum.CREATED_AT,
-                PlanColumnEnum.UPDATED_AT,
-            ],
-            [
-                PlanRelationEnum.ADMIN,
-                PlanRelationEnum.UPDATED_BY
-            ],
-            plan_id
-        );
+        const plan = await this.plansViaAdminService.findOnePlan(plan_id);
         return {
             response: {
                 message: `Plan with id ${plan_id} fetched successfully`,
-                plan
+                plan,
             },
         };
     }
@@ -123,15 +91,14 @@ export class PlansViaAdminsController {
         @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
         @ExtractAccountData('id') admin_id: number,
     ) {
-
         const plan = await this.plansViaAdminService.updatePlan(plan_id, admin_id, updatePlanDto);
 
         return {
             response: {
                 message: 'Plan updated successfully',
-                plan
-            }
-        }
+                plan,
+            },
+        };
     }
 
     @Patch('active-plan/:plan_id')
@@ -144,11 +111,10 @@ export class PlansViaAdminsController {
         return {
             response: {
                 message: 'Plan deactivated successfully',
-                plan
-            }
-        }
+                plan,
+            },
+        };
     }
-
 
     @Patch('deactivate-plan/:plan_id')
     async deactivatePlan(
@@ -160,8 +126,8 @@ export class PlansViaAdminsController {
         return {
             response: {
                 message: 'Plan deactivated successfully',
-                plan
-            }
-        }
+                plan,
+            },
+        };
     }
 }

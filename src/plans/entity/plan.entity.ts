@@ -1,9 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
 import { Plan_Account } from '../../account/entity/account.plan.entity';
+import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 
 @Entity('plans')
-export class Plan {
+export class Plan extends AbstractEntity<Plan> {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -62,6 +63,7 @@ export class Plan {
 
     // each plan is created by an admin, and multiple plans can be created by the same admin
     @ManyToOne(() => Account, (account) => account.plans, {
+        eager: true,
         nullable: false,
     })
     @JoinColumn({ name: 'admin_id' })
@@ -69,6 +71,7 @@ export class Plan {
 
     // each plan can be updated by an admin, and multiple plans can be updated by the same admin
     @ManyToOne(() => Account, (account) => account.plans_updated, {
+        eager: true,
         //nullable: false,
     })
     @JoinColumn({ name: 'updated_by_id' })
