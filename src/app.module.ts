@@ -43,6 +43,11 @@ import { CommentsModule } from './blog-system/comments/comments.module';
 import { RepliesModule } from './blog-system/replies/replies.module';
 import { VideosModule } from './videos/videos.module';
 import { SectionsModule } from './sections/sections.module';
+import { ReviewCoursesModule } from './administration/review-courses/review-courses.module';
+import { AdministrationModule } from './administration/administration.module';
+import { PaymentsModule } from './payments/payments.module';
+import { VideoNotesModule } from './videos-engagement-and-interaction/notes/notes.module';
+import { VideoCommentsModule } from './videos-engagement-and-interaction/comments/comments.module';
 
 // Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -51,12 +56,6 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
-import { ReviewCoursesModule } from './administration/review-courses/review-courses.module';
-import { AdministrationModule } from './administration/administration.module';
-import { PaymentsModule } from './payments/payments.module';
-import { VideosEngagementAndInteractionModule } from './videos-engagement-and-interaction/videos-engagement-and-interaction.module';
-import { NotesModule } from './videos-engagement-and-interaction/notes/notes.module';
-import { CommentsModule } from './videos-engagement-and-interaction/comments/comments.module';
 
 @Module({
     imports: [
@@ -129,11 +128,9 @@ import { CommentsModule } from './videos-engagement-and-interaction/comments/com
 
         PaymentsModule,
 
-        VideosEngagementAndInteractionModule,
+        VideoCommentsModule,
 
-        NotesModule,
-
-        // KeyGeneratorModule,
+        VideoNotesModule,
 
         // DbModule,
     ],
