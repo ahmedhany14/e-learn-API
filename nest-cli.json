@@ -16,13 +16,13 @@
         "tsConfigPath": "libs/abstract.db/tsconfig.lib.json"
       }
     },
-    "pagination": {
+    "abstract.mongo": {
       "type": "library",
-      "root": "libs/pagination",
+      "root": "libs/abstract.mongo",
       "entryFile": "index",
-      "sourceRoot": "libs/pagination/src",
+      "sourceRoot": "libs/abstract.mongo/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/pagination/tsconfig.lib.json"
+        "tsConfigPath": "libs/abstract.mongo/tsconfig.lib.json"
       }
     }
   }
