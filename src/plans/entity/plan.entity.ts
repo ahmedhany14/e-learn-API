@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMan
 import { Account } from '../../account/entity/account.entity';
 import { Plan_Account } from '../../account/entity/account.plan.entity';
 import { AbstractEntity } from '@app/abstract.db/abstract.entity';
+import { CoursePlans } from './course.plan.entity';
 
 @Entity('plans')
 export class Plan extends AbstractEntity<Plan> {
@@ -76,4 +77,10 @@ export class Plan extends AbstractEntity<Plan> {
     })
     @JoinColumn({ name: 'updated_by_id' })
     updated_by: Account;
+
+    // each plan can have multiple courses, and each course can belong to multiple plans
+    @OneToMany(() => CoursePlans, (course_plan) => course_plan.plan, {
+        lazy: true,
+    })
+    plan_courses: Promise<CoursePlans[]>;
 }
