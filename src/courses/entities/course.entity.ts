@@ -14,6 +14,7 @@ import { CourseTags } from '../../tags/entity/course.tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
 import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
 import { AbstractEntity } from '@app/abstract.db/abstract.entity';
+import { CourseCommitsReview } from 'src/administration/review-courses/entity/course.commits.review.entity';
 
 @Entity()
 export class Course extends AbstractEntity<Course> {
@@ -121,6 +122,12 @@ export class Course extends AbstractEntity<Course> {
         lazy: true,
     })
     course_review: Promise<CourseReview[]>;
+
+    // one course can have many commits reviews
+    @OneToMany(() => CourseCommitsReview, (courseCommitsReview) => courseCommitsReview.course, {
+        lazy: true,
+    })
+    course_commits_review: Promise<CourseCommitsReview[]>
 
     // one course can be enrolled by many accounts
     @OneToMany(() => EnrolledCourses, (enrolledCourses) => enrolledCourses.course, {

@@ -4,7 +4,8 @@ import { CoursesModule } from '../../courses/courses.module';
 // controllers
 import { ReviewCoursesController } from './review-courses.controller';
 
-// orm
+// orm and entities
+import { CourseCommitsReview } from './entity/course.commits.review.entity';
 import { CourseReview } from './entity/course.reviwe.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -18,7 +19,10 @@ import { RejectCourseTransaction } from './repository/transactions/reject.transa
 import { CloseCourseTransaction } from './repository/transactions/close.transaction';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([CourseReview]), CoursesModule],
+    imports: [TypeOrmModule.forFeature([
+        CourseReview,
+        CourseCommitsReview
+    ]), CoursesModule],
     controllers: [ReviewCoursesController],
     providers: [
         CourseReviewRepository,
@@ -29,4 +33,4 @@ import { CloseCourseTransaction } from './repository/transactions/close.transact
     ],
     exports: [ReviewCoursesService],
 })
-export class ReviewCoursesModule {}
+export class ReviewCoursesModule { }
