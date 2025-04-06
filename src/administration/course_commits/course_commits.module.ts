@@ -11,5 +11,6 @@ import { CourseCommitsRepository } from './course.commits.repository';
         ])
     ],
     providers: [CourseCommitsService, CourseCommitsRepository],
+    exports: [CourseCommitsService],
 })
 export class CourseCommitsModule { }

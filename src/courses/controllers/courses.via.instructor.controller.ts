@@ -135,7 +135,8 @@ export class CoursesViaInstructorController {
     ) {
         this.logger.log(`Committing changes for course_id: ${course_id}`);
 
-        await this.courseService.commitChanges(course_id, commitedChangesDto);
+        if (Object.keys(commitedChangesDto).length !== 0)
+            await this.courseService.commitChanges(course_id, commitedChangesDto);
 
         return {
             response: {
