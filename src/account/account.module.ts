@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { AccountController } from './account.controller';
 
 // Module
-import { EmailModule } from '../common/email/email.module';
+import { EmailModule } from '@app/email';
 import { AppModule } from '../app.module';
 import { AuthModule } from '../auth/auth.module';
 import { RedisModule } from 'src/redis/redis.module';

@@ -1,12 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { StartTimeMiddleware } from './common/middleware/start.time.middleware';
+import { StartTimeMiddleware } from '@app/middlewares';
 import * as compression from 'compression';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import helmet from 'helmet';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as process from 'node:process';
 
 // const cluster = require('cluster');

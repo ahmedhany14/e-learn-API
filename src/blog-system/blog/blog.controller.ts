@@ -28,7 +28,7 @@ import { ObjectIdValidationPipe } from './validators/object.id.validation.pipe';
 import { AUTH } from '@app/decorators';
 import { AuthEnum } from '@app/enums';
 import { ExtractAccountData } from '@app/decorators';
-import { types } from 'src/common/enums/react.to.types';
+import { types } from '@app/enums/react.to.types';
 
 @Controller('blog')
 export class BlogController {

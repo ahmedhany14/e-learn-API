@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CoursesModule } from '../courses/courses.module';
-import { KeyGeneratorModule } from '../common/key.generator/key.generator.module';
 
 // controllers
 import { SectionsViaInstructorController } from './controllers/sections.via.instructor.controller';
@@ -14,13 +13,9 @@ import { SectionsInstructorService } from './services/instructor/sections.instru
 import { SectionsInstructorRepo } from './repository/instructor/sections.instructor.repo';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Section]),
-        CoursesModule,
-        KeyGeneratorModule,
-    ],
+    imports: [TypeOrmModule.forFeature([Section]), CoursesModule],
     providers: [SectionsInstructorService, SectionsInstructorRepo],
     exports: [SectionsInstructorService],
     controllers: [SectionsViaInstructorController],
 })
-export class SectionsModule { }
+export class SectionsModule {}

@@ -19,7 +19,7 @@ import { PaymentAccountDetailsDto } from './dtos/payment.account.details.dto';
 // service
 import { AccountService } from './service/account.service';
 import { TokenProvider } from '../auth/providers/token.provider';
-import { Email } from '../common/email/email';
+import { Email } from '@app/email';
 
 // decorators for auth
 import { AUTH } from '@app/decorators';

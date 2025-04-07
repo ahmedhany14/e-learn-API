@@ -119,7 +119,12 @@
       "^@app/abstract.mongo(|/.*)$": "<rootDir>/libs/abstract.mongo/src/$1",
       "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
       "^@app/configurations(|/.*)$": "<rootDir>/libs/configurations/src/$1",
-      "^@app/enums(|/.*)$": "<rootDir>/libs/enums/src/$1"
+      "^@app/enums(|/.*)$": "<rootDir>/libs/enums/src/$1",
+      "^@app/constants(|/.*)$": "<rootDir>/libs/constants/src/$1",
+      "^@app/dtos(|/.*)$": "<rootDir>/libs/dtos/src/$1",
+      "^@app/middlewares(|/.*)$": "<rootDir>/libs/middlewares/src/$1",
+      "^@app/email(|/.*)$": "<rootDir>/libs/email/src/$1",
+      "^@app/interceptors(|/.*)$": "<rootDir>/libs/interceptors/src/$1"
     }
   }
 }

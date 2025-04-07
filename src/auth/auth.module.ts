@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 // Modules
 import { AccountModule } from '../account/account.module';
 import { ProfileModule } from '../profile/profile.module';
-import { EmailModule } from '../common/email/email.module';
+import { EmailModule } from '@app/email';
 import { AppModule } from '../app.module';
 import { ConfigurationsModule } from '@app/configurations';
 

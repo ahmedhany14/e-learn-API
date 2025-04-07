@@ -1,25 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
-import {
-    LIKES_KEY,
-    DISLIKES_KEY,
-} from '../../common/constants/redis-keys/blogs.keys';
+import { LIKES_KEY, DISLIKES_KEY } from '@app/constants';
 
-import { types } from '../../common//enums/react.to.types';
+import { types } from '@app/enums/react.to.types';
 
 @Injectable()
 export class ReactisRedisCachingService {
-    constructor(
-        @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
-    ) { }
+    constructor(@Inject('REDIS_CLIENT') private readonly redisClient: Redis) {}
 
-
-    async setLike(
-        type: types,
-        id: string,
-        liker_id: number
-    ) {
+    async setLike(type: types, id: string, liker_id: number) {
         /*
         Strategy:
         * i will use a set to store the likes of a comment, blog or reply
@@ -51,18 +41,13 @@ export class ReactisRedisCachingService {
         if (is_liker) {
             await this.redisClient.srem(like_key, liker_id);
             return { like: -1, dislike: 0 };
-        }
-        else {
+        } else {
             await this.redisClient.sadd(like_key, liker_id);
             return { like: 1, dislike: 0 };
         }
     }
 
-    async setDislike(
-        type: types,
-        id: string,
-        disliker_id: number
-    ) {
+    async setDislike(type: types, id: string, disliker_id: number) {
         /*
         Strategy:
         * i will use a set to store the dislikes of a comment
@@ -100,14 +85,16 @@ export class ReactisRedisCachingService {
         }
     }
 
-    async delAllKeys(
-        type: types,
-        id: string) {
+    async delAllKeys(type: types, id: string) {
         let cursor = '0';
         const keysToDelete: string[] = [];
 
         do {
-            const [newCursor, keys] = await this.redisClient.scan(cursor, 'MATCH', `${type}:*:${id}`);
+            const [newCursor, keys] = await this.redisClient.scan(
+                cursor,
+                'MATCH',
+                `${type}:*:${id}`,
+            );
             cursor = newCursor;
             keysToDelete.push(...keys);
         } while (cursor !== '0');
@@ -116,7 +103,4 @@ export class ReactisRedisCachingService {
             await this.redisClient.del(key);
         }
     }
-
 }
-
-

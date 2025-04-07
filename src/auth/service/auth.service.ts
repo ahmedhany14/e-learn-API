@@ -12,7 +12,7 @@ import { TokenProvider } from '../providers/token.provider';
 import { AccountService } from '../../account/service/account.service';
 import { Hashing } from '../interfaces/Hashing';
 import { SignupProvider } from '../providers/transactions/signup.provider';
-import { Email } from '../../common/email/email';
+import { Email } from '@app/email';
 import { AuthRedisService } from '../../redis/services/auth.redis.service';
 import { ConfigService } from '@nestjs/config';
 

@@ -26,7 +26,7 @@ import { RoleEnum } from '@app/enums';
 // dto
 import { AddVideoDto } from '../dtos/add.video.dto';
 import { UpdateVideoDto } from '../dtos/update.video.dto';
-import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
+import { ReOrderingDto } from '@app/dtos';
 
 // guards
 import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';

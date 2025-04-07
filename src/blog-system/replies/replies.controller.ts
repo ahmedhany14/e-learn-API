@@ -22,7 +22,7 @@ import { CreateReplyDto } from './dto/create.reply.dto';
 import { CommentsService } from '../comments/comments.service';
 import { UpdateReplyDto } from './dto/update.reply.dto';
 import { ReactisRedisCachingService } from '../../redis/services/reactis.redis.caching.service';
-import { types } from '../../common/enums/react.to.types';
+import { types } from '@app/enums';
 
 // auth
 import { AUTH } from '@app/decorators';

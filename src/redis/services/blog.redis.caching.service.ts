@@ -1,21 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
-import {
-    BLOG_VIEWS_KEY,
-} from '../../common/constants/redis-keys/blogs.keys';
+import { BLOG_VIEWS_KEY } from '@app/constants';
 
 @Injectable()
 export class BlogRedisCachingService {
     constructor(
-        @Inject("REDIS_CLIENT")
-        private readonly redisClient: Redis
-    ) { }
+        @Inject('REDIS_CLIENT')
+        private readonly redisClient: Redis,
+    ) {}
 
-    async incViews(
-        blog_id: string,
-        viewer_id: number
-    ) {
+    async incViews(blog_id: string, viewer_id: number) {
         /*
         Strategy:
         * i will use hyperloglog to store the views of a blog

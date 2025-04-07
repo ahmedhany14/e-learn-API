@@ -20,6 +20,16 @@
     "@app/configurations/(.*)": "<rootDir>/../libs/configurations/src/$1",
     "@app/configurations": "<rootDir>/../libs/configurations/src",
     "@app/enums/(.*)": "<rootDir>/../libs/enums/src/$1",
-    "@app/enums": "<rootDir>/../libs/enums/src"
+    "@app/enums": "<rootDir>/../libs/enums/src",
+    "@app/constants/(.*)": "<rootDir>/../libs/constants/src/$1",
+    "@app/constants": "<rootDir>/../libs/constants/src",
+    "@app/dtos/(.*)": "<rootDir>/../libs/dtos/src/$1",
+    "@app/dtos": "<rootDir>/../libs/dtos/src",
+    "@app/middlewares/(.*)": "<rootDir>/../libs/middlewares/src/$1",
+    "@app/middlewares": "<rootDir>/../libs/middlewares/src",
+    "@app/email/(.*)": "<rootDir>/../libs/email/src/$1",
+    "@app/email": "<rootDir>/../libs/email/src",
+    "@app/interceptors/(.*)": "<rootDir>/../libs/interceptors/src/$1",
+    "@app/interceptors": "<rootDir>/../libs/interceptors/src"
   }
 }

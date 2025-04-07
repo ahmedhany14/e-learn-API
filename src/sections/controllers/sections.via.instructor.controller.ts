@@ -16,7 +16,7 @@ import { SectionsInstructorService } from 'src/sections/services/instructor/sect
 // dtos
 import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
 import { EditSectionDto } from '../dtos/edit.section.dto';
-import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
+import { ReOrderingDto } from '@app/dtos';
 
 // guards
 import { IsYourCourseGuard } from '../../courses/guards/is.your.course.guard';

@@ -28,7 +28,7 @@ import { ExtractAccountData } from '@app/decorators';
 import { CommentsService } from './comments.service';
 import { ReactisRedisCachingService } from 'src/redis/services/reactis.redis.caching.service';
 
-import { types } from '../../common/enums/react.to.types';
+import { types } from '@app/enums';
 
 @Controller('comments')
 export class CommentsController {

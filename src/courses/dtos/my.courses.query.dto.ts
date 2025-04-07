@@ -1,7 +1,7 @@
 import { IsOptional, IsString, IsEnum } from 'class-validator';
 
 import { CourseStatusEnum } from '../enums/course.status.enum';
-import { PaginationDto } from 'src/common/pagination/pagination.dto';
+import { PaginationDto } from '@app/dtos';
 import { PartialType } from '@nestjs/mapped-types';
 
 export class QueryDto extends PartialType(PaginationDto) {
