@@ -1,6 +1,7 @@
 import {
     Column,
     Entity,
+    Index,
     JoinColumn,
     ManyToOne,
     OneToMany,
@@ -18,6 +19,7 @@ import { CourseCommitsReview } from 'src/administration/course_commits/entity/co
 import { CoursePlans } from '../../plans/entity/course.plan.entity';
 
 @Entity()
+@Index('idx_course_search', ['title', 'description', 'requirements', 'what_you_learn'])
 export class Course extends AbstractEntity<Course> {
     @PrimaryGeneratedColumn()
     id: number;
@@ -30,6 +32,7 @@ export class Course extends AbstractEntity<Course> {
     })
     image_url: string;
 
+    @Index('idx_course_title')
     @Column({
         type: 'varchar',
         default: 'No Title Provided',
@@ -37,6 +40,7 @@ export class Course extends AbstractEntity<Course> {
     })
     title: string;
 
+    @Index('idx_course_description')
     @Column({
         type: 'varchar',
         default: 'No Description Provided',
@@ -44,6 +48,7 @@ export class Course extends AbstractEntity<Course> {
     })
     description: string;
 
+    @Index('idx_course_requirements')
     @Column({
         type: 'varchar',
         default: 'No Requirements Provided',
@@ -51,6 +56,7 @@ export class Course extends AbstractEntity<Course> {
     })
     requirements: string;
 
+    @Index('idx_course_what_you_learn')
     @Column({
         type: 'varchar',
         default: 'No What You Learn Provided',

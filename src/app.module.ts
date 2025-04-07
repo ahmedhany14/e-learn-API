@@ -56,6 +56,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // Middleware
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middleware';
+import { SearchModule } from './search/search.module';
 
 @Module({
     imports: [
@@ -131,6 +132,8 @@ import { RateLimiterMiddleware } from './common/middleware/rate.limiter.middlewa
         VideoCommentsModule,
 
         VideoNotesModule,
+
+        SearchModule,
 
         // DbModule,
     ],
