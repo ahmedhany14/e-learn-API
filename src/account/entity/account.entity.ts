@@ -7,7 +7,7 @@ import { RoleEnum } from '../../auth/enums/role.enum';
 import { Profile } from '../../profile/entity/profile.entity';
 import { Instructor } from '../../instructor/entity/instructor.entity';
 import { Plan } from '../../plans/entity/plan.entity';
-import { Plan_Account } from './account.plan.entity';
+import { AccountSubscriptions } from '../../payments/modules/subscriptions/entity/account.plan.entity';
 import { Course } from '../../courses/entities/course.entity';
 import { Tags } from '../../tags/entity/tags.entity';
 import { CourseReview } from '../../administration/review-courses/entity/course.reviwe.entity';
@@ -120,10 +120,10 @@ export class Account extends AbstractEntity<Account> {
     tags: Promise<Tags[]>;
 
     // each account can have multiple plans, but if the account activates a plan, he can't activate it again until it expires
-    @OneToMany(() => Plan_Account, (plan_account) => plan_account.account, {
+    @OneToMany(() => AccountSubscriptions, (accountSubscriptions) => accountSubscriptions.account, {
         lazy: true,
     })
-    plans_account: Promise<Plan_Account[]>;
+    plans_account: Promise<AccountSubscriptions[]>;
 
     // each admin can create multiple plans
     @OneToMany(() => Plan, (plan) => plan.admin, {

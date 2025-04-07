@@ -13,7 +13,6 @@ import { EnrollCoursesController } from './enroll-courses.controller';
 
 // services
 import { EnrollCoursesService } from './services/enroll-courses.service';
-import { EntollCoursesRepo } from './repository/entoll-courses.repo';
 
 @Module({
     imports: [
@@ -22,7 +21,7 @@ import { EntollCoursesRepo } from './repository/entoll-courses.repo';
         forwardRef(() => PaymentsModule),
     ],
     controllers: [EnrollCoursesController],
-    providers: [EnrollCoursesService, EntollCoursesRepo],
+    providers: [EnrollCoursesService],
     exports: [EnrollCoursesService],
 })
 export class EnrollCoursesModule {}

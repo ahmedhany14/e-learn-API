@@ -2,7 +2,10 @@ import Stripe from 'stripe';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from 'src/configurations/config.service';
 
-import { PaymentMetadataI } from '../../interfaces/payment.metadata.interface';
+import {
+    PaymentMetadataI,
+    PlanPaymentMetadataI,
+} from '../../interfaces/payment.metadata.interface';
 
 @Injectable()
 export class StripeService {
@@ -21,7 +24,7 @@ export class StripeService {
     async processPayment(
         price: number,
         paymentMethodId: string,
-        metadata: PaymentMetadataI,
+        metadata: PaymentMetadataI | PlanPaymentMetadataI,
     ): Promise<Stripe.PaymentIntent> {
         try {
             return await this.stripe.paymentIntents.create({

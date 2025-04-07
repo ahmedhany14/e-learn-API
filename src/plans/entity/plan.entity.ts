@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Account } from '../../account/entity/account.entity';
-import { Plan_Account } from '../../account/entity/account.plan.entity';
+import { AccountSubscriptions } from '../../payments/modules/subscriptions/entity/account.plan.entity';
 import { AbstractEntity } from '@app/abstract.db/abstract.entity';
 import { CoursePlans } from './course.plan.entity';
 
@@ -57,10 +57,10 @@ export class Plan extends AbstractEntity<Plan> {
     })
     updated_at: Date;
 
-    @OneToMany(() => Plan_Account, (plan_account) => plan_account.plan, {
+    @OneToMany(() => AccountSubscriptions, (accountSubscriptions) => accountSubscriptions.plan, {
         lazy: true,
     })
-    plans_account: Promise<Plan_Account[]>;
+    plans_account: Promise<AccountSubscriptions[]>;
 
     // each plan is created by an admin, and multiple plans can be created by the same admin
     @ManyToOne(() => Account, (account) => account.plans, {
