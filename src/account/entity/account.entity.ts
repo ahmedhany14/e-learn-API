@@ -97,9 +97,9 @@ export class Account extends AbstractEntity<Account> {
 
     // each account has one profile
     @OneToOne(() => Profile, (profile) => profile.account, {
-        lazy: true,
+        lazy: false,
     })
-    profile: Promise<Profile>;
+    profile: Profile;
 
     // each account can be assigned to one instructor
     @OneToOne(() => Instructor, (instructor) => instructor.account, {

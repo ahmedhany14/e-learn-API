@@ -15,6 +15,7 @@ export class SearchController {
         @Param('tag') tag: string,
         @Query() searchQueryDto: SearchQueryDto
     ) {
+
         return await this.searchService.getCoursesWithTopic(tag, searchQueryDto);
     }
 
