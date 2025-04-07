@@ -1,10 +1,10 @@
-import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { CourseRepo } from '../courses/repository/course.repo';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from '../courses/entities/course.entity';
 import { Repository } from 'typeorm';
 import { CourseTags } from '../tags/entity/course.tags.entity';
 import { CourseStatusEnum } from 'src/courses/enums/course.status.enum';
+import { SearchQueryDto } from './dto/search.quary.dto';
 
 @Injectable()
 export class SearchRepository {
@@ -13,12 +13,12 @@ export class SearchRepository {
     constructor(
         @InjectRepository(Course)
         private readonly courseRepository: Repository<Course>,
-        @InjectRepository(CourseTags)
-        private readonly courseTagsRepository: Repository<CourseTags>,
     ) { }
 
-    async getCoursesWithTopic(tag: string, rating: number = 0, page: number = 1) {
+    async getCoursesWithTopic(tag: string, searchQueryDto: SearchQueryDto) {
         try {
+            const { rating, page, price } = searchQueryDto;
+
             const queryBuilder = this.courseRepository
                 .createQueryBuilder('course')
                 .leftJoinAndSelect('course.instructor', 'instructor')
@@ -29,6 +29,8 @@ export class SearchRepository {
                     state: CourseStatusEnum.PUBLISHED
                 })
                 .andWhere('course.rate >= :rating', { rating })
+                .andWhere('course.price <= :price', { price })
+                .setParameters({ rating, price })
 
             const skip = (page - 1) * 10;
 
@@ -40,10 +42,16 @@ export class SearchRepository {
 
             const [courses, total] = await queryBuilder.getManyAndCount();
 
+            courses.map(async (course) => {
+                await course.course_tags;
+                await course.sections;
+                await course.enrolled_courses;
+            });
+
             const totalPages = Math.ceil(total / 10);
             return {
-                data: {
-                    courses: courses.map(async (course) => ({
+                response: await {
+                    courses: await Promise.all(courses.map(async (course) => ({
                         id: course.id,
                         title: course.title,
                         description: course.description,
@@ -54,9 +62,9 @@ export class SearchRepository {
                         instructor: {
                             id: course.instructor.id,
                         },
-                        total_sections: (await course.sections).length,
-                        total_enrolled: (await course.enrolled_courses).length,
-                    })),
+                        total_sections: (await course.sections).length || 0,
+                        total_enrolled: (await course.enrolled_courses).length || 0,
+                    })),)
                 },
                 meta: {
                     total,
@@ -73,7 +81,6 @@ export class SearchRepository {
             }
         } catch (error) {
             this.logger.error(error);
-
             throw new InternalServerErrorException({
                 message: 'Error fetching courses with topic',
                 details: error.message,

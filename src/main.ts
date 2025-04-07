@@ -26,50 +26,50 @@ import * as process from 'node:process';
 //   });
 // } else {
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
-  app.use(new StartTimeMiddleware().use);
-  app.use(
-    helmet({
-      xssFilter: true, // Prevents attempts to inject malicious JavaScript code (XSS) into the application
-      frameguard: {
-        // Prevents the application from being displayed inside an iframe, which protects against clickjacking attacks
-        action: 'deny',
-      },
-      noSniff: true, // Protects against MIME sniffing attempts, making the browser rely solely on the
-      contentSecurityPolicy: {
-        // Helps define which content sources (such as scripts and images) are allowed, increasing security by restricting potentially harmful external content
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", 'trusted.com'],
-        },
-      },
-    }),
-  );
-  app.use(compression()); // Enable response compression, reducing the size of the response body
-  app.use(bodyParser.json()); // Enable JSON body parsing
-  app.use(bodyParser.urlencoded({ extended: true })); // Enable URL-encoded body parsing
-  app.use(morgan('combined')); // Enable request logging
-  app.enableCors();
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transformOptions: {
+                enableImplicitConversion: true,
+            },
+        }),
+    );
+    app.use(new StartTimeMiddleware().use);
+    app.use(
+        helmet({
+            xssFilter: true, // Prevents attempts to inject malicious JavaScript code (XSS) into the application
+            frameguard: {
+                // Prevents the application from being displayed inside an iframe, which protects against clickjacking attacks
+                action: 'deny',
+            },
+            noSniff: true, // Protects against MIME sniffing attempts, making the browser rely solely on the
+            contentSecurityPolicy: {
+                // Helps define which content sources (such as scripts and images) are allowed, increasing security by restricting potentially harmful external content
+                directives: {
+                    defaultSrc: ["'self'"],
+                    scriptSrc: ["'self'", 'trusted.com'],
+                },
+            },
+        }),
+    );
+    app.use(compression()); // Enable response compression, reducing the size of the response body
+    app.use(bodyParser.json()); // Enable JSON body parsing
+    app.use(bodyParser.urlencoded({ extended: true })); // Enable URL-encoded body parsing
+    app.use(morgan('combined')); // Enable request logging
+    app.enableCors();
 
-  await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 3000);
 }
 
 bootstrap().then(() => {
-  console.log(
-    `
+    console.log(
+        `
 Server is running on http://localhost:${process.env.PORT ?? 3000}
     `,
-  );
+    );
 });
 // }
