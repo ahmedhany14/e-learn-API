@@ -1,21 +1,21 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { AuthEnum } from '../auth/enums/auth.enum';
+import { Controller, Get, Inject, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { SearchService } from './search.service';
 
-@AUTH(AuthEnum.BEARER)
+// @AUTH(AuthEnum.BEARER)
 @Controller('search')
 export class SearchController {
-    @Get('/:search_text')
-    async getCourseBySearchText(
-        @Param('search_text') searchText: string,
-        @Query('rating') rating: number,
-    ) {
-        return `courses with search text ${searchText} and rating more than or equal ${rating}`;
-    }
+    constructor(
+        @Inject()
+        private readonly searchService: SearchService,
+    ) {}
 
     @Get('explore/topic/:tag')
-    async getCourseWithTopic(@Param('tag') tag: string, @Query('rating') rating: number) {
-        return `courses with topic ${tag} and rating more than or equal ${rating}`;
+    async getCourseWithTopic(
+        @Param('tag') tag: string,
+        @Query('rating', ParseIntPipe) rating: number = 0,
+        @Query('page', ParseIntPipe) page: number = 1,
+    ) {
+        return await this.searchService.getCoursesWithTopic(tag, rating, page);
     }
 
     @Get('explore/category/:category')
@@ -33,5 +33,13 @@ export class SearchController {
         @Query('rating') rating: number,
     ) {
         return `courses with category ${category}, subcategory ${subcategory} and rating more than or equal ${rating}`;
+    }
+
+    @Get('/:search_text')
+    async getCourseBySearchText(
+        @Param('search_text') searchText: string,
+        @Query('rating') rating: number,
+    ) {
+        return `courses with search text ${searchText} and rating more than or equal ${rating}`;
     }
 }

@@ -102,7 +102,7 @@ export class Course extends AbstractEntity<Course> {
         name: 'instructor_id',
         referencedColumnName: 'id',
     })
-    instructor: Course;
+    instructor: Account;
 
     // one course can have many sections
     @OneToMany(() => Section, (section) => section.course, {

@@ -7,4 +7,8 @@ export class SearchService {
         @Inject()
         private readonly searchRepository: SearchRepository,
     ) {}
+
+    async getCoursesWithTopic(tag: string, rating: number = 0, page: number = 1) {
+        return await this.searchRepository.getCoursesWithTopic(tag, rating, page);
+    }
 }
