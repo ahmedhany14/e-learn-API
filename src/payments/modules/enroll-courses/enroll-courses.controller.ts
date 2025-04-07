@@ -8,7 +8,7 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 
 // services
 import { EnrollCoursesService } from './services/enroll-courses.service';
-import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 
 @Controller('enroll-courses')
 export class EnrollCoursesController {

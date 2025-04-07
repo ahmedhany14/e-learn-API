@@ -15,7 +15,7 @@ import { ObjectIdValidationPipe } from './validators/object.id.validation.pipe';
 // Authorization and Roles
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from 'src/auth/enums/auth.enum';
-import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { types } from 'src/common/enums/react.to.types';
 
 @Controller('blog')

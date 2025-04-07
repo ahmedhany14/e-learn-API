@@ -24,10 +24,10 @@ import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 
 // decorators
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { ProfileService } from '../profile/services/profile.service';
 import { IsYourCourseGuard } from 'src/courses/guards/is.your.course.guard';
-import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
+import { ExtractCourseDate } from '@app/decorators';
 import { Course } from 'src/courses/entities/course.entity';
 
 @Controller('file')
@@ -39,7 +39,7 @@ export class FileController {
         private readonly courseService: CourseService,
         @Inject()
         private readonly profileService: ProfileService,
-    ) { }
+    ) {}
 
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
@@ -56,10 +56,7 @@ export class FileController {
         if (fileKey !== 'default.jpg') {
             await this.fileService.deleteImage(`${path}/${fileKey}`);
         }
-        const filename = await this.fileService.uploadImage(
-            file,
-            path,
-        )
+        const filename = await this.fileService.uploadImage(file, path);
 
         await this.courseService.updateImageName(course_id, filename);
 
@@ -79,11 +76,9 @@ export class FileController {
         @ExtractAccountData('id') account_id: number,
     ) {
         const profile = await this.profileService.findByAccountId(account_id);
-        if (profile.profile_image) await this.fileService.deleteImage(`profile/${profile.profile_image}`);
-        const filename = await this.fileService.uploadImage(
-            file,
-            'profile',
-        );
+        if (profile.profile_image)
+            await this.fileService.deleteImage(`profile/${profile.profile_image}`);
+        const filename = await this.fileService.uploadImage(file, 'profile');
 
         await this.profileService.updateProfileImage(account_id, filename);
         return {

@@ -23,7 +23,7 @@ import { ObjectIdValidationPipe } from '../blog/validators/object.id.validation.
 import { CommentsService } from './comments.service';
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ExtractAccountData } from '../../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { ReactisRedisCachingService } from 'src/redis/services/reactis.redis.caching.service';
 import { types } from '../../common/enums/react.to.types';
 

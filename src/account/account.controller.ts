@@ -31,7 +31,7 @@ import { RoleEnum } from '../auth/enums/role.enum';
 // decorators
 import { TokenIsInRedisGuard } from './guards/account.redis.guard';
 import { AccountIsExistingDecorator } from './decorators/account.is_existing.decorator';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 
 
 // guards
@@ -46,7 +46,7 @@ export class AccountController {
         @Inject() private readonly accountService: AccountService,
         @Inject() private readonly tokenProvider: TokenProvider,
         @Inject() private readonly email: Email,
-    ) {}
+    ) { }
 
     @AUTH(AuthEnum.BEARER)
     @Get()

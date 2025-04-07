@@ -11,15 +11,11 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "y/common/(.*)": "<rootDir>/../libs/common/src/$1",
-    "y/common": "<rootDir>/../libs/common/src",
-    "yesy/abstarct.db/(.*)": "<rootDir>/../libs/abstarct.db/src/$1",
-    "yesy/abstarct.db": "<rootDir>/../libs/abstarct.db/src",
-    "y/abstract.db/(.*)": "<rootDir>/../libs/abstract.db/src/$1",
-    "y/abstract.db": "<rootDir>/../libs/abstract.db/src",
-    "@app/pagination/(.*)": "<rootDir>/../libs/pagination/src/$1",
-    "@app/pagination": "<rootDir>/../libs/pagination/src",
+    "@app/abstract.db/(.*)": "<rootDir>/../libs/abstract.db/src/$1",
+    "@app/abstract.db": "<rootDir>/../libs/abstract.db/src",
     "@app/abstract.mongo/(.*)": "<rootDir>/../libs/abstract.mongo/src/$1",
-    "@app/abstract.mongo": "<rootDir>/../libs/abstract.mongo/src"
+    "@app/abstract.mongo": "<rootDir>/../libs/abstract.mongo/src",
+    "@app/decorators/(.*)": "<rootDir>/../libs/decorators/src/$1",
+    "@app/decorators": "<rootDir>/../libs/decorators/src"
   }
 }

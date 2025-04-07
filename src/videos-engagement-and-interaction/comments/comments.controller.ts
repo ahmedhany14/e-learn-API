@@ -8,7 +8,7 @@ import { ROLE } from 'src/auth/decorators/role.decorator';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 
 import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
-import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { CreateCommentDto } from 'src/blog-system/comments/dtos/create.comment.dto';
 
 @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER)

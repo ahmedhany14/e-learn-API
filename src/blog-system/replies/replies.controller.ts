@@ -17,7 +17,7 @@ import { types } from '../../common//enums/react.to.types';
 // auth 
 import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ExtractAccountData } from '../../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 
 @Controller('replies')
 export class RepliesController {

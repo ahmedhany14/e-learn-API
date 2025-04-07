@@ -19,7 +19,7 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 
 // decorators
-import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 
 // services and providers
 import { CourseService } from 'src/courses/service/course.service';

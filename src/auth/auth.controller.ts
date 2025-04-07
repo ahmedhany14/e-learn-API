@@ -29,7 +29,7 @@ import { GoogleAuthDto } from './dto/google.signup.dto';
 // decorators and types
 import { AUTH } from './decorators/auth.decorator';
 import { ROLE } from './decorators/role.decorator';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { RoleEnum } from './enums/role.enum';
 import { AuthEnum } from './enums/auth.enum';
 

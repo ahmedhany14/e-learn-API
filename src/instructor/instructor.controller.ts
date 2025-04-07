@@ -7,17 +7,14 @@ import { AuthEnum } from '../auth/enums/auth.enum';
 import { RoleEnum } from '../auth/enums/role.enum';
 
 // decorators
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 
 // services and providers
 import { InstructorService } from './services/instructor.service';
 
-//safe types
-import { SafePaymentInfo } from './types/instructor.types';
-
 // dto
 import { IsYourCourseGuard } from '../courses/guards/is.your.course.guard';
-import { ExtractCourseDate } from 'src/common/decorators/request.extractCourseDate.decorator';
+import { ExtractCourseDate } from '@app/decorators';
 
 @Controller('instructor')
 export class InstructorController {
@@ -26,7 +23,7 @@ export class InstructorController {
     constructor(
         @Inject()
         private readonly instructorService: InstructorService,
-    ) { }
+    ) {}
 
     @Get('push-course-to-review/:course_id')
     @UseGuards(IsYourCourseGuard)

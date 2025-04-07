@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import {Course} from "../../courses/entities/course.entity";
+import { Course } from "src/courses/entities/course.entity";
 
 export const ExtractCourseDate = createParamDecorator(
     (data: string, ctx: ExecutionContext) => {

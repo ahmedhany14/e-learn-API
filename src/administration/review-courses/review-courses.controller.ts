@@ -23,7 +23,7 @@ import { AUTH } from '../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../auth/enums/auth.enum';
 import { ROLE } from '../../auth/decorators/role.decorator';
 import { RoleEnum } from '../../auth/enums/role.enum';
-import { ExtractAccountData } from '../../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { IsReadyForReviewGuard } from './guards/is.ready.for.review.guard';
 import * as console from 'node:console';
 import { FeedbackDto } from './dtos/feedback.dto';

@@ -4,7 +4,7 @@ import { Body, Controller, Delete, Inject, Param, ParseIntPipe, Post } from '@ne
 import { AUTH } from '../../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../../auth/enums/auth.enum';
 import { SubscriptionsService } from './subscriptions.service';
-import { ExtractAccountData } from '../../../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { VisaPaymentDataDto } from '../enroll-courses/dto/payment.data.dto';
 
 @AUTH(AuthEnum.BEARER)

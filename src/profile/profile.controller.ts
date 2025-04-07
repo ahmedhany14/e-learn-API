@@ -6,7 +6,7 @@ import { AUTH } from '../auth/decorators/auth.decorator';
 import { ROLE } from '../auth/decorators/role.decorator';
 import { RoleEnum } from '../auth/enums/role.enum';
 import { AuthEnum } from '../auth/enums/auth.enum';
-import { ExtractAccountData } from '../common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 
 // dto
 import { UpdateProfileDto } from './dtos/update.profile.dto';

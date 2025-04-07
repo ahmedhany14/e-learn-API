@@ -18,7 +18,7 @@ import { AuthEnum } from 'src/auth/enums/auth.enum';
 import { RoleEnum } from 'src/auth/enums/role.enum';
 
 // decorators and validators
-import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { IsExistPlan } from '../pip_validators/is.exist.plan.decorator';
 
 // services

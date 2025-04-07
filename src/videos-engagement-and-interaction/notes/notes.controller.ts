@@ -11,7 +11,7 @@ import { NotesService } from './notes.service';
 
 // dtos and validators
 import { CreateNoteDto } from './dtos/create.note.dto';
-import { ExtractAccountData } from 'src/common/decorators/request.extractData.decorator';
+import { ExtractAccountData } from '@app/decorators';
 import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.id.validation.pipe';
 
 @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER)
