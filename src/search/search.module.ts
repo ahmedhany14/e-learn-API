@@ -7,10 +7,11 @@ import { Course } from '../courses/entities/course.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SearchTagsProvider } from './providers/search.tags.provider';
 import { Profile } from 'src/profile/entity/profile.entity';
+import { SearchCategoryProvider } from './providers/search.category.provider';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Course, Profile])],
     controllers: [SearchController],
-    providers: [SearchService, SearchTagsProvider],
+    providers: [SearchService, SearchTagsProvider, SearchCategoryProvider],
 })
 export class SearchModule { }

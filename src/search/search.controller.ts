@@ -1,4 +1,12 @@
-import { Controller, Get, Inject, Param, ParseIntPipe, DefaultValuePipe, Query } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Inject,
+    Param,
+    ParseIntPipe,
+    DefaultValuePipe,
+    Query,
+} from '@nestjs/common';
 import { SearchService } from './search.service';
 import { SearchQueryDto } from './dto/search.quary.dto';
 
@@ -8,23 +16,19 @@ export class SearchController {
     constructor(
         @Inject()
         private readonly searchService: SearchService,
-    ) { }
+    ) {}
 
     @Get('explore/topic/:tag')
-    async getCourseWithTopic(
-        @Param('tag') tag: string,
-        @Query() searchQueryDto: SearchQueryDto
-    ) {
-
+    async getCourseWithTopic(@Param('tag') tag: string, @Query() searchQueryDto: SearchQueryDto) {
         return await this.searchService.getCoursesWithTopic(tag, searchQueryDto);
     }
 
     @Get('explore/category/:category')
     async getCourseWithCategory(
         @Param('category') category: string,
-        @Query('rating') rating: number,
+        @Query() searchQueryDto: SearchQueryDto,
     ) {
-        return `courses with category ${category} and rating more than or equal ${rating}`;
+        return await this.searchService.getCoursesWithCategory(category, searchQueryDto);
     }
 
     @Get('explore/:category/:subcategory')
