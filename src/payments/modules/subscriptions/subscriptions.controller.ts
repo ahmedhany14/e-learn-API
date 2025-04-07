@@ -1,15 +1,32 @@
-import { Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
 
 // auth decorator
 import { AUTH } from '../../../auth/decorators/auth.decorator';
 import { AuthEnum } from '../../../auth/enums/auth.enum';
+import { SubscriptionsService } from './subscriptions.service';
+import { ExtractAccountData } from '../../../common/decorators/request.extractData.decorator';
+import { VisaPaymentDataDto } from '../enroll-courses/dto/payment.data.dto';
 
 @AUTH(AuthEnum.BEARER)
 @Controller('subscriptions')
 export class SubscriptionsController {
-    @Post('plan/:plan_id')
-    async createSubscription(@Param('plan_id') plan_id: string) {
-        // Logic to create a subscription
+    constructor(
+        @Inject()
+        private readonly subscriptionsService: SubscriptionsService,
+    ) {}
+
+    @Post('check-out/:plan_id')
+    async createSubscription(
+        @Param('plan_id', ParseIntPipe) plan_id: number,
+        @ExtractAccountData('id') account_id: number,
+        @Body() visaPaymentDataDto: VisaPaymentDataDto,
+    ) {
+        await this.subscriptionsService.processCreateSubscription(
+            plan_id,
+            account_id,
+            visaPaymentDataDto,
+        );
+
         return {
             message: 'Subscription created successfully',
         };
