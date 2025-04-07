@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from 'src/configurations/config.service';
+import { ConfigService } from '@app/configurations';
 import Redis from 'ioredis';
-import { ConfigurationsModule } from 'src/configurations/configurations.module';
+import { ConfigurationsModule } from '@app/configurations';
 import { AuthRedisService } from './services/auth.redis.service';
 import { AccountRedisService } from './services/account.redis.service';
 import { BlogRedisCachingService } from './services/blog.redis.caching.service';
@@ -24,7 +24,7 @@ import { ReactisRedisCachingService } from './services/reactis.redis.caching.ser
         AuthRedisService,
         AccountRedisService,
         BlogRedisCachingService,
-        ReactisRedisCachingService
+        ReactisRedisCachingService,
     ],
 
     exports: [
@@ -32,7 +32,7 @@ import { ReactisRedisCachingService } from './services/reactis.redis.caching.ser
         AuthRedisService,
         AccountRedisService,
         BlogRedisCachingService,
-        ReactisRedisCachingService
+        ReactisRedisCachingService,
     ],
 })
-export class RedisModule { }
+export class RedisModule {}

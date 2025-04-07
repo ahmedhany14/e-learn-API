@@ -3,28 +3,28 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 import { Profile } from '../../profile/entity/profile.entity';
-import { ConfigService } from '../../configurations/config.service';
+import { ConfigService } from '@app/configurations';
 
 @Injectable()
 export class Email {
-  private readonly logger = new Logger(Email.name);
+    private readonly logger = new Logger(Email.name);
 
-  constructor(
-    private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
-  ) {}
+    constructor(
+        private readonly mailerService: MailerService,
+        private readonly configService: ConfigService,
+    ) {}
 
-  async sendWelcomeEmail(email: string, token: string) {
-    this.logger.log(`Sending welcome email to ${email}`);
+    async sendWelcomeEmail(email: string, token: string) {
+        this.logger.log(`Sending welcome email to ${email}`);
 
-    const loginUrl = `http://localhost:3000/auth/sign?token=${token}`;
+        const loginUrl = `http://localhost:3000/auth/sign?token=${token}`;
 
-    await this.mailerService
-      .sendMail({
-        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
-        to: email,
-        subject: 'Welcome to our platform',
-        text: `
+        await this.mailerService
+            .sendMail({
+                from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
+                to: email,
+                subject: 'Welcome to our platform',
+                text: `
         Hello,
 
         Welcome to our platform! Click the link below to sign in:
@@ -34,7 +34,7 @@ export class Email {
         Best regards,
         The Team
       `,
-        html: `
+                html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <h1 style="color: #4CAF50;">Welcome!</h1>
           <p>We're thrilled to have you on board.</p>
@@ -62,29 +62,29 @@ export class Email {
           <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
         </div>
       `,
-      })
-      .then(() => {
-        this.logger.log(`Email sent to ${email}`);
-      })
-      .catch((error) => {
-        this.logger.error(`Error sending email to ${email}: ${error}`);
-      });
-  }
+            })
+            .then(() => {
+                this.logger.log(`Email sent to ${email}`);
+            })
+            .catch((error) => {
+                this.logger.error(`Error sending email to ${email}: ${error}`);
+            });
+    }
 
-  async sendResetPasswordEmail(email: string, token: string) {
-    this.logger.log(`Sending reset password email to ${email}`);
+    async sendResetPasswordEmail(email: string, token: string) {
+        this.logger.log(`Sending reset password email to ${email}`);
 
-    await this.mailerService
-      .sendMail({
-        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
-        to: email,
-        subject: 'Reset your password',
-        template: './reset-password',
-        context: {
-          email: email,
-          resetUrl: `http://localhost:3000/auth/reset-password?token=${token}`,
-        },
-        text: `
+        await this.mailerService
+            .sendMail({
+                from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
+                to: email,
+                subject: 'Reset your password',
+                template: './reset-password',
+                context: {
+                    email: email,
+                    resetUrl: `http://localhost:3000/auth/reset-password?token=${token}`,
+                },
+                text: `
             Hello,
             
             You've requested to reset your password. Click the link below to reset it:
@@ -93,7 +93,7 @@ export class Email {
             Best regards,
             The Team
       `,
-        html: `
+                html: `
               <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <h1 style="color: #4CAF50;">Hello!</h1>
                 <p>You've requested to reset your password. Click the button below to reset it:</p>
@@ -119,29 +119,29 @@ export class Email {
                 <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
               </div>
         `,
-      })
-      .then(() => {
-        this.logger.log(`Email sent to ${email}`);
-      })
-      .catch((error) => {
-        this.logger.error(`Error sending email to ${email}: ${error}`);
-      });
-  }
+            })
+            .then(() => {
+                this.logger.log(`Email sent to ${email}`);
+            })
+            .catch((error) => {
+                this.logger.error(`Error sending email to ${email}: ${error}`);
+            });
+    }
 
-  async sendOrderConfirmationEmail(email: string, orderId: number) {
-    this.logger.log(`Sending order confirmation email to ${email}`);
+    async sendOrderConfirmationEmail(email: string, orderId: number) {
+        this.logger.log(`Sending order confirmation email to ${email}`);
 
-    await this.mailerService
-      .sendMail({
-        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
-        to: email,
-        subject: 'Order Confirmation',
-        template: './order-confirmation',
-        context: {
-          email: email,
-          orderId: orderId,
-        },
-        text: `
+        await this.mailerService
+            .sendMail({
+                from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
+                to: email,
+                subject: 'Order Confirmation',
+                template: './order-confirmation',
+                context: {
+                    email: email,
+                    orderId: orderId,
+                },
+                text: `
             Hello,
             
             Your order has been received. Your order ID is: ${orderId}.
@@ -149,7 +149,7 @@ export class Email {
             Best regards,
             The Team
       `,
-        html: `
+                html: `
               <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <h1 style="color: #4CAF50;">Hello!</h1>
                 <p>Your order has been received. Your order ID is: ${orderId}.</p>
@@ -158,29 +158,29 @@ export class Email {
                 <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
               </div>
         `,
-      })
-      .then(() => {
-        this.logger.log(`Email sent to ${email}`);
-      })
-      .catch((error) => {
-        this.logger.error(`Error sending email to ${email}: ${error}`);
-      });
-  }
+            })
+            .then(() => {
+                this.logger.log(`Email sent to ${email}`);
+            })
+            .catch((error) => {
+                this.logger.error(`Error sending email to ${email}: ${error}`);
+            });
+    }
 
-  async sendApprovedEmail(orderId: number, email: string) {
-    this.logger.log(`Sending approved email for order ${orderId}`);
+    async sendApprovedEmail(orderId: number, email: string) {
+        this.logger.log(`Sending approved email for order ${orderId}`);
 
-    await this.mailerService
-      .sendMail({
-        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
-        to: email,
-        subject: 'Order Approved',
-        template: './order-approved',
-        context: {
-          email: email,
-          orderId: orderId,
-        },
-        text: `
+        await this.mailerService
+            .sendMail({
+                from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
+                to: email,
+                subject: 'Order Approved',
+                template: './order-approved',
+                context: {
+                    email: email,
+                    orderId: orderId,
+                },
+                text: `
             Hello,
             
             Your order has been approved. Your order ID is: ${orderId}.
@@ -188,7 +188,7 @@ export class Email {
             Best regards,
             The Team
       `,
-        html: `
+                html: `
               <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <h1 style="color: #4CAF50;">Hello!</h1>
                 <p>Your order has been approved. Your order ID is: ${orderId}.</p>
@@ -197,29 +197,29 @@ export class Email {
                 <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
               </div>
         `,
-      })
-      .then(() => {
-        this.logger.log(`Email sent to ${email}`);
-      })
-      .catch((error) => {
-        this.logger.error(`Error sending email to ${email}: ${error}`);
-      });
-  }
+            })
+            .then(() => {
+                this.logger.log(`Email sent to ${email}`);
+            })
+            .catch((error) => {
+                this.logger.error(`Error sending email to ${email}: ${error}`);
+            });
+    }
 
-  async sendRejectedEmail(orderId: number, email: string) {
-    this.logger.log(`Sending rejected email for order ${orderId}`);
+    async sendRejectedEmail(orderId: number, email: string) {
+        this.logger.log(`Sending rejected email for order ${orderId}`);
 
-    await this.mailerService
-      .sendMail({
-        from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
-        to: email,
-        subject: 'Order Rejected',
-        template: './order-rejected',
-        context: {
-          email: email,
-          orderId: orderId,
-        },
-        text: `
+        await this.mailerService
+            .sendMail({
+                from: `"Onboarding Team" <${this.configService.emailConfig.mailUser}>`,
+                to: email,
+                subject: 'Order Rejected',
+                template: './order-rejected',
+                context: {
+                    email: email,
+                    orderId: orderId,
+                },
+                text: `
             Hello,
             
             Your order has been rejected. Your order ID is: ${orderId}.
@@ -227,7 +227,7 @@ export class Email {
             Best regards,
             The Team
       `,
-        html: `
+                html: `
               <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <h1 style="color: #4CAF50;">Hello!</h1>
                 <p>Your order has been rejected. Your order ID is: ${orderId}.</p>
@@ -236,12 +236,12 @@ export class Email {
                 <p style="font-size: 12px; color: #777;">Best regards,<br />The Team</p>
               </div>
         `,
-      })
-      .then(() => {
-        this.logger.log(`Email sent to ${email}`);
-      })
-      .catch((error) => {
-        this.logger.error(`Error sending email to ${email}: ${error}`);
-      });
-  }
+            })
+            .then(() => {
+                this.logger.log(`Email sent to ${email}`);
+            })
+            .catch((error) => {
+                this.logger.error(`Error sending email to ${email}: ${error}`);
+            });
+    }
 }

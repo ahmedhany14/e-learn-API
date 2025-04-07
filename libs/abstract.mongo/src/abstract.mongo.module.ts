@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AbstractRerpositort } from './abstract.mongo.service';
 import { ModelDefinition, MongooseModule } from '@nestjs/mongoose';
-import { ConfigurationsModule } from '../../../src/configurations/configurations.module';
-import { ConfigService } from '../../../src/configurations/config.service';
+import { ConfigurationsModule } from '@app/configurations';
+import { ConfigService } from '@app/configurations';
 
 @Module({
     imports: [
@@ -21,10 +21,7 @@ import { ConfigService } from '../../../src/configurations/config.service';
     exports: [AbstractRerpositort],
 })
 export class AbstractMongoModule {
-    static forFeature(
-        models: ModelDefinition[],
-    ) {
+    static forFeature(models: ModelDefinition[]) {
         return MongooseModule.forFeature(models);
     }
-
 }

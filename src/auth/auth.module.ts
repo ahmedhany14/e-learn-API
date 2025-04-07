@@ -2,12 +2,11 @@ import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 
 // Modules
-import { ConfigModule } from '@nestjs/config';
 import { AccountModule } from '../account/account.module';
 import { ProfileModule } from '../profile/profile.module';
 import { EmailModule } from '../common/email/email.module';
 import { AppModule } from '../app.module';
-import { ConfigurationsModule } from '../configurations/configurations.module';
+import { ConfigurationsModule } from '@app/configurations';
 
 // Services and Providers
 import { TokenProvider } from './providers/token.provider';
@@ -26,31 +25,31 @@ import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Account, Profile]),
-    forwardRef(() => AccountModule),
-    forwardRef(() => AppModule),
-    JwtModule,
-    ConfigurationsModule,
-    ProfileModule,
-    EmailModule,
-    RedisModule
-  ],
+    imports: [
+        TypeOrmModule.forFeature([Account, Profile]),
+        forwardRef(() => AccountModule),
+        forwardRef(() => AppModule),
+        JwtModule,
+        ConfigurationsModule,
+        ProfileModule,
+        EmailModule,
+        RedisModule,
+    ],
 
-  controllers: [AuthController],
+    controllers: [AuthController],
 
-  providers: [
-    TokenProvider,
-    AuthService,
-    {
-      provide: Hashing,
-      useClass: BcryptProvider,
-    },
-    SignupProvider,
-    AccountRedisService,
-    GoogleService,
-  ],
+    providers: [
+        TokenProvider,
+        AuthService,
+        {
+            provide: Hashing,
+            useClass: BcryptProvider,
+        },
+        SignupProvider,
+        AccountRedisService,
+        GoogleService,
+    ],
 
-  exports: [AuthService, Hashing, TokenProvider],
+    exports: [AuthService, Hashing, TokenProvider],
 })
-export class AuthModule { }
+export class AuthModule {}

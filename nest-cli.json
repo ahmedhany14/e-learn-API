@@ -33,6 +33,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/decorators/tsconfig.lib.json"
       }
+    },
+    "configurations": {
+      "type": "library",
+      "root": "libs/configurations",
+      "entryFile": "index",
+      "sourceRoot": "libs/configurations/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/configurations/tsconfig.lib.json"
+      }
     }
   }
 }

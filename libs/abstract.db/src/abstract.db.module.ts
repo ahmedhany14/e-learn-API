@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigurationsModule } from '../../../src/configurations/configurations.module';
+import { ConfigurationsModule } from '@app/configurations';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { ConfigService } from '../../../src/configurations/config.service';
+import { ConfigService } from '@app/configurations';
 import { AbstractRepoService } from './abstract.repo.service';
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 

@@ -16,6 +16,8 @@
     "@app/abstract.mongo/(.*)": "<rootDir>/../libs/abstract.mongo/src/$1",
     "@app/abstract.mongo": "<rootDir>/../libs/abstract.mongo/src",
     "@app/decorators/(.*)": "<rootDir>/../libs/decorators/src/$1",
-    "@app/decorators": "<rootDir>/../libs/decorators/src"
+    "@app/decorators": "<rootDir>/../libs/decorators/src",
+    "@app/configurations/(.*)": "<rootDir>/../libs/configurations/src/$1",
+    "@app/configurations": "<rootDir>/../libs/configurations/src"
   }
 }

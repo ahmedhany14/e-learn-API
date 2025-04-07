@@ -117,7 +117,8 @@
     "moduleNameMapper": {
       "^@app/abstract.db(|/.*)$": "<rootDir>/libs/abstract.db/src/$1",
       "^@app/abstract.mongo(|/.*)$": "<rootDir>/libs/abstract.mongo/src/$1",
-      "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1"
+      "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
+      "^@app/configurations(|/.*)$": "<rootDir>/libs/configurations/src/$1"
     }
   }
 }

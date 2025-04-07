@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from 'src/configurations/config.service';
+import { ConfigService } from '@app/configurations';
 
 import {
     PaymentMetadataI,

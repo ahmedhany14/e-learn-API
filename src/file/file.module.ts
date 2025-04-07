@@ -3,7 +3,7 @@ import { BadRequestException, Module } from '@nestjs/common';
 // modules
 import { CoursesModule } from '../courses/courses.module';
 import { ProfileModule } from '../profile/profile.module';
-import { ConfigurationsModule } from '../configurations/configurations.module';
+import { ConfigurationsModule } from '@app/configurations';
 
 // file upload packages
 import * as path from 'path';
@@ -25,17 +25,11 @@ import { ImageProcessingProvider } from './image-processing/image.processing.pro
         MulterModule.register({
             storage: multer.memoryStorage(),
             limits: { fileSize: 5 * 1024 * 1024 },
-            fileFilter: async (
-                request: Request,
-                file: Express.Multer.File,
-                cb: Function,
-            ) => {
+            fileFilter: async (request: Request, file: Express.Multer.File, cb: Function) => {
                 const allowedMimeTypes = ['image/jpeg', 'image/png'];
                 if (!allowedMimeTypes.includes(file.mimetype)) {
                     return cb(
-                        new BadRequestException(
-                            'Only JPEG, PNG and JPG image files are allowed!',
-                        ),
+                        new BadRequestException('Only JPEG, PNG and JPG image files are allowed!'),
                         false,
                     );
                 }
@@ -63,4 +57,4 @@ import { ImageProcessingProvider } from './image-processing/image.processing.pro
     controllers: [FileController],
     providers: [FileService, S3Provider, ImageProcessingProvider],
 })
-export class FileModule { }
+export class FileModule {}

@@ -38,6 +38,12 @@
       ],
       "@app/decorators/*": [
         "libs/decorators/src/*"
+      ],
+      "@app/configurations": [
+        "libs/configurations/src"
+      ],
+      "@app/configurations/*": [
+        "libs/configurations/src/*"
       ]
     }
   }

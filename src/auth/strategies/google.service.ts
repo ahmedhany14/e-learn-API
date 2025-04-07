@@ -11,7 +11,7 @@ import { GooglePayload } from '../interfaces/google.payload.interface';
 import { SignupProvider } from '../providers/transactions/signup.provider';
 import { AccountService } from '../../account/service/account.service';
 import { TokenProvider } from '../providers/token.provider';
-import { ConfigService } from 'src/configurations/config.service';
+import { ConfigService } from '@app/configurations';
 
 @Injectable()
 export class GoogleService implements OnModuleInit {
