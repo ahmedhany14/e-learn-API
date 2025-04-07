@@ -9,6 +9,7 @@ import { SearchTagsProvider } from './providers/search.tags.provider';
 import { Profile } from 'src/profile/entity/profile.entity';
 import { SearchCategoryProvider } from './providers/search.category.provider';
 import { SearchCategorySubCategoryProvider } from './providers/search.category.sub-category.provider';
+import { SearchTextProvider } from './providers/search.text.provider';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Course, Profile])],
@@ -18,6 +19,7 @@ import { SearchCategorySubCategoryProvider } from './providers/search.category.s
         SearchTagsProvider,
         SearchCategoryProvider,
         SearchCategorySubCategoryProvider,
+        SearchTextProvider,
     ],
 })
 export class SearchModule {}

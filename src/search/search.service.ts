@@ -3,6 +3,7 @@ import { SearchQueryDto } from './dto/search.quary.dto';
 import { SearchTagsProvider } from './providers/search.tags.provider';
 import { SearchCategoryProvider } from './providers/search.category.provider';
 import { SearchCategorySubCategoryProvider } from './providers/search.category.sub-category.provider';
+import { SearchTextProvider } from './providers/search.text.provider';
 
 @Injectable()
 export class SearchService {
@@ -13,6 +14,8 @@ export class SearchService {
         private readonly searchCategoryProvider: SearchCategoryProvider,
         @Inject()
         private readonly searchCategorySubCategoryProvider: SearchCategorySubCategoryProvider,
+        @Inject()
+        private readonly searchTextProvider: SearchTextProvider,
     ) {}
 
     async getCoursesWithTopic(tag: string, searchQueryDto: SearchQueryDto) {
@@ -33,5 +36,9 @@ export class SearchService {
             subCategory,
             searchQueryDto,
         );
+    }
+
+    async getCoursesWithText(searchText: string, searchQueryDto: SearchQueryDto) {
+        return await this.searchTextProvider.getSearchQuery(searchText, searchQueryDto);
     }
 }
