@@ -1,10 +1,10 @@
 import { Controller, Delete, Inject, Param, ParseIntPipe, Patch } from '@nestjs/common';
 
-// Auth and Role
-import { ROLE } from '../../auth/decorators/role.decorator';
-import { RoleEnum } from '../../auth/enums/role.enum';
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../auth/enums/auth.enum';
+// decorators for auth
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // Services
 import { AdminPrivacyService } from './services/admin.privacy.service';

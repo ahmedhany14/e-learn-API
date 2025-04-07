@@ -1,10 +1,10 @@
 import { Controller, Get, Inject, Logger, UseGuards } from '@nestjs/common';
 
 // Auth and role decorators
-import { ROLE } from '../auth/decorators/role.decorator';
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { AuthEnum } from '../auth/enums/auth.enum';
-import { RoleEnum } from '../auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // decorators
 import { ExtractAccountData } from '@app/decorators';

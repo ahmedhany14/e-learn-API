@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 
 import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
-import { CourseService } from 'src/courses/service/course.service';
 
 // dtos
 import { AddCourseSectionsDto } from '../dtos/add.course.sections.dto';
@@ -24,10 +23,10 @@ import { IsYourCourseGuard } from '../../courses/guards/is.your.course.guard';
 import { IsYourSectionGuard } from '../guards/is.your.section.guard';
 
 // Auth and Role
-import { ROLE } from 'src/auth/decorators/role.decorator';
-import { AuthEnum } from 'src/auth/enums/auth.enum';
-import { AUTH } from 'src/auth/decorators/auth.decorator';
-import { RoleEnum } from 'src/auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 @Controller('sections-via-instructor')
 export class SectionsViaInstructorController {

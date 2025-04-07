@@ -11,7 +11,6 @@ import {
     Patch,
     Post,
     UseGuards,
-    UseInterceptors,
 } from '@nestjs/common';
 
 // dto
@@ -23,16 +22,15 @@ import { TokenProvider } from '../auth/providers/token.provider';
 import { Email } from '../common/email/email';
 
 // decorators for auth
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { ROLE } from '../auth/decorators/role.decorator';
-import { AuthEnum } from '../auth/enums/auth.enum';
-import { RoleEnum } from '../auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // decorators
 import { TokenIsInRedisGuard } from './guards/account.redis.guard';
 import { AccountIsExistingDecorator } from './decorators/account.is_existing.decorator';
 import { ExtractAccountData } from '@app/decorators';
-
 
 // guards
 import { IsUniqueEmailGuard } from './guards/is.unique.email.guard';
@@ -46,7 +44,7 @@ export class AccountController {
         @Inject() private readonly accountService: AccountService,
         @Inject() private readonly tokenProvider: TokenProvider,
         @Inject() private readonly email: Email,
-    ) { }
+    ) {}
 
     @AUTH(AuthEnum.BEARER)
     @Get()

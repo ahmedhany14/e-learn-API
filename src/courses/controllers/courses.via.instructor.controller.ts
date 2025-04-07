@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 
 // auth and role decorators
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { ROLE } from '../../auth/decorators/role.decorator';
-import { AuthEnum } from 'src/auth/enums/auth.enum';
-import { RoleEnum } from 'src/auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // decorators
 import { ExtractAccountData } from '@app/decorators';
@@ -40,7 +40,7 @@ export class CoursesViaInstructorController {
     constructor(
         @Inject()
         private readonly courseService: CourseService,
-    ) { }
+    ) {}
 
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
@@ -117,9 +117,9 @@ export class CoursesViaInstructorController {
     }
 
     /**
-     * 
-     * @param course_id 
-     * @param commitedChangesDto 
+     *
+     * @param course_id
+     * @param commitedChangesDto
      * @returns the course with the commited changes
      * @description this endpoint is used to commit the changes made to the course
      * @description the changes are made in the course_commits_review table
@@ -144,5 +144,4 @@ export class CoursesViaInstructorController {
             },
         };
     }
-
 }

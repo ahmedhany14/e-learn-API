@@ -44,6 +44,12 @@
       ],
       "@app/configurations/*": [
         "libs/configurations/src/*"
+      ],
+      "@app/enums": [
+        "libs/enums/src"
+      ],
+      "@app/enums/*": [
+        "libs/enums/src/*"
       ]
     }
   }

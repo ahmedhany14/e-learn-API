@@ -11,10 +11,10 @@ import {
 } from '@nestjs/common';
 
 // decorators and types from auth
-import { AUTH } from 'src/auth/decorators/auth.decorator';
-import { ROLE } from 'src/auth/decorators/role.decorator';
-import { AuthEnum } from 'src/auth/enums/auth.enum';
-import { RoleEnum } from 'src/auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // service
 import { CourseTagService } from '../services/course.tag.service';

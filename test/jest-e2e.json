@@ -18,6 +18,8 @@
     "@app/decorators/(.*)": "<rootDir>/../libs/decorators/src/$1",
     "@app/decorators": "<rootDir>/../libs/decorators/src",
     "@app/configurations/(.*)": "<rootDir>/../libs/configurations/src/$1",
-    "@app/configurations": "<rootDir>/../libs/configurations/src"
+    "@app/configurations": "<rootDir>/../libs/configurations/src",
+    "@app/enums/(.*)": "<rootDir>/../libs/enums/src/$1",
+    "@app/enums": "<rootDir>/../libs/enums/src"
   }
 }

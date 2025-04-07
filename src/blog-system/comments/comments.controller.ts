@@ -19,12 +19,15 @@ import { UpdateCommentDto } from './dtos/update.comment.dto';
 // validators
 import { ObjectIdValidationPipe } from '../blog/validators/object.id.validation.pipe';
 
+// decorators for auth
+import { AUTH } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { ExtractAccountData } from '@app/decorators';
+
 // services
 import { CommentsService } from './comments.service';
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ExtractAccountData } from '@app/decorators';
 import { ReactisRedisCachingService } from 'src/redis/services/reactis.redis.caching.service';
+
 import { types } from '../../common/enums/react.to.types';
 
 @Controller('comments')
@@ -34,7 +37,7 @@ export class CommentsController {
         private readonly commentsService: CommentsService,
         @Inject()
         private readonly reactisRedisCachingService: ReactisRedisCachingService,
-    ) { }
+    ) {}
 
     @AUTH(AuthEnum.BEARER)
     @Post(':blog_id')
@@ -43,11 +46,7 @@ export class CommentsController {
         @Param('blog_id', ObjectIdValidationPipe) blog_id: string,
         @ExtractAccountData('id') author_id: number,
     ) {
-        const comment = await this.commentsService.addComment(
-            createCommentDto,
-            blog_id,
-            author_id,
-        );
+        const comment = await this.commentsService.addComment(createCommentDto, blog_id, author_id);
 
         return {
             response: {
@@ -58,9 +57,7 @@ export class CommentsController {
     }
 
     @Get(':comment_id')
-    async getComment(
-        @Param('comment_id', ObjectIdValidationPipe) comment_id: string,
-    ) {
+    async getComment(@Param('comment_id', ObjectIdValidationPipe) comment_id: string) {
         const comment = await this.commentsService.getComment(comment_id);
         return {
             response: {
@@ -143,10 +140,7 @@ export class CommentsController {
         return {
             response: {
                 like: redis_ret.like === 1 ? 'Comment Liked' : 'Comment Like Removed',
-                dislike:
-                    redis_ret.dislike === 1
-                        ? 'Comment Disliked'
-                        : 'Comment Dislike Removed',
+                dislike: redis_ret.dislike === 1 ? 'Comment Disliked' : 'Comment Dislike Removed',
             },
         };
     }
@@ -171,10 +165,7 @@ export class CommentsController {
         return {
             response: {
                 like: redis_ret.like === 1 ? 'Comment Liked' : 'Comment Like Removed',
-                dislike:
-                    redis_ret.dislike === 1
-                        ? 'Comment Disliked'
-                        : 'Comment Dislike Removed',
+                dislike: redis_ret.dislike === 1 ? 'Comment Disliked' : 'Comment Dislike Removed',
             },
         };
     }

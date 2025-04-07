@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 
 // decorators and types from auth
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ROLE } from '../../auth/decorators/role.decorator';
-import { RoleEnum } from '../../auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 import { ExtractAccountData } from '@app/decorators';
 
 // dto

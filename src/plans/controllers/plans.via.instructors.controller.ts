@@ -12,10 +12,10 @@ import {
 import { IsYourCourseGuard } from '../../courses/guards/is.your.course.guard';
 
 // auth decorators
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ROLE } from '../../auth/decorators/role.decorator';
-import { RoleEnum } from '../../auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // service
 import { PlanRepository } from '../repository/plan.repo';

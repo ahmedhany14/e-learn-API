@@ -1,7 +1,11 @@
 import { Controller, Get, Inject, Param, Query } from '@nestjs/common';
 import { SearchService } from './search.service';
 import { SearchQueryDto } from './dto/search.quary.dto';
-import * as console from 'node:console';
+
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // @AUTH(AuthEnum.BEARER)
 @Controller('search')

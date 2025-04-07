@@ -1,11 +1,9 @@
 import {
     Controller,
     Inject,
-    NotFoundException,
     Param,
     ParseIntPipe,
     Post,
-    UnauthorizedException,
     UploadedFile,
     UseGuards,
     UseInterceptors,
@@ -16,19 +14,21 @@ import { Express } from 'express';
 // services and providers
 import { FileService } from './file.service';
 import { CourseService } from '../courses/service/course.service';
+import { ProfileService } from '../profile/services/profile.service';
 
 // decorators for auth
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { AuthEnum } from '../auth/enums/auth.enum';
-import { ROLE } from '../auth/decorators/role.decorator';
-import { RoleEnum } from '../auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // decorators
 import { ExtractAccountData } from '@app/decorators';
-import { ProfileService } from '../profile/services/profile.service';
-import { IsYourCourseGuard } from 'src/courses/guards/is.your.course.guard';
 import { ExtractCourseDate } from '@app/decorators';
+
 import { Course } from 'src/courses/entities/course.entity';
+
+import { IsYourCourseGuard } from 'src/courses/guards/is.your.course.guard';
 
 @Controller('file')
 export class FileController {

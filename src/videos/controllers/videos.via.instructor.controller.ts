@@ -18,10 +18,10 @@ import { SectionsInstructorService } from '../../sections/services/instructor/se
 import { VideosInstructorService } from '../services/instructor/videos.instructor.service';
 
 // Auth and Role
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ROLE } from '../../auth/decorators/role.decorator';
-import { RoleEnum } from '../../auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // dto
 import { AddVideoDto } from '../dtos/add.video.dto';
@@ -31,7 +31,6 @@ import { ReOrderingDto } from '../../common/dtos/re-ordering/re-ordering.dto';
 // guards
 import { IsYourSectionGuard } from '../../sections/guards/is.your.section.guard';
 import { IsYourVideoGuard } from '../guards/is.your.video.guard';
-
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
@@ -56,7 +55,7 @@ export class VideosViaInstructorController {
             `adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`,
         );
 
-        const section = await this.sectionsService.findSectionById( section_id);
+        const section = await this.sectionsService.findSectionById(section_id);
 
         const all_videos = await this.videosService.findAllVideosInSection(section_id);
 

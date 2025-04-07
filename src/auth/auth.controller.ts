@@ -1,17 +1,4 @@
-import {
-    Controller,
-    Post,
-    Get,
-    Inject,
-    Body,
-    InternalServerErrorException,
-    NotFoundException,
-    GoneException,
-    BadRequestException,
-    Logger,
-    Param,
-    UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Post, Get, Inject, Body, Logger, Param } from '@nestjs/common';
 
 // services and providers
 import { AuthService } from './service/auth.service';
@@ -26,12 +13,12 @@ import { ForgetDto } from './dto/forget.dto';
 import { ResetPasswordDto } from './dto/reset.password.dto';
 import { GoogleAuthDto } from './dto/google.signup.dto';
 
-// decorators and types
-import { AUTH } from './decorators/auth.decorator';
-import { ROLE } from './decorators/role.decorator';
+// decorators for auth
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 import { ExtractAccountData } from '@app/decorators';
-import { RoleEnum } from './enums/role.enum';
-import { AuthEnum } from './enums/auth.enum';
 
 // interfaces
 import { SafeResetAccountPassword } from '../account/interfaces/accounts.interface';

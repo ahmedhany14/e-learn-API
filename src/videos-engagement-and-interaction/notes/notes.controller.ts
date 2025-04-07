@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
 
 // auth decorators
-import { AUTH } from 'src/auth/decorators/auth.decorator';
-import { AuthEnum } from 'src/auth/enums/auth.enum';
-import { ROLE } from 'src/auth/decorators/role.decorator';
-import { RoleEnum } from 'src/auth/enums/role.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 
 // service
 import { NotesService } from './notes.service';
@@ -18,18 +18,17 @@ import { ObjectIdValidationPipe } from 'src/blog-system/blog/validators/object.i
 @AUTH(AuthEnum.BEARER)
 @Controller('notes')
 export class NotesController {
-
     constructor(
         @Inject()
-        private readonly notesService: NotesService
-    ) { }
+        private readonly notesService: NotesService,
+    ) {}
 
     /**
-     * 
-     * @param course_id will used later for authorization
-     * @param account_id 
-     * @param video_id 
-     * @body createNoteDto 
+     *
+     * @param account_id
+     * @param video_id
+     * @param createNoteDto
+     * @body createNoteDto
      * @returns success message and the created note
      * @description This endpoint is used to create a new note for a video.
      */
@@ -40,14 +39,11 @@ export class NotesController {
         @Param('video_id', ParseIntPipe) video_id: number,
         @Body() createNoteDto: CreateNoteDto,
     ) {
-
-        const note = await this.notesService.create(
-            {
-                ...createNoteDto,
-                video_id,
-                account_id,
-            }
-        )
+        const note = await this.notesService.create({
+            ...createNoteDto,
+            video_id,
+            account_id,
+        });
 
         return {
             message: 'Note created successfully',
@@ -56,10 +52,10 @@ export class NotesController {
     }
 
     /**
-     * 
+     *
      * @param course_id will used later for authorization
-     * @param video_id 
-     * @param note_id 
+     * @param video_id
+     * @param note_id
      * @param account_id
      * @returns success message that the note was deleted
      * @description This endpoint is used to delete a note for a video.
@@ -70,13 +66,11 @@ export class NotesController {
         @Param('video_id', ParseIntPipe) video_id: number,
         @Param('note_id', ObjectIdValidationPipe) note_id: string,
     ) {
-        await this.notesService.findOneAndDelete(
-            {
-                note_id,
-                video_id,
-                account_id,
-            }
-        )
+        await this.notesService.findOneAndDelete({
+            note_id,
+            video_id,
+            account_id,
+        });
         return {
             message: 'Note deleted successfully',
             data: {},
@@ -84,9 +78,9 @@ export class NotesController {
     }
 
     /**
-     * 
+     *
      * @param course_id will used later for authorization
-     * @param video_id 
+     * @param video_id
      * @param account_id
      * @returns success message and the notes
      * @description This endpoint is used to get all notes for a video.
@@ -96,15 +90,13 @@ export class NotesController {
         @ExtractAccountData('id') account_id: number,
         @Param('video_id', ParseIntPipe) video_id: number,
     ) {
-        const notes = await this.notesService.find(
-            {
-                video_id,
-                account_id,
-            }
-        )
+        const notes = await this.notesService.find({
+            video_id,
+            account_id,
+        });
 
         // sort the notes by note_time (ascending)
-        notes.sort((a, b) => a.note_time - b.note_time)
+        notes.sort((a, b) => a.note_time - b.note_time);
 
         return {
             message: 'Notes retrieved successfully',

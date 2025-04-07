@@ -17,16 +17,17 @@ import { ReviewCoursesService } from './services/review-courses.service';
 
 // dtos
 import { ReviewStateDto } from './dtos/review.state.dto';
-
-// auth and roles decorators
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../auth/enums/auth.enum';
-import { ROLE } from '../../auth/decorators/role.decorator';
-import { RoleEnum } from '../../auth/enums/role.enum';
-import { ExtractAccountData } from '@app/decorators';
-import { IsReadyForReviewGuard } from './guards/is.ready.for.review.guard';
-import * as console from 'node:console';
 import { FeedbackDto } from './dtos/feedback.dto';
+
+// decorators for auth
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
+import { ExtractAccountData } from '@app/decorators';
+
+// guards
+import { IsReadyForReviewGuard } from './guards/is.ready.for.review.guard';
 
 ROLE(RoleEnum.ADMIN);
 

@@ -3,8 +3,8 @@ import { Body, Controller, Inject, Logger, Param, ParseIntPipe, Post } from '@ne
 import { VisaPaymentDataDto } from './dto/payment.data.dto';
 
 // auth
-import { AUTH } from 'src/auth/decorators/auth.decorator';
-import { AuthEnum } from 'src/auth/enums/auth.enum';
+import { AUTH } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
 
 // services
 import { EnrollCoursesService } from './services/enroll-courses.service';

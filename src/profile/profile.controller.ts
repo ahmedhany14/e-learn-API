@@ -2,10 +2,10 @@ import { Body, Controller, Get, Inject, Logger, Patch, UseGuards } from '@nestjs
 import { ProfileService } from './services/profile.service';
 
 // decorators and types
-import { AUTH } from '../auth/decorators/auth.decorator';
-import { ROLE } from '../auth/decorators/role.decorator';
-import { RoleEnum } from '../auth/enums/role.enum';
-import { AuthEnum } from '../auth/enums/auth.enum';
+import { AUTH } from '@app/decorators';
+import { ROLE } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
+import { RoleEnum } from '@app/enums';
 import { ExtractAccountData } from '@app/decorators';
 
 // dto
@@ -25,11 +25,8 @@ export class ProfileController {
 
     @AUTH(AuthEnum.BEARER)
     @Get('my-profile')
-    async getProfile(
-        @ExtractAccountData('id') accountId: number,
-    ) {
+    async getProfile(@ExtractAccountData('id') accountId: number) {
         this.logger.log('Fetching profile');
-
 
         const profile = await this.profileService.findByAccountId(accountId);
 

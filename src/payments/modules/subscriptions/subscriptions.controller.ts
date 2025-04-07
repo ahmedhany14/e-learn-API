@@ -1,10 +1,14 @@
 import { Body, Controller, Delete, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
 
 // auth decorator
-import { AUTH } from '../../../auth/decorators/auth.decorator';
-import { AuthEnum } from '../../../auth/enums/auth.enum';
-import { SubscriptionsService } from './subscriptions.service';
+import { AUTH } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
 import { ExtractAccountData } from '@app/decorators';
+
+// services
+import { SubscriptionsService } from './subscriptions.service';
+
+// dtos
 import { VisaPaymentDataDto } from '../enroll-courses/dto/payment.data.dto';
 
 @AUTH(AuthEnum.BEARER)

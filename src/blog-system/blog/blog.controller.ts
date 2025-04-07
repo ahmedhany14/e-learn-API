@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    NotFoundException,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+} from '@nestjs/common';
 
 // DTOs
 import { UpdateBlogDto } from './dtos/update.blog.dto';
@@ -12,9 +24,9 @@ import { ReactisRedisCachingService } from 'src/redis/services/reactis.redis.cac
 // Pipes
 import { ObjectIdValidationPipe } from './validators/object.id.validation.pipe';
 
-// Authorization and Roles
-import { AUTH } from '../../auth/decorators/auth.decorator';
-import { AuthEnum } from 'src/auth/enums/auth.enum';
+// decorators for auth
+import { AUTH } from '@app/decorators';
+import { AuthEnum } from '@app/enums';
 import { ExtractAccountData } from '@app/decorators';
 import { types } from 'src/common/enums/react.to.types';
 
@@ -29,8 +41,7 @@ export class BlogController {
 
         @Inject()
         private readonly reactisRedisCachingService: ReactisRedisCachingService,
-    ) { }
-
+    ) {}
 
     @AUTH(AuthEnum.BEARER)
     @Post('create-blog')
@@ -43,8 +54,8 @@ export class BlogController {
         return {
             response: {
                 message: 'Blog created',
-                blog
-            }
+                blog,
+            },
         };
     }
 
@@ -52,7 +63,7 @@ export class BlogController {
     @Get('get-one-blog/:blog_id')
     async getOneBlog(
         @Param('blog_id', ObjectIdValidationPipe) blog_id: string,
-        @ExtractAccountData('id') author_id: number
+        @ExtractAccountData('id') author_id: number,
     ) {
         /*
             Cache the views of the blog
@@ -62,14 +73,13 @@ export class BlogController {
         // NOTE: The second arg will be fixed after adding authentication
         if (await this.blogRedisCachingService.incViews(blog_id, 10))
             blog = await this.blogService.incrementViews(blog_id);
-        else
-            blog = await this.blogService.getOneBlog(blog_id);
+        else blog = await this.blogService.getOneBlog(blog_id);
 
         return {
             response: {
                 message: 'Blog fetched',
-                blog
-            }
+                blog,
+            },
         };
     }
 
@@ -82,7 +92,6 @@ export class BlogController {
         return full_data;
     }
 
-
     @AUTH(AuthEnum.BEARER)
     @Patch('update-blog/:blog_id')
     async updateBlog(
@@ -94,8 +103,9 @@ export class BlogController {
 
         return {
             response: {
-                message: 'Blog updated', blog
-            }
+                message: 'Blog updated',
+                blog,
+            },
         };
     }
 
@@ -105,17 +115,14 @@ export class BlogController {
         @ExtractAccountData('id') author_id: number,
         @Param('blog_id', ObjectIdValidationPipe) blog_id: string,
     ) {
-        await this.blogService.deleteBlog(
-            author_id,
-            blog_id
-        );
+        await this.blogService.deleteBlog(author_id, blog_id);
 
         await this.reactisRedisCachingService.delAllKeys(types.BLOG, blog_id);
 
         return {
             response: {
-                message: 'Blog deleted'
-            }
+                message: 'Blog deleted',
+            },
         };
     }
 
@@ -123,7 +130,7 @@ export class BlogController {
     @Post('upvote-blog/:blog_id/')
     async upvoteBlog(
         @Param('blog_id', ObjectIdValidationPipe) blog_id: string,
-        @ExtractAccountData('id') upvoter_id: number
+        @ExtractAccountData('id') upvoter_id: number,
     ) {
         const blog = await this.blogService.getOneBlog(blog_id);
 
@@ -137,8 +144,8 @@ export class BlogController {
         return {
             response: {
                 upvote: ret.like === 1 ? 'Blog upvoted' : 'Blog upvote removed',
-                downvote: ret.dislike === 1 ? 'Blog downvoted' : 'Blog downvote removed'
-            }
+                downvote: ret.dislike === 1 ? 'Blog downvoted' : 'Blog downvote removed',
+            },
         };
     }
 
@@ -146,22 +153,25 @@ export class BlogController {
     @Post('downvote-blog/:blog_id')
     async downvoteBlog(
         @Param('blog_id') blog_id: string,
-        @ExtractAccountData('id') downvoter_id: number
+        @ExtractAccountData('id') downvoter_id: number,
     ) {
         const blog = await this.blogService.getOneBlog(blog_id);
         if (!blog) throw new NotFoundException('Blog not found');
 
-        const ret = await this.reactisRedisCachingService.setDislike(types.BLOG, blog_id, downvoter_id); // 1 ? will increase the downvote count : -1 ? will decrease the downvote count
+        const ret = await this.reactisRedisCachingService.setDislike(
+            types.BLOG,
+            blog_id,
+            downvoter_id,
+        ); // 1 ? will increase the downvote count : -1 ? will decrease the downvote count
 
         await this.blogService.upvoteBlog(blog_id, ret.like);
         await this.blogService.downvoteBlog(blog_id, ret.dislike);
 
-
         return {
             response: {
                 upvote: ret.like === 1 ? 'Blog upvoted' : 'Blog upvote removed',
-                downvote: ret.dislike === 1 ? 'Blog downvoted' : 'Blog downvote removed'
-            }
+                downvote: ret.dislike === 1 ? 'Blog downvoted' : 'Blog downvote removed',
+            },
         };
     }
 }
