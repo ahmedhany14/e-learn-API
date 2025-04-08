@@ -30,7 +30,7 @@ import { UpdatePlanDto } from 'src/plans/dtos/update.plan.dto';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
-@Controller('plans-via-admins')
+@Controller('plans/admins')
 export class PlansViaAdminsController {
     private readonly logger = new Logger(PlansViaAdminsController.name);
 

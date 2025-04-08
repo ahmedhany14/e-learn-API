@@ -33,7 +33,7 @@ import { IsYourCourseGuard } from '../guards/is.your.course.guard';
 import { CommitedChangesDto } from '../dtos/commited.changes.dto';
 import { CanCommitChangesGuard } from '../guards/can.commit.changes.guard';
 
-@Controller('courses-via-instructor')
+@Controller('courses/instructor')
 export class CoursesViaInstructorController {
     private readonly logger = new Logger(CoursesViaInstructorController.name);
 

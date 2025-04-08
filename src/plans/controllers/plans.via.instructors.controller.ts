@@ -21,7 +21,7 @@ import { RoleEnum } from '@app/enums';
 import { PlanRepository } from '../repository/plan.repo';
 import { PlansViaInstructorsService } from '../service/plans.via.instructors.service';
 
-@Controller('plans-via-instructors')
+@Controller('plans/instructors')
 export class PlansViaInstructorsController {
     constructor(
         @Inject()

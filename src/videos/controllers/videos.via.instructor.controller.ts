@@ -34,7 +34,7 @@ import { IsYourVideoGuard } from '../guards/is.your.video.guard';
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
-@Controller('videos-via-instructor')
+@Controller('videos/instructor')
 export class VideosViaInstructorController {
     private readonly logger = new Logger(VideosViaInstructorController.name);
 

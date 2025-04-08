@@ -28,7 +28,7 @@ import { TagsService } from '../services/tags.service';
 
 @ROLE(RoleEnum.ADMIN)
 @AUTH(AuthEnum.BEARER)
-@Controller('tags-via-admins')
+@Controller('tags/admins')
 export class TagsViaAdminsController {
     constructor(
         @Inject()

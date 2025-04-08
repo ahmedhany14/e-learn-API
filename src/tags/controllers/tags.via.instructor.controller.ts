@@ -29,7 +29,7 @@ import { RemoveTagsFromCourseDto } from '../dtos/remove.tags.from.course.dto';
 
 @ROLE(RoleEnum.INSTRUCTOR)
 @AUTH(AuthEnum.BEARER)
-@Controller('tags-via-instructor')
+@Controller('tags/instructor')
 export class TagsViaInstructorController {
     constructor(
         @Inject()
