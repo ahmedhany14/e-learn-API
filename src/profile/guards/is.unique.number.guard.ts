@@ -17,7 +17,9 @@ export class IsUniqueNumberGuard implements CanActivate {
             accountId: number = request.accountId;
         if (!phone_number) return true;
 
-        const sameProfileWithNumber = await this.profileService.findByPhoneNumber(phone_number);
+        const sameProfileWithNumber = await this.profileService.findOne({
+            phone_number,
+        });
 
         if (sameProfileWithNumber && sameProfileWithNumber.account.id !== accountId) {
             throw new ConflictException({

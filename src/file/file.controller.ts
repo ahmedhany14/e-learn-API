@@ -75,12 +75,12 @@ export class FileController {
         @UploadedFile() file: Express.Multer.File,
         @ExtractAccountData('id') account_id: number,
     ) {
-        const profile = await this.profileService.findByAccountId(account_id);
+        const profile = await this.profileService.findOne({ account: { id: account_id } });
         if (profile.profile_image)
             await this.fileService.deleteImage(`profile/${profile.profile_image}`);
         const filename = await this.fileService.uploadImage(file, 'profile');
 
-        await this.profileService.updateProfileImage(account_id, filename);
+        await this.profileService.updateProfileImage({ account: { id: account_id } }, filename);
         return {
             response: {
                 message: 'Profile image uploaded successfully',

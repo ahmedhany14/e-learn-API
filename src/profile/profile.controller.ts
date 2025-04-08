@@ -25,10 +25,12 @@ export class ProfileController {
 
     @AUTH(AuthEnum.BEARER)
     @Get('my-profile')
-    async getProfile(@ExtractAccountData('id') accountId: number) {
+    async getProfile(@ExtractAccountData('id') account_id: number) {
         this.logger.log('Fetching profile');
 
-        const profile = await this.profileService.findByAccountId(accountId);
+        const profile = await this.profileService.findOne({
+            account: { id: account_id },
+        });
 
         return {
             response: {
@@ -42,11 +44,16 @@ export class ProfileController {
     @AUTH(AuthEnum.BEARER)
     @Patch()
     async updateProfileDate(
-        @ExtractAccountData('id') accountId: number,
+        @ExtractAccountData('id') account_id: number,
         @Body() updateProfileDto: UpdateProfileDto,
     ) {
-        this.logger.log('Updating profile', accountId);
-        await this.profileService.updateProfile(accountId, updateProfileDto);
+        this.logger.log('Updating profile', account_id);
+        await this.profileService.findOneAndUpdate(
+            {
+                account: { id: account_id },
+            },
+            updateProfileDto,
+        );
         return {
             response: 'Profile updated successfully',
         };
