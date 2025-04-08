@@ -6,7 +6,6 @@ import { PaymentsHistory } from './entities/payments.history.entity';
 
 import { PaymentsService } from './payments.service';
 import { PaymentsRepositoryService } from './payments.repositoy.service';
-import { CoursesModule } from 'src/courses/courses.module';
 import { ChargebackMonitorService } from './schedulers/chargeback-monitor.service';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 
@@ -15,10 +14,9 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
         TypeOrmModule.forFeature([PaymentsHistory]),
         StripeModule,
         forwardRef(() => EnrollCoursesModule),
-        CoursesModule,
         SubscriptionsModule,
     ],
     providers: [PaymentsService, PaymentsRepositoryService, ChargebackMonitorService],
     exports: [PaymentsService],
 })
-export class PaymentsModule {}
+export class PaymentsModule { }

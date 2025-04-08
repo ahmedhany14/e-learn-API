@@ -24,4 +24,4 @@ import { EnrollCoursesService } from './services/enroll-courses.service';
     providers: [EnrollCoursesService],
     exports: [EnrollCoursesService],
 })
-export class EnrollCoursesModule {}
+export class EnrollCoursesModule { }

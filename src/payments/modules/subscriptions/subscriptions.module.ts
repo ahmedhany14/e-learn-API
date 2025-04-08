@@ -16,5 +16,6 @@ import { PaymentsModule } from '../../payments.module';
     ],
     controllers: [SubscriptionsController],
     providers: [SubscriptionsService, CreateSubscribe, CancelSubscribe],
+    exports: [SubscriptionsService],
 })
-export class SubscriptionsModule {}
+export class SubscriptionsModule { }

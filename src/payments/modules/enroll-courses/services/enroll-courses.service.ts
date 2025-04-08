@@ -3,15 +3,17 @@ import { BadRequestException, Inject, Injectable, Logger, NotFoundException } fr
 // services
 import { StripeService } from 'src/payments/modules/stripe/stripe.service';
 import { PaymentsService } from 'src/payments/payments.service';
+import { AbstractRepoService } from '@app/abstract.db';
 
 // dto, entities, and enums
 import { VisaPaymentDataDto } from '../dto/payment.data.dto';
 import { CourseStatusEnum } from 'src/courses/enums/course.status.enum';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner, Repository, EntityManager } from 'typeorm';
 import { Course } from 'src/courses/entities/course.entity';
 import { EnrolledCourses } from '../entity/enrolled.courses.entity';
 import { PaymentsHistory } from 'src/payments/entities/payments.history.entity';
 import { PaymentMetadataI } from '../../../interfaces/payment.metadata.interface';
+import { InjectRepository } from '@nestjs/typeorm';
 
 /**
  * Service for enrolling courses and processing payments,
@@ -25,17 +27,23 @@ import { PaymentMetadataI } from '../../../interfaces/payment.metadata.interface
     5. Handle payment failures and roll-back transactions
  */
 @Injectable()
-export class EnrollCoursesService {
-    private readonly logger = new Logger(EnrollCoursesService.name);
+export class EnrollCoursesService extends AbstractRepoService<EnrolledCourses> {
+    protected readonly logger = new Logger(EnrollCoursesService.name);
 
     constructor(
+        @InjectRepository(EnrolledCourses)
+        private readonly enrolledCoursesRepo: Repository<EnrolledCourses>,
         @Inject()
         private readonly stripeService: StripeService,
         @Inject()
         private readonly paymentsService: PaymentsService,
         @Inject()
         private readonly dataSource: DataSource,
-    ) {}
+        entityManager: EntityManager,
+
+    ) {
+        super(enrolledCoursesRepo, entityManager);
+    }
 
     /**
      * Enroll a course by Visa payment method
