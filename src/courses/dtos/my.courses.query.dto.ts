@@ -8,5 +8,5 @@ export class QueryDto extends PartialType(PaginationDto) {
     @IsOptional()
     @IsString()
     @IsEnum(CourseStatusEnum)
-    state?: string;
+    state?: CourseStatusEnum;
 }

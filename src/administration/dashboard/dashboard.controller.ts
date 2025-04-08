@@ -51,16 +51,18 @@ export class DashboardController {
 
     // total published, pending, draft, ...etc courses
     @Get('total-courses')
-    async getTotalCourses(@Query() type: CourseTypeDto) {
+    async getTotalCourses(@Query() state: CourseTypeDto) {
         this.logger.log('Total courses');
 
-        const filter = {
-            state: type.type,
-        };
-        const total = await this.courseService.getTotalCourses(filter);
+        const total = await this.courseService.getTotalCourses({
+            state: state.state,
+        });
 
         return {
-            response: total,
+            response: {
+                message: 'Total courses',
+                total,
+            },
         };
     }
 

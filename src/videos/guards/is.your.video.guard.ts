@@ -11,10 +11,8 @@ import { CourseService } from 'src/courses/service/course.service';
 import { SectionsInstructorService } from 'src/sections/services/instructor/sections.instructor.service';
 import { VideosInstructorService } from 'src/videos/services/instructor/videos.instructor.service';
 
-
 @Injectable()
 export class IsYourVideoGuard implements CanActivate {
-
     constructor(
         private readonly videosService: VideosInstructorService,
         private readonly sectionsService: SectionsInstructorService,
@@ -41,16 +39,16 @@ export class IsYourVideoGuard implements CanActivate {
             });
         }
 
-        const section = await this.sectionsService.findSectionById(
-            video.section.id,
-        );
+        const section = await this.sectionsService.findSectionById(video.section.id);
 
         if (!section) {
             throw new NotFoundException({
                 message: `Section with id: ${video.section.id} not found`,
             });
         }
-        const course = await this.courseService.getCourse(section.course.id);
+        const course = await this.courseService.findOne({
+            id: section.course.id,
+        });
 
         if (course.instructor.id !== instructor_id) {
             throw new UnauthorizedException({

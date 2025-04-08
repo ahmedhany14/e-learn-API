@@ -3,30 +3,26 @@ import { EnrollCoursesService } from 'src/payments/modules/enroll-courses/servic
 
 @Injectable()
 export class IsEnrolledGuard implements CanActivate {
-
     constructor(
         @Inject()
-        private readonly enrollCoursesService: EnrollCoursesService
-    ) { }
+        private readonly enrollCoursesService: EnrollCoursesService,
+    ) {}
 
-    async canActivate(
-        context: ExecutionContext,
-    ): Promise<boolean> {
-
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const course_id = request.params.course_id;
         const account_id = request.accountId;
 
         const isEnrolled = await this.enrollCoursesService.findOne({
             course: {
-                id: course_id
+                id: course_id,
             },
             account: {
-                id: account_id
-            }
+                id: account_id,
+            },
         });
 
-        request.isEnrolled = isEnrolled ? true : false;
+        request.isEnrolled = !!isEnrolled;
 
         return true;
     }

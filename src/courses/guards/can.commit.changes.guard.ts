@@ -11,18 +11,15 @@ import { CourseStatusEnum } from '../enums/course.status.enum';
 
 @Injectable()
 export class CanCommitChangesGuard implements CanActivate {
-    constructor(private readonly courseService: CourseService) { }
+    constructor(private readonly courseService: CourseService) {}
 
-    async canActivate(
-        context: ExecutionContext,
-    ): Promise<boolean> {
-
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
 
         const instructor_id: number = request.accountId;
         const course_id: number = parseInt(request.params.course_id);
 
-        const course = await this.courseService.getCourse(course_id);
+        const course = await this.courseService.findOne({ id: course_id });
 
         if (!course) throw new NotFoundException(`Course with ID ${course_id} does not exist.`);
 

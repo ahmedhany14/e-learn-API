@@ -64,12 +64,13 @@ export class CoursesViaInstructorController {
     async getMyCourses(@Query() queryDto: QueryDto, @ExtractAccountData('id') account_id: number) {
         this.logger.log(`Getting courses for the instructor account_id: ${account_id}`);
 
-        const filter = {
-            instructor: { id: account_id },
-            state: queryDto.state,
-        };
-
-        const my_courses = await this.courseService.getMyCourses(filter, queryDto);
+        const my_courses = await this.courseService.paginate(
+            {
+                instructor: { id: account_id },
+                state: queryDto.state,
+            },
+            queryDto,
+        );
 
         return {
             response: {
@@ -82,11 +83,11 @@ export class CoursesViaInstructorController {
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
-    @Get('course/:course_id')
-    async getCourse(@Param('course_id', ParseIntPipe) course_id: number) {
-        this.logger.log(`Getting course with course_id: ${course_id}`);
+    @Get('course/:id')
+    async getCourse(@Param('id', ParseIntPipe) id: number) {
+        this.logger.log(`Getting course with course_id: ${id}`);
 
-        const course = await this.courseService.getCourse(course_id);
+        const course = await this.courseService.findOne({ id });
 
         return {
             response: {
@@ -96,17 +97,24 @@ export class CoursesViaInstructorController {
         };
     }
 
+    /**
+     *
+     * @param id course_id
+     * @param updateCourseDataDto the data to update the course
+     * @returns the updated course
+     */
+
     @UseGuards(IsYourCourseGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
-    @Patch('update-course-data/:course_id')
+    @Patch('update-course-data/:id')
     async updateCourseData(
-        @Param('course_id', ParseIntPipe) course_id: number,
+        @Param('id', ParseIntPipe) id: number,
         @Body() updateCourseDataDto: UpdateCourseDto,
     ) {
-        this.logger.log(`Updating course metadata for course_id: ${course_id}`);
+        this.logger.log(`Updating course metadata for course_id: ${id}`);
 
-        const course = await this.courseService.updateCourseData(course_id, updateCourseDataDto);
+        const course = await this.courseService.findOneAndUpdate({ id }, updateCourseDataDto);
 
         return {
             response: {
@@ -118,25 +126,24 @@ export class CoursesViaInstructorController {
 
     /**
      *
-     * @param course_id
+     * @param id
      * @param commitedChangesDto
      * @returns the course with the commited changes
      * @description this endpoint is used to commit the changes made to the course
      * @description the changes are made in the course_commits_review table
      */
-
     @UseGuards(CanCommitChangesGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
-    @Patch('commit-changes/:course_id')
+    @Patch('commit-changes/:id')
     async commitChanges(
-        @Param('course_id', ParseIntPipe) course_id: number,
+        @Param('id', ParseIntPipe) id: number,
         @Body() commitedChangesDto: CommitedChangesDto,
     ) {
-        this.logger.log(`Committing changes for course_id: ${course_id}`);
+        this.logger.log(`Committing changes for course_id: ${id}`);
 
         if (Object.keys(commitedChangesDto).length !== 0)
-            await this.courseService.commitChanges(course_id, commitedChangesDto);
+            await this.courseService.commitChanges(id, commitedChangesDto);
 
         return {
             response: {

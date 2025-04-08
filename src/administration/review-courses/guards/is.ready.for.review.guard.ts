@@ -41,7 +41,7 @@ export class IsReadyForReviewGuard implements CanActivate {
             });
         }
 
-        const course = await this.courseService.getCourse(courseReview.course.id);
+        const course = await this.courseService.findOne({ id: courseReview.course.id });
 
         if (!course) {
             throw new NotFoundException({
