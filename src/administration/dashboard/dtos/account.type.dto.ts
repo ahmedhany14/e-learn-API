@@ -1,7 +1,4 @@
-import {
-    IsEnum,
-    IsOptional,
-} from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 enum AccountType {
     ACTIVE = 'active',
@@ -12,5 +9,5 @@ enum AccountType {
 export class AccountTypeDto {
     @IsEnum(AccountType, { message: 'Invalid account type' })
     @IsOptional()
-    type: string;
+    type: AccountType;
 }

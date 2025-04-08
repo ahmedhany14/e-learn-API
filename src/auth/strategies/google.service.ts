@@ -47,7 +47,7 @@ export class GoogleService implements OnModuleInit {
     }
 
     async googleSignUp(googlePayload: GooglePayload) {
-        const account = await this.accountService.findByEmail(googlePayload.email);
+        const account = await this.accountService.findByEmail({ email: googlePayload.email });
 
         if (account) {
             const { accessToken, refreshToken } = await this.tokenProvider.generateToken(account);

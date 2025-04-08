@@ -38,7 +38,7 @@ export class AccessTokenGuard implements CanActivate {
             throw new UnauthorizedException('Invalid token');
         }
 
-        const account = await this.accountService.findById(payload.id);
+        const account = await this.accountService.findById({ id: payload.id });
         if (!account) throw new NotFoundException('Account not found');
         if (!account.is_active) throw new GoneException('Account is not active');
         if (account.has_been_banned) throw new GoneException('Account has been banned');

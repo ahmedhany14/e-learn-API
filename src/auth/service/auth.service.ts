@@ -12,20 +12,19 @@ import { TokenProvider } from '../providers/token.provider';
 import { AccountService } from '../../account/service/account.service';
 import { Hashing } from '../interfaces/Hashing';
 import { SignupProvider } from '../providers/transactions/signup.provider';
-import { Email } from '@app/email';
 import { AuthRedisService } from '../../redis/services/auth.redis.service';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService } from '@app/configurations';
+import { Email } from '@app/email';
 
 // Dto and Interfaces
 import { RefreshTokenDto } from '../dto/refresh_token.dto';
 import { AccountLoginDto } from '../dto/account.login.dto';
 import { AccountSignupDto } from '../dto/account.signup.dto';
-import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
 import { ResetPasswordDto } from '../dto/reset.password.dto';
 import { AccountResetPasswordDto } from '../dto/account.reset-password.dto';
 import { ForgetDto } from '../dto/forget.dto';
 import { Account } from '../../account/entity/account.entity';
-import * as console from 'node:console';
+import { AccountPayloadInterface } from '../interfaces/AccountPayload.interface';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +50,7 @@ export class AuthService {
 
     async login(accountLoginDto: AccountLoginDto) {
         this.logger.log('login attempt');
-        const account = await this.accountService.findByEmail(accountLoginDto.email);
+        const account = await this.accountService.findByEmail({ email: accountLoginDto.email });
         console.log(account);
         if (!account) throw new NotFoundException('Account not found');
         if (!account.is_active) throw new GoneException('Account is not active');
@@ -70,7 +69,7 @@ export class AuthService {
 
         this.logger.log(`Payload: ${JSON.stringify(payload)}`);
 
-        const account = await this.accountService.findById(payload.id);
+        const account = await this.accountService.findById({ id: payload.id });
 
         if (!account || account.is_active === false) {
             throw new NotFoundException({
@@ -95,7 +94,7 @@ export class AuthService {
             });
 
         const newAccount = await this.accountService.updatePassword(
-            account.id,
+            { id: account.id },
             await this.hashing.hash(resetPasswordDto.new_password),
         );
 
@@ -113,7 +112,7 @@ export class AuthService {
     async forgotPassword(forgetDto: ForgetDto) {
         this.logger.log(`Forgot password attempt for ${forgetDto.email}`);
 
-        const account = await this.accountService.findByEmail(forgetDto.email);
+        const account = await this.accountService.findByEmail({ email: forgetDto.email });
         if (!account) {
             throw new NotFoundException({
                 message: 'Forget password failed',
@@ -125,7 +124,7 @@ export class AuthService {
         await this.redisService.setResetPasswordToken(
             reset_token,
             account.id,
-            this.configService.get<number>('jwt.reset_token_expires_in'),
+            this.configService.jwtConfig.reset_token_expires_in,
         );
 
         //await this.email.sendResetPasswordEmail(account.email, reset_token);
@@ -148,10 +147,10 @@ export class AuthService {
             });
         }
 
-        const account = await this.accountService.findById(payload.id);
+        const account = await this.accountService.findById({ id: payload.id });
 
         await this.accountService.updatePassword(
-            account.id,
+            { id: account.id },
             await this.hashing.hash(resetPasswordDto.password),
         );
 

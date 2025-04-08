@@ -1,13 +1,12 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AccountService } from 'src/account/service/account.service';
 
-
 @Injectable()
 export class AdminPrivacyService {
     constructor(@Inject() private readonly accountService: AccountService) {}
 
-    async bannedAccount(account_id: number) {
-        const account = await this.accountService.findById(account_id);
+    async bannedAccount(id: number) {
+        const account = await this.accountService.findById({ id });
         if (!account) {
             throw new NotFoundException({
                 message: 'Account not found',
@@ -24,8 +23,8 @@ export class AdminPrivacyService {
         return await this.accountService.save(account);
     }
 
-    async deactivateAccount(account_id: number) {
-        const account = await this.accountService.findById(account_id);
+    async deactivateAccount(id: number) {
+        const account = await this.accountService.findById({ id });
         if (!account) {
             throw new NotFoundException({
                 message: 'Account not found',
@@ -40,8 +39,8 @@ export class AdminPrivacyService {
         await this.accountService.save(account);
     }
 
-    async activateAccount(account_id: number) {
-        const account = await this.accountService.findById(account_id);
+    async activateAccount(id: number) {
+        const account = await this.accountService.findById({ id });
         if (!account) {
             throw new NotFoundException({
                 message: 'Account not found',

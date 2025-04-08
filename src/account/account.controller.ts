@@ -56,10 +56,10 @@ export class AccountController {
     @UseGuards(IsUniqueEmailGuard)
     @AUTH(AuthEnum.BEARER)
     @Patch('change-email')
-    async changeEmail(@ExtractAccountData() account_id: number, @Body('email') email: string) {
+    async changeEmail(@ExtractAccountData('id') id: number, @Body('email') email: string) {
         this.logger.log('change email attempted');
 
-        await this.accountService.updateEmail(account_id, email);
+        await this.accountService.updateEmail({ id }, email);
         return { response: 'Email changed successfully' };
     }
 
@@ -79,7 +79,7 @@ export class AccountController {
     async delete(@ExtractAccountData('id') id: number) {
         this.logger.log('delete account attempted');
 
-        await this.accountService.delete(id);
+        await this.accountService.delete({ id });
 
         return { response: 'Account deleted successfully' };
     }
@@ -87,8 +87,8 @@ export class AccountController {
     @Get('active-account/:account_id/:token')
     @UseGuards(TokenIsInRedisGuard)
     async activeAccount(@Param('account_id', ParseIntPipe, AccountIsExistingDecorator) id: number) {
-        const account = await this.accountService.findById(id);
-        await this.accountService.activeAccount(id);
+        const account = await this.accountService.findById({ id });
+        await this.accountService.activeAccount({ id });
 
         const { accessToken, refreshToken } = await this.tokenProvider.generateToken(account);
 
@@ -105,7 +105,7 @@ export class AccountController {
     async resetActiveToken(
         @Param('account_id', ParseIntPipe, AccountIsExistingDecorator) id: number,
     ) {
-        const account = await this.accountService.findById(id);
+        const account = await this.accountService.findById({ id });
 
         if (account.is_active) {
             throw new ConflictException({
@@ -128,10 +128,10 @@ export class AccountController {
     @AUTH(AuthEnum.BEARER)
     @Post('upgrade-to-instructor')
     async upgradeToInstructor(
-        @ExtractAccountData('id') account_id: number,
+        @ExtractAccountData('id') id: number,
         @Body() paymentAccountDetailsDto: PaymentAccountDetailsDto,
     ) {
-        await this.accountService.upgradeToInstructor(account_id, paymentAccountDetailsDto);
+        await this.accountService.upgradeToInstructor({ id }, paymentAccountDetailsDto);
 
         return {
             response: 'Upgrade to instructor requested successfully',
