@@ -25,9 +25,11 @@ export class IsReadyForReviewGuard implements CanActivate {
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const review_course_id = context.switchToHttp().getRequest().params.review_course_id;
+        const id = context.switchToHttp().getRequest().params.review_course_id;
 
-        const courseReview = await this.reviewCoursesService.getCourseReview(review_course_id, {});
+        const courseReview = await this.reviewCoursesService.findOne({
+            id,
+        });
 
         if (!courseReview) {
             throw new NotFoundException({

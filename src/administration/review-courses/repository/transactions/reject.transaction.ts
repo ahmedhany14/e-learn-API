@@ -8,7 +8,6 @@ import { CourseReview } from '../../entity/course.reviwe.entity';
 // enum for course status
 import { CourseStatusEnum } from '../../../../courses/enums/course.status.enum';
 import { CourseReviewEnum } from '../../enums/course.review.enum';
-import * as console from 'node:console';
 
 @Injectable()
 export class RejectCourseTransaction {

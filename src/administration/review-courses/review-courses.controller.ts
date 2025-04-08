@@ -43,17 +43,23 @@ export class ReviewCoursesController {
 
     @Get('pushed-courses-to-review')
     async getPushed(@Query() reviewStateDto: ReviewStateDto) {
-        console.log(reviewStateDto);
-        const filter = reviewStateDto.state ? { state: reviewStateDto.state } : {};
+        const review_courses = await this.reviewCoursesService.find({
+            state: reviewStateDto.state || undefined,
+        });
 
         return {
-            response: await this.reviewCoursesService.getPushedCourses(filter),
+            response: {
+                message: 'fetched pushed courses successfully',
+                review_courses,
+            },
         };
     }
 
-    @Get('pushed-course-to-review/:review_course_id')
-    async getPushedCourse(@Param('review_course_id', ParseIntPipe) review_course_id: number) {
-        let review_course = await this.reviewCoursesService.getPushedCourse(review_course_id);
+    @Get('pushed-course-to-review/:id')
+    async getPushedCourse(@Param('id', ParseIntPipe) id: number) {
+        let review_course = await this.reviewCoursesService.findOne({
+            id,
+        });
 
         if (!review_course) {
             throw new NotFoundException({
@@ -78,12 +84,12 @@ export class ReviewCoursesController {
     }
 
     @UseGuards(IsReadyForReviewGuard)
-    @Post('approve-course/:review_course_id')
+    @Post('approve-course/:id')
     async approveCourse(
         @ExtractAccountData('id') admin_id: number,
-        @Param('review_course_id', ParseIntPipe) review_course_id: number,
+        @Param('review_course_id', ParseIntPipe) id: number,
     ) {
-        await this.reviewCoursesService.approveCourse(admin_id, review_course_id);
+        await this.reviewCoursesService.approveCourse(admin_id, id);
 
         // send email to instructor that course is approved
         /*
@@ -96,12 +102,12 @@ export class ReviewCoursesController {
     }
 
     @UseGuards(IsReadyForReviewGuard)
-    @Post('reject-course/:review_course_id')
+    @Post('reject-course/:id')
     async rejectCourse(
         @ExtractAccountData('id') admin_id: number,
-        @Param('review_course_id', ParseIntPipe) review_course_id: number,
+        @Param('id', ParseIntPipe) id: number,
     ) {
-        await this.reviewCoursesService.rejectCourse(admin_id, review_course_id);
+        await this.reviewCoursesService.rejectCourse(admin_id, id);
 
         // email instructor that course is rejected
         /*
@@ -113,13 +119,13 @@ export class ReviewCoursesController {
     }
 
     @UseGuards(IsReadyForReviewGuard)
-    @Post('reverse-course-and-send-feedback/:review_course_id')
+    @Post('reverse-course-and-send-feedback/:id')
     async sendFeedback(
         @ExtractAccountData('id') admin_id: number,
-        @Param('review_course_id', ParseIntPipe) review_course_id: number,
+        @Param('id', ParseIntPipe) id: number,
         @Body() feedback: FeedbackDto,
     ) {
-        await this.reviewCoursesService.closeReview(admin_id, review_course_id);
+        await this.reviewCoursesService.closeReview(admin_id, id);
 
         this.logger.log(`feedback: ${feedback.feedback}`);
         /*

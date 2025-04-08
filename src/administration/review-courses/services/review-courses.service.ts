@@ -7,6 +7,8 @@ import { CourseReviewRepository } from '../repository/coures.review.repo';
 import { ApproveCourseTransaction } from '../repository/transactions/approve.transaction';
 import { RejectCourseTransaction } from '../repository/transactions/reject.transaction';
 import { CloseCourseTransaction } from '../repository/transactions/close.transaction';
+import { FindOptionsWhere } from 'typeorm';
+import { CourseReview } from '../entity/course.reviwe.entity';
 
 @Injectable()
 export class ReviewCoursesService {
@@ -21,20 +23,16 @@ export class ReviewCoursesService {
         private readonly closeTransaction: CloseCourseTransaction,
     ) {}
 
-    async getCourseReview(review_course_id: number, filter: any) {
-        return this.courseReviewRepository.getCourseReview(review_course_id, filter);
+    async find(filter: FindOptionsWhere<CourseReview>) {
+        return this.courseReviewRepository.find(filter);
+    }
+
+    async findOne(filter: FindOptionsWhere<CourseReview>) {
+        return this.courseReviewRepository.findOne(filter);
     }
 
     async pushCourseToReview(course_id: number) {
         return this.courseReviewRepository.createCourseReview(course_id);
-    }
-
-    async getPushedCourses(filter: any) {
-        return this.courseReviewRepository.getReviewCourses(filter);
-    }
-
-    async getPushedCourse(review_course_id: number) {
-        return this.courseReviewRepository.getReviewCourse(review_course_id);
     }
     async approveCourse(admin_id: number, review_course_id: number) {
         return this.approveTransaction.approveCourse(admin_id, review_course_id);

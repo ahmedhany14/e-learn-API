@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, EntityManager } from 'typeorm';
 
 // entities
 import { CourseReview } from '../entity/course.reviwe.entity';
@@ -8,29 +8,19 @@ import { Course } from '../../../courses/entities/course.entity';
 
 // enums
 import { CourseStatusEnum } from '../../../courses/enums/course.status.enum';
+import { AbstractRepoService } from '@app/abstract.db';
 
 @Injectable()
-export class CourseReviewRepository {
-    private readonly logger = new Logger(CourseReviewRepository.name);
+export class CourseReviewRepository extends AbstractRepoService<CourseReview> {
+    protected readonly logger = new Logger(CourseReviewRepository.name);
 
     constructor(
         @InjectRepository(CourseReview)
         private readonly courseReviewRepository: Repository<CourseReview>,
+        entityManager: EntityManager,
         private readonly dataSource: DataSource,
-    ) {}
-
-    async getCourseReview(review_course_id: number, filter: any): Promise<CourseReview> {
-        try {
-            return this.courseReviewRepository.findOne({
-                where: { id: review_course_id, ...filter },
-            });
-        } catch (error) {
-            this.logger.error(`Error while fetching course review, ${error.message}`);
-            throw new InternalServerErrorException({
-                message: 'Error while fetching course review, please try again',
-                details: error.message,
-            });
-        }
+    ) {
+        super(courseReviewRepository, entityManager);
     }
 
     async createCourseReview(course_id: number): Promise<CourseReview> {
@@ -70,31 +60,5 @@ export class CourseReviewRepository {
             await queryRunner.release();
         }
         return savedCourseReview;
-    }
-
-    async getReviewCourses(filter: any): Promise<CourseReview[]> {
-        try {
-            return this.courseReviewRepository.find({
-                where: filter,
-            });
-        } catch (error) {
-            this.logger.error(`Error while fetching courses, ${error.message}`);
-            throw new InternalServerErrorException({
-                message: 'Error while fetching courses, please try again',
-                details: error.message,
-            });
-        }
-    }
-
-    async getReviewCourse(review_course_id: number): Promise<CourseReview> {
-        try {
-            return this.courseReviewRepository.findOne({ where: { id: review_course_id } });
-        } catch (error) {
-            this.logger.error(`Error while fetching course, ${error.message}`);
-            throw new InternalServerErrorException({
-                message: 'Error while fetching course, please try again',
-                details: error.message,
-            });
-        }
     }
 }
