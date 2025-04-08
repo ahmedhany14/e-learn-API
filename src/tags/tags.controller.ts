@@ -8,28 +8,34 @@ export class TagsController {
     @Get('all')
     async getAllTags() {
         return {
-            response: await this.tagsService.findAllTags({}),
+            response: {
+                message: 'All tags fetched successfully',
+                tags: await this.tagsService.find({}),
+            },
         };
     }
 
     @Get('category/:category')
     async getTagsByCategory(@Param('category') category: string) {
-        const filter = {
-            category,
-        };
-
         return {
-            response: await this.tagsService.findAllTags(filter),
+            response: {
+                message: 'Tags fetched successfully',
+                tags: await this.tagsService.find({
+                    category,
+                }),
+            },
         };
     }
 
     @Get('subcategory/:subcategory')
     async getTagsBySubcategory(@Param('subcategory') subcategory: string) {
-        const filter = {
-            subcategory,
-        };
         return {
-            response: await this.tagsService.findAllTags(filter),
+            response: {
+                message: 'Tags fetched successfully',
+                tags: await this.tagsService.find({
+                    subcategory,
+                }),
+            },
         };
     }
 }

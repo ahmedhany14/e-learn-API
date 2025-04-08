@@ -17,27 +17,23 @@ export class TagsService {
         private readonly tagsRepo: TagsRepository,
     ) {}
 
-    async createTag(createTagDto: CreateTagDto, admin_id: number) {
+    async create(createTagDto: CreateTagDto, admin_id: number) {
         return await this.tagsRepo.create(this.tagsRepo.newTag(createTagDto, admin_id));
     }
 
-    async findOneTag(id: number) {
-        return await this.tagsRepo.findOne({ id });
+    async findOne(filter: FindOptionsWhere<Tags>) {
+        return await this.tagsRepo.findOne(filter);
     }
 
-    async findAllTags(filter: FindOptionsWhere<Tags>) {
+    async find(filter: FindOptionsWhere<Tags>) {
         return await this.tagsRepo.find(filter);
     }
 
-    async findOneTagWithAllFields(getByThree: GetByThree) {
-        return this.tagsRepo.findOne({ ...getByThree });
+    async delete(filter: FindOptionsWhere<Tags>) {
+        return await this.tagsRepo.findOneAndDelete(filter);
     }
 
-    async deleteTag(id: number) {
-        return await this.tagsRepo.findOneAndDelete({ id });
-    }
-
-    async updateTag(id: number, updateTagDto: UpdateTagDto) {
-        return await this.tagsRepo.findOneAndUpdate({ id }, { ...updateTagDto });
+    async update(filter: FindOptionsWhere<Tags>, updateTagDto: UpdateTagDto) {
+        return await this.tagsRepo.findOneAndUpdate(filter, { ...updateTagDto });
     }
 }

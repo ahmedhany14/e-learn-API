@@ -35,13 +35,15 @@ export class TagsViaAdminsController {
         private readonly tagsService: TagsService,
     ) {}
 
-    @Get('one-tag/:tag_id')
-    async getTagById(@Param('tag_id', ParseIntPipe) tag_id: number) {
-        const tag = await this.tagsService.findOneTag(tag_id);
+    @Get('one-tag/:id')
+    async getTagById(@Param('id', ParseIntPipe) id: number) {
+        const tag = await this.tagsService.findOne({
+            id,
+        });
         if (!tag) {
             throw new NotFoundException({
                 message: 'Tag not found',
-                details: `Tag with id: ${tag_id} not found`,
+                details: `Tag with id: ${id} not found`,
             });
         }
 
@@ -60,7 +62,7 @@ export class TagsViaAdminsController {
 
     @Get('all-tags')
     async getAllTagsWithDetails() {
-        const tags = await this.tagsService.findAllTags({});
+        const tags = await this.tagsService.find({});
         return {
             response: {
                 message: 'all Tags fetched successfully',
@@ -74,7 +76,7 @@ export class TagsViaAdminsController {
         @Body() createTagDto: CreateTagDto,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        const tagExists = await this.tagsService.findOneTagWithAllFields({
+        const tagExists = await this.tagsService.findOne({
             category: createTagDto.category,
             subcategory: createTagDto.subcategory,
             tag: createTagDto.tag,
@@ -86,7 +88,7 @@ export class TagsViaAdminsController {
             });
         }
 
-        const tag = await this.tagsService.createTag(createTagDto, admin_id);
+        const tag = await this.tagsService.create(createTagDto, admin_id);
 
         return {
             response: {
@@ -96,20 +98,17 @@ export class TagsViaAdminsController {
         };
     }
 
-    @Patch('edit-tag/:tag_id')
-    async editTag(
-        @Param('tag_id', ParseIntPipe) tag_id: number,
-        @Body() updateTagDto: UpdateTagDto,
-    ) {
-        const tag = await this.tagsService.findOneTag(tag_id);
+    @Patch('edit-tag/:id')
+    async editTag(@Param('id', ParseIntPipe) id: number, @Body() updateTagDto: UpdateTagDto) {
+        const tag = await this.tagsService.findOne({ id });
         if (!tag) {
             throw new NotFoundException({
                 message: 'Tag not found',
-                details: `Tag with id: ${tag_id} not found`,
+                details: `Tag with id: ${id} not found`,
             });
         }
 
-        const updatedTag = await this.tagsService.updateTag(tag_id, updateTagDto);
+        const updatedTag = await this.tagsService.update({ id }, updateTagDto);
 
         return {
             response: {
@@ -119,17 +118,17 @@ export class TagsViaAdminsController {
         };
     }
 
-    @Delete('tag/:tag_id')
-    async deleteTag(@Param('tag_id', ParseIntPipe) tag_id: number) {
-        const tag = await this.tagsService.findOneTag(tag_id);
+    @Delete('tag/:id')
+    async deleteTag(@Param('id', ParseIntPipe) id: number) {
+        const tag = await this.tagsService.findOne({ id });
         if (!tag) {
             throw new ConflictException({
                 message: 'Tag not found',
-                details: `Tag with id: ${tag_id} not found`,
+                details: `Tag with id: ${id} not found`,
             });
         }
 
-        await this.tagsService.deleteTag(tag_id);
+        await this.tagsService.delete({ id });
 
         return {
             response: {

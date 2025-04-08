@@ -84,7 +84,7 @@ export class TagsViaInstructorController {
 
     private async is_tags_exist(tags: AddTagsToCourseDto) {
         for (let i = 0; i < tags.tag_ids.length; i++) {
-            const tag = await this.TagsService.findOneTag(tags.tag_ids[i]);
+            const tag = await this.TagsService.findOne({ id: tags.tag_ids[i] });
             if (!tag) {
                 return { ret: false, tag_id: tags.tag_ids[i] };
             }
