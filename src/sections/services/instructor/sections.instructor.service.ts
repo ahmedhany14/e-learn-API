@@ -7,6 +7,7 @@ import { SectionsInstructorRepo } from '../../repository/instructor/sections.ins
 import { EditSectionDto } from '../../dtos/edit.section.dto';
 import { Section } from 'src/sections/entity/sections.entity';
 import { Course } from 'src/courses/entities/course.entity';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class SectionsInstructorService {
@@ -15,28 +16,28 @@ export class SectionsInstructorService {
         private readonly SectionsRepo: SectionsInstructorRepo,
     ) {}
 
-    async findSectionById(id: number): Promise<Section> {
-        return await this.SectionsRepo.findOne({ id });
-    }
-
-    async createSection(title: string, order: number, course_id: number) {
+    async create(title: string, order: number, course_id: number) {
         return await this.SectionsRepo.create(
             this.SectionsRepo.newSection(title, order, course_id),
         );
     }
-
-    async updateSection(id: Section['id'], editSectionDto: EditSectionDto) {
-        return await this.SectionsRepo.findOneAndUpdate({ id }, editSectionDto);
+    async find(filter: FindOptionsWhere<Section>): Promise<Section[]> {
+        return await this.SectionsRepo.find(filter);
     }
 
-    async deleteSection(id: Section['id']) {
-        await this.SectionsRepo.findOneAndDelete({ id });
+    async findOne(filter: FindOptionsWhere<Section>): Promise<Section> {
+        return await this.SectionsRepo.findOne(filter);
     }
 
-    async findCourseSections(course_id: Course['id']) {
-        return await this.SectionsRepo.find({
-            course: { id: course_id },
-        });
+    async findOneAndUpdate(
+        filter: FindOptionsWhere<Section>,
+        editSectionDto: EditSectionDto,
+    ): Promise<Section> {
+        return await this.SectionsRepo.findOneAndUpdate(filter, editSectionDto);
+    }
+
+    async findOneAndDelete(filter: FindOptionsWhere<Section>): Promise<void> {
+        await this.SectionsRepo.findOneAndDelete(filter);
     }
 
     async updateSectionsOrder(

@@ -33,7 +33,9 @@ export class IsYourSectionGuard implements CanActivate {
         section_id: number,
         instructor_id: number,
     ): Promise<boolean> {
-        const section = await this.sectionsService.findSectionById(section_id);
+        const section = await this.sectionsService.findOne({
+            id: section_id,
+        });
 
         if (!section) {
             throw new NotFoundException({

@@ -49,12 +49,14 @@ export class SectionsViaInstructorController {
             `adding sections to course with id: ${course_id}, with properties: ${JSON.stringify(addCourseSectionsDto)}`,
         );
 
-        const sections = await this.sectionService.findCourseSections(course_id);
+        const sections = await this.sectionService.find({
+            course: { id: course_id },
+        });
 
         const order = sections.length + 1;
         console.log('newOrder', order);
 
-        const section = await this.sectionService.createSection(
+        const section = await this.sectionService.create(
             addCourseSectionsDto.title,
             order,
             course_id,
@@ -80,7 +82,12 @@ export class SectionsViaInstructorController {
             `editing section with id: ${section_id}, with properties: ${JSON.stringify(editSectionDto)}`,
         );
 
-        const section = await this.sectionService.updateSection(section_id, editSectionDto);
+        const section = await this.sectionService.findOneAndUpdate(
+            {
+                id: section_id,
+            },
+            editSectionDto,
+        );
 
         return {
             response: {
@@ -93,11 +100,13 @@ export class SectionsViaInstructorController {
     @UseGuards(IsYourSectionGuard)
     @ROLE(RoleEnum.INSTRUCTOR)
     @AUTH(AuthEnum.BEARER)
-    @Delete('delete-section/:section_id')
-    async deleteSection(@Param('section_id', ParseIntPipe) section_id: number) {
-        this.logger.log(`deleting section with id: ${section_id}`);
+    @Delete('delete-section/:id')
+    async deleteSection(@Param('id', ParseIntPipe) id: number) {
+        this.logger.log(`deleting section with id: ${id}`);
 
-        const section = await this.sectionService.findSectionById(section_id);
+        const section = await this.sectionService.findOne({
+            id,
+        });
 
         const videos = await section.videos;
 
@@ -108,7 +117,9 @@ export class SectionsViaInstructorController {
             });
         }
 
-        await this.sectionService.deleteSection(section_id);
+        await this.sectionService.findOneAndDelete({
+            id,
+        });
 
         return {
             response: {
@@ -126,7 +137,9 @@ export class SectionsViaInstructorController {
         @Param('course_id', ParseIntPipe) course_id: number,
         @Body() reOrderSectionsDto: ReOrderingDto,
     ) {
-        let all_sections = await this.sectionService.findCourseSections(course_id);
+        let all_sections = await this.sectionService.find({
+            course: { id: course_id },
+        });
 
         if (
             reOrderSectionsDto.new_order < 1 ||

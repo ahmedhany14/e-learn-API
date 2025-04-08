@@ -39,8 +39,9 @@ export class IsYourVideoGuard implements CanActivate {
             });
         }
 
-        const section = await this.sectionsService.findSectionById(video.section.id);
-
+        const section = await this.sectionsService.findOne({
+            id: video.section.id,
+        });
         if (!section) {
             throw new NotFoundException({
                 message: `Section with id: ${video.section.id} not found`,

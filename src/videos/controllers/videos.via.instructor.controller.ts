@@ -55,7 +55,9 @@ export class VideosViaInstructorController {
             `adding video to section with id: ${section_id}, with properties: ${JSON.stringify(addVideoDto)}`,
         );
 
-        const section = await this.sectionsService.findSectionById(section_id);
+        const section = await this.sectionsService.findOne({
+            id: section_id,
+        });
 
         const all_videos = await this.videosService.findAllVideosInSection(section_id);
 
@@ -73,11 +75,11 @@ export class VideosViaInstructorController {
     }
 
     @UseGuards(IsYourVideoGuard)
-    @Delete('delete-video/:video_id')
-    async deleteVideo(@Param('video_id', ParseIntPipe) video_id: number) {
-        this.logger.log(`deleting video with id: ${video_id}`);
+    @Delete('delete-video/:id')
+    async deleteVideo(@Param('id', ParseIntPipe) id: number) {
+        this.logger.log(`deleting video with id: ${id}`);
 
-        await this.videosService.deleteVideo(video_id);
+        await this.videosService.deleteVideo(id);
 
         return {
             response: {
@@ -87,14 +89,14 @@ export class VideosViaInstructorController {
     }
 
     @UseGuards(IsYourVideoGuard)
-    @Patch('update-video/:video_id')
+    @Patch('update-video/:id')
     async updateVideo(
-        @Param('video_id', ParseIntPipe) video_id: number,
+        @Param('video_id', ParseIntPipe) id: number,
         @Body() updateVideoDto: UpdateVideoDto,
     ) {
-        this.logger.log(`updating video with id: ${video_id}`);
+        this.logger.log(`updating video with id: ${id}`);
 
-        const video = await this.videosService.updateVideo(video_id, updateVideoDto);
+        const video = await this.videosService.updateVideo(id, updateVideoDto);
 
         return {
             response: {
