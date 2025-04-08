@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 // orm and entity
-import { EntityManager, FindOptionsSelect, Repository } from 'typeorm';
+import { EntityManager, FindOptionsSelect, FindOptionsWhere, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from '../entities/course.entity';
 
@@ -35,7 +35,7 @@ export class CourseRepo extends AbstractRepoService<Course> {
         }
     }
 
-    async getTotalCourses(filter: any): Promise<number> {
+    async getTotalCourses(filter: FindOptionsWhere<Course>): Promise<number> {
         try {
             return await this.courseRepository.count({
                 where: filter,
@@ -48,7 +48,7 @@ export class CourseRepo extends AbstractRepoService<Course> {
         }
     }
 
-    async findAll(filter: any, queryDto: QueryDto) {
+    async findAll(filter: FindOptionsWhere<Course>, queryDto: QueryDto) {
         return await this.paginate(
             filter,
             this.courseRepository,

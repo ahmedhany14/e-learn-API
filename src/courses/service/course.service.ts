@@ -8,6 +8,8 @@ import { QueryDto } from 'src/courses/dtos/my.courses.query.dto';
 import { UpdateCourseDto } from 'src/courses/dtos/update.course.dto';
 import { CommitedChangesDto } from '../dtos/commited.changes.dto';
 import { CourseCommitsService } from '../../administration/course_commits/course_commits.service';
+import { FindOptionsWhere } from 'typeorm';
+import { Course } from '../entities/course.entity';
 
 @Injectable()
 export class CourseService {
@@ -23,28 +25,23 @@ export class CourseService {
         return await this.courserRepo.create(this.courserRepo.newCourse(instructor_id));
     }
 
-    async getCourse(id: number) {
-        return await this.courserRepo.findOne({ id });
+    async findOne(filter: FindOptionsWhere<Course>) {
+        return await this.courserRepo.findOne(filter);
     }
 
-    async updateImageName(course_id: number, image_url: string) {
-        return await this.courserRepo.findOneAndUpdate({ id: course_id }, { image_url });
+    async updateCourseImage(filter: FindOptionsWhere<Course>, image_url: string) {
+        return await this.courserRepo.findOneAndUpdate(filter, { image_url });
     }
 
-    async updateCourseData(course_id: number, updateCourseDto: UpdateCourseDto) {
-        return await this.courserRepo.findOneAndUpdate(
-            { id: course_id },
-            {
-                ...updateCourseDto,
-            },
-        );
+    async findOneAndUpdate(filter: FindOptionsWhere<Course>, updateCourseDto: UpdateCourseDto) {
+        return await this.courserRepo.findOneAndUpdate(filter, { ...updateCourseDto, },);
     }
 
-    async getMyCourses(filter: any, queryDto: QueryDto) {
+    async paginate(filter: FindOptionsWhere<Course>, queryDto: QueryDto) {
         return await this.courserRepo.findAll(filter, queryDto);
     }
 
-    async getTotalCourses(filter: any) {
+    async getTotalCourses(filter: FindOptionsWhere<Course>) {
         return await this.courserRepo.getTotalCourses(filter);
     }
 

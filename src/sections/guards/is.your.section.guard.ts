@@ -16,7 +16,6 @@ import { CourseStatusEnum } from '../../courses/enums/course.status.enum';
 
 @Injectable()
 export class IsYourSectionGuard implements CanActivate {
-
     constructor(
         private readonly sectionsService: SectionsInstructorService,
         private readonly courseService: CourseService,
@@ -34,8 +33,7 @@ export class IsYourSectionGuard implements CanActivate {
         section_id: number,
         instructor_id: number,
     ): Promise<boolean> {
-
-        const section = await this.sectionsService.findSectionById( section_id);
+        const section = await this.sectionsService.findSectionById(section_id);
 
         if (!section) {
             throw new NotFoundException({
@@ -44,7 +42,7 @@ export class IsYourSectionGuard implements CanActivate {
             });
         }
 
-        const course = await this.courseService.getCourse(section.course.id);
+        const course = await this.courseService.findOne({ id: section.course.id });
 
         if (course.instructor.id !== instructor_id) {
             throw new UnauthorizedException({

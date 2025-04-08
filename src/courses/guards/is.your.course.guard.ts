@@ -18,7 +18,7 @@ export class IsYourCourseGuard implements CanActivate {
         const instructor_id: number = request.accountId;
         const course_id: number = parseInt(request.params.course_id);
 
-        const course = await this.courseService.getCourse(course_id);
+        const course = await this.courseService.findOne({ id: course_id });
 
         if (!course) throw new NotFoundException(`Course with ID ${course_id} does not exist.`);
 

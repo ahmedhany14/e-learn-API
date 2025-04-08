@@ -37,7 +37,7 @@ export class CoursesController {
         @Param('id') id: number,
     ) {
 
-        const course = await this.CourseService.getCourse(id);
+        const course = await this.CourseService.findOne({ id });
 
         let sections = null, videos = null;
         if (request.isInYourPlan || request.isEnrolled) {

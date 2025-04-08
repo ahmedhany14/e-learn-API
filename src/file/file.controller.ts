@@ -58,7 +58,7 @@ export class FileController {
         }
         const filename = await this.fileService.uploadImage(file, path);
 
-        await this.courseService.updateImageName(course_id, filename);
+        await this.courseService.updateCourseImage({ id: course_id }, filename);
 
         return {
             response: {

@@ -1,18 +1,9 @@
-import {
-    IsEnum,
-    IsOptional,
-} from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
-enum CourseType {
-    DRAFT = 'draft',
-    PUBLISHED = 'published',
-    ARCHIVED = 'archived',
-    IN_REVIEW = 'in_review',
-
-}
+import { CourseStatusEnum } from '../../../courses/enums/course.status.enum';
 
 export class CourseTypeDto {
-    @IsEnum(CourseType, { message: 'Invalid course type' })
+    @IsEnum(CourseStatusEnum, { message: 'Invalid course type' })
     @IsOptional()
-    type: string;
+    state: CourseStatusEnum;
 }
