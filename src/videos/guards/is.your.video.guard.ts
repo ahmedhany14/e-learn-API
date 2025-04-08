@@ -31,7 +31,7 @@ export class IsYourVideoGuard implements CanActivate {
         instructor_id: number,
         request,
     ): Promise<boolean> {
-        const video = await this.videosService.findOneById(video_id);
+        const video = await this.videosService.findOne({ id: video_id });
 
         if (!video) {
             throw new NotFoundException({

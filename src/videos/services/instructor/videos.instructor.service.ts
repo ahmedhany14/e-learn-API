@@ -11,6 +11,7 @@ import { UpdateVideoDto } from '../../dtos/update.video.dto';
 // entities
 import { Videos } from 'src/videos/entity/videos.entity';
 import { Section } from 'src/sections/entity/sections.entity';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class VideosInstructorService {
@@ -21,28 +22,26 @@ export class VideosInstructorService {
         private readonly moveTransaction: MoveVideosFromSectionToSectionTransaction,
     ) {}
 
-    async createVideo(addVideoToSectionDto: AddVideoDto, section_id: Section['id'], order: number) {
+    async create(addVideoToSectionDto: AddVideoDto, section_id: Section['id'], order: number) {
         return await this.videosRepo.create(
             await this.videosRepo.newVideo(addVideoToSectionDto, section_id, order),
         );
     }
 
-    async findOneById(id: Videos['id']) {
-        return await this.videosRepo.findOne({ id });
+    async find(filter: FindOptionsWhere<Videos>) {
+        return await this.videosRepo.find(filter);
     }
 
-    async deleteVideo(id: Videos['id']) {
-        return await this.videosRepo.findOneAndDelete({ id: id });
+    async findOne(filter: FindOptionsWhere<Videos>) {
+        return await this.videosRepo.findOne(filter);
     }
 
-    async updateVideo(id: Videos['id'], updateVideoDto: UpdateVideoDto) {
-        await this.videosRepo.findOneAndUpdate({ id }, updateVideoDto);
+    async findOneAndDelete(filter: FindOptionsWhere<Videos>) {
+        await this.videosRepo.findOneAndDelete(filter);
     }
 
-    async findAllVideosInSection(section_id: Section['id']) {
-        return await this.videosRepo.find(
-            { section: { id: section_id } },
-        )
+    async findOneAndUpdate(filter: FindOptionsWhere<Videos>, updateVideoDto: UpdateVideoDto) {
+        await this.videosRepo.findOneAndUpdate(filter, updateVideoDto);
     }
 
     async updateVideosOrder(videos: Videos[], video_id: Videos['id'], new_order: number) {

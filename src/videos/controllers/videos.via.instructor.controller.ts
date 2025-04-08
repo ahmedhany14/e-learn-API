@@ -59,12 +59,14 @@ export class VideosViaInstructorController {
             id: section_id,
         });
 
-        const all_videos = await this.videosService.findAllVideosInSection(section_id);
+        const all_videos = await this.videosService.find({
+            section: { id: section.id },
+        });
 
         console.log('all_videos', all_videos);
 
         const order = all_videos.length + 1;
-        const video = await this.videosService.createVideo(addVideoDto, section.id, order);
+        const video = await this.videosService.create(addVideoDto, section.id, order);
 
         return {
             response: {
@@ -79,7 +81,7 @@ export class VideosViaInstructorController {
     async deleteVideo(@Param('id', ParseIntPipe) id: number) {
         this.logger.log(`deleting video with id: ${id}`);
 
-        await this.videosService.deleteVideo(id);
+        await this.videosService.findOneAndDelete({ id });
 
         return {
             response: {
@@ -96,7 +98,7 @@ export class VideosViaInstructorController {
     ) {
         this.logger.log(`updating video with id: ${id}`);
 
-        const video = await this.videosService.updateVideo(id, updateVideoDto);
+        const video = await this.videosService.findOneAndUpdate({ id }, updateVideoDto);
 
         return {
             response: {
@@ -115,7 +117,9 @@ export class VideosViaInstructorController {
     ) {
         const section_id = request.section_id;
 
-        let all_videos = await this.videosService.findAllVideosInSection(section_id);
+        let all_videos = await this.videosService.find({
+            section: { id: section_id },
+        });
 
         if (reOrderingDto.new_order > all_videos.length) {
             throw new ConflictException({
@@ -158,7 +162,9 @@ export class VideosViaInstructorController {
             `moving video with id: ${video_id} to new section with id: ${new_section_id}`,
         );
 
-        const all_videos = await this.videosService.findAllVideosInSection(new_section_id);
+        const all_videos = await this.videosService.find({
+            section: { id: new_section_id },
+        });
 
         if (reOrderingDto.new_order > all_videos.length + 1) {
             throw new ConflictException({
