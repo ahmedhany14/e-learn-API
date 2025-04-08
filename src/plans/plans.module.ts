@@ -13,7 +13,7 @@ import { PlansController } from './plans.controller';
 @Module({
     imports: [TypeOrmModule.forFeature([Plan, CoursePlans]), CoursesModule],
     providers: [PlansViaAdminService, PlanRepository, PlansViaInstructorsService],
-    exports: [PlansViaAdminService, PlanRepository],
+    exports: [PlansViaAdminService, PlanRepository, PlansViaInstructorsService],
     controllers: [PlansViaAdminsController, PlansViaInstructorsController, PlansController],
 })
-export class PlansModule {}
+export class PlansModule { }
