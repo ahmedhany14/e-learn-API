@@ -59,11 +59,10 @@ export class PlansViaAdminsController {
     @Get('plans')
     async getAllPlans(@Query('is_active') is_active: boolean) {
         this.logger.log('Get all plans');
-        const filter = {
-            is_active,
-        };
 
-        const plans = await this.plansViaAdminService.findAllPlans(filter);
+        const plans = await this.plansViaAdminService.find({
+            is_active,
+        });
 
         return {
             response: {
@@ -73,25 +72,25 @@ export class PlansViaAdminsController {
         };
     }
 
-    @Get('plan/:plan_id')
-    async getPlan(@Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number) {
-        this.logger.log(`Get plan with id: ${plan_id}`);
-        const plan = await this.plansViaAdminService.findOnePlan(plan_id);
+    @Get('plan/:id')
+    async getPlan(@Param('id', ParseIntPipe, IsExistPlan) id: number) {
+        this.logger.log(`Get plan with id: ${id}`);
+        const plan = await this.plansViaAdminService.findOne({ id });
         return {
             response: {
-                message: `Plan with id ${plan_id} fetched successfully`,
+                message: `Plan with id ${id} fetched successfully`,
                 plan,
             },
         };
     }
 
-    @Patch('plan/:plan_id')
+    @Patch('plan/:id')
     async updatePlan(
         @Body() updatePlanDto: UpdatePlanDto,
-        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @Param('id', ParseIntPipe, IsExistPlan) id: number,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        const plan = await this.plansViaAdminService.updatePlan(plan_id, admin_id, updatePlanDto);
+        const plan = await this.plansViaAdminService.updatePlan({ id }, admin_id, updatePlanDto);
 
         return {
             response: {
@@ -101,12 +100,12 @@ export class PlansViaAdminsController {
         };
     }
 
-    @Patch('active-plan/:plan_id')
+    @Patch('active-plan/:id')
     async activePlan(
-        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @Param('id', ParseIntPipe, IsExistPlan) id: number,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        const plan = await this.plansViaAdminService.active(plan_id, admin_id);
+        const plan = await this.plansViaAdminService.active({ id }, admin_id);
 
         return {
             response: {
@@ -116,12 +115,12 @@ export class PlansViaAdminsController {
         };
     }
 
-    @Patch('deactivate-plan/:plan_id')
+    @Patch('deactivate-plan/:id')
     async deactivatePlan(
-        @Param('plan_id', ParseIntPipe, IsExistPlan) plan_id: number,
+        @Param('id', ParseIntPipe, IsExistPlan) id: number,
         @ExtractAccountData('id') admin_id: number,
     ) {
-        const plan = await this.plansViaAdminService.de_active(plan_id, admin_id);
+        const plan = await this.plansViaAdminService.de_active({ id }, admin_id);
 
         return {
             response: {

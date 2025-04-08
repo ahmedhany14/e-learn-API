@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 
 // orm
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Plan } from '../entity/plan.entity';
 import { CreatePlanDto } from '../dtos/create.plan.dto';
 
@@ -23,13 +23,11 @@ export class PlanRepository extends AbstractRepoService<Plan> {
 
     newPlan(plan: CreatePlanDto, admin_id: number) {
         try {
-            const newPlan = this.planRepository.create({
+            return this.planRepository.create({
                 ...plan,
                 admin: { id: admin_id },
                 updated_by: { id: admin_id },
             });
-
-            return newPlan;
         } catch (error) {
             throw new InternalServerErrorException({
                 message: 'Error creating new plan',
