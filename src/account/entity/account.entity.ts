@@ -14,6 +14,7 @@ import { CourseReview } from '../../administration/review-courses/entity/course.
 import { PaymentsHistory } from '../../payments/entities/payments.history.entity';
 import { EnrolledCourses } from 'src/payments/modules/enroll-courses/entity/enrolled.courses.entity';
 import { AbstractEntity } from '@app/abstract.db/abstract.entity';
+import { ChatRoom } from '../../chat/subscribe/entities/char.room.entity';
 
 @Entity({
     name: 'accounts',
@@ -154,4 +155,11 @@ export class Account extends AbstractEntity<Account> {
         lazy: true,
     })
     enrolled_courses: Promise<EnrolledCourses[]>;
+
+    // each instructor account can have one chat rooms
+    @OneToOne(() => ChatRoom, (chatRoom) => chatRoom.instructor, {
+        lazy: true,
+        nullable: true,
+    })
+    instructor_room: ChatRoom;
 }

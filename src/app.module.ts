@@ -56,6 +56,7 @@ import { HttpExceptionFilter } from '@app/interceptors';
 import { LoggerMiddleware } from '@app/middlewares';
 import { RateLimiterMiddleware } from '@app/middlewares';
 import { SearchModule } from './search/search.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
     imports: [
@@ -131,6 +132,8 @@ import { SearchModule } from './search/search.module';
         VideoNotesModule,
 
         SearchModule,
+
+        ChatModule,
 
         // DbModule,
     ],
