@@ -25,7 +25,6 @@ export class WsJwtIoAdapter extends IoAdapter {
     }
 
     createIOServer(port: number, options?: ServerOptions): Server {
-
         options = {
             ...options,
             cors: {
@@ -47,12 +46,9 @@ export class WsJwtIoAdapter extends IoAdapter {
                     throw new Error('Token not provided');
                 }
 
-                const payload = await this.jwtService.verifyAsync<JwtPayload>(
-                    token,
-                    {
-                        secret: this.configService.jwtConfig.secret,
-                    }
-                );
+                const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
+                    secret: this.configService.jwtConfig.secret,
+                });
 
                 socket.data.user = payload;
                 socket.data.userId = payload.id;
@@ -75,11 +71,7 @@ export class WsJwtIoAdapter extends IoAdapter {
         client.on('disconnect', callback);
     }
 
-    bindMessageHandlers(
-        client: any,
-        handlers: any[],
-        transform: (data: any) => any,
-    ) {
+    bindMessageHandlers(client: any, handlers: any[], transform: (data: any) => any) {
         handlers.forEach(({ message, callback }) => {
             client.on(message, (data: any) => {
                 callback(transform ? transform(data) : data);
@@ -105,7 +97,7 @@ export class WsJwtIoAdapter extends IoAdapter {
     }
 
     private handleError(error: any): string {
-        console.log('ssadasdasd')
+        console.log(error.name);
 
         if (error.name === 'JsonWebTokenError') {
             return 'Invalid token';
