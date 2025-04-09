@@ -7,6 +7,9 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import helmet from 'helmet';
 import * as process from 'node:process';
+import { WsJwtIoAdapter } from './chat/adapters/ws-jwt.adapter';
+import { ConfigService } from '@app/configurations';
+
 
 // const cluster = require('cluster');
 // const os = require('os');
@@ -59,7 +62,13 @@ async function bootstrap() {
     app.use(bodyParser.json()); // Enable JSON body parsing
     app.use(bodyParser.urlencoded({ extended: true })); // Enable URL-encoded body parsing
     app.use(morgan('combined')); // Enable request logging
-    app.enableCors();
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        credentials: true,
+    });
+
+    app.useWebSocketAdapter(new WsJwtIoAdapter(app, app.get(ConfigService)));
 
     await app.listen(process.env.PORT ?? 3000);
 }
