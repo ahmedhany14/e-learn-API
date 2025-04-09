@@ -15,5 +15,6 @@ import { RoomSubscribersRepository } from './repositories/room.subscribers.repos
     imports: [TypeOrmModule.forFeature([ChatRoom, RoomSubscribers])],
     controllers: [SubscribeController],
     providers: [SubscribeService, SubscribeRepository, RoomSubscribersRepository],
+    exports: [SubscribeService]
 })
-export class SubscribeModule {}
+export class SubscribeModule { }

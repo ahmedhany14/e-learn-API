@@ -10,14 +10,20 @@ export class RoomSubscribers extends AbstractEntity<RoomSubscribers> {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => ChatRoom, (charRoom) => charRoom.room_subscribers, { onDelete: 'CASCADE' })
+    @ManyToOne(() => ChatRoom, (charRoom) => charRoom.room_subscribers, {
+        eager: true,
+        onDelete: 'CASCADE'
+    })
     @JoinColumn({
         name: 'room_id',
         referencedColumnName: 'id',
     })
     room: ChatRoom;
 
-    @ManyToOne(() => Account, (account) => account.room_subscriptions, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Account, (account) => account.room_subscriptions, {
+        eager: true,
+        onDelete: 'CASCADE'
+    })
     @JoinColumn({
         name: 'subscriber_id',
         referencedColumnName: 'id',

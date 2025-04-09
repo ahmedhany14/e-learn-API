@@ -25,6 +25,12 @@ export class SubscribeService {
         return await this.RoomSubscribersRepository.findOne(filter);
     }
 
+    async findAllRoomSubscribers(
+        filter: FindOptionsWhere<RoomSubscribers>,
+    ): Promise<RoomSubscribers[]> {
+        return await this.RoomSubscribersRepository.find(filter);
+    }
+
     async createChatRoom(creator_id: number, createRoomDto: CreateRoomDto): Promise<ChatRoom> {
         const room = this.SubscribeRepository.creatNewChatRoom(creator_id, createRoomDto);
 
