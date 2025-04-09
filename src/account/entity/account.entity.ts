@@ -161,5 +161,5 @@ export class Account extends AbstractEntity<Account> {
         lazy: true,
         nullable: true,
     })
-    instructor_room: ChatRoom;
+    instructor_room: Promise<ChatRoom>;
 }

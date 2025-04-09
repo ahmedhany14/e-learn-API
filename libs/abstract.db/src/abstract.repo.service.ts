@@ -22,6 +22,7 @@ export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
         try {
             return await this.entityRepository.save(entity);
         } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException({
                 message: 'Error creating entity',
                 error: error.message,
