@@ -1,9 +1,9 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { AbstractRepoService } from '@app/abstract.db';
-import { ChatRoom } from './entities/char.room.entity';
+import { ChatRoom } from '../entities/char.room.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateRoomDto } from './dto/create.room.dto';
+import { CreateRoomDto } from '../dto/create.room.dto';
 
 @Injectable()
 export class SubscribeRepository extends AbstractRepoService<ChatRoom> {

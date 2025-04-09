@@ -5,6 +5,8 @@ import {
     Get,
     Inject,
     NotFoundException,
+    Param,
+    ParseIntPipe,
     Post,
 } from '@nestjs/common';
 
@@ -13,7 +15,6 @@ import { AUTH, ExtractAccountData, ROLE } from '@app/decorators';
 import { RoleEnum, AuthEnum } from '@app/enums';
 
 // dtos
-import { JoinRoomDto } from './dto/join.room.dto';
 import { CreateRoomDto } from './dto/create.room.dto';
 
 // services
@@ -72,13 +73,30 @@ export class SubscribeController {
         };
     }
 
-    @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.INSTRUCTOR, RoleEnum.ADMIN)
-    @Post('join-chat-room')
-    async join(@Body() room: JoinRoomDto, @ExtractAccountData('id') user_id: number) {
+    @ROLE(RoleEnum.INSTRUCTOR, RoleEnum.USER, RoleEnum.ADMIN)
+    @Post('join-chat-room/:room_id')
+    async join(
+        @ExtractAccountData('id') user_id: number,
+        @Param('room_id', ParseIntPipe) room_id: number,
+    ) {
+        const is_exist_subscription = await this.subscribeService.findOneRoomSubscriber({
+            room: { id: room_id },
+            subscriber: { id: user_id },
+        });
+
+        if (is_exist_subscription) {
+            throw new ConflictException({
+                message: 'chat room already joined.',
+                detail: 'You have already joined this chat room.',
+            });
+        }
+
+        const room_subscriber = await this.subscribeService.joinChatRoom(room_id, user_id);
+
         return {
             response: {
                 message: 'chat room joined successfully.',
-                chat_id: room.room_id,
+                room_subscriber,
             },
         };
     }
