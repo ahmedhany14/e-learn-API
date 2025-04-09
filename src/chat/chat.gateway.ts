@@ -13,6 +13,8 @@ import { Server, Socket } from 'socket.io';
 import { ChatRoomService } from './chat-room.service';
 import { JwtPayload } from './adapters/ws-jwt.adapter';
 import { SubscribeService } from './subscribe/subscribe.service';
+import { RoleEnum } from '@app/enums';
+import { WsRoleGuard } from './guards/ws.role.guard';
 
 interface SocketWithAuth extends Socket {
     data: {
@@ -75,8 +77,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log(`Client disconnected: ${client.id} - User: ${client.data.user.email}`);
     }
 
+    @UseGuards(new WsRoleGuard([RoleEnum.USER]))
     @SubscribeMessage('test')
-    handleMessage() {
-        console.log('sadasdasd')
+    handleMessage(
+        client: SocketWithAuth,
+    ) {
+        console.log('Working');
+        client.emit('test:event', {
+            message: 'Hello from server'
+        });
     }
 }
