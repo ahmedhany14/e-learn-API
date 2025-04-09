@@ -1,35 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AccountService } from 'src/account/service/account.service';
 import { TokenProvider } from 'src/auth/providers/token.provider';
-import { JwtPayload } from './interfaces/jwt.interface';
+import { ChatRoomService } from '../chat-room.service';
 
 @Injectable()
-export class ChatRoomService {
+export class WsAuthGuard implements CanActivate {
+
     constructor(
-        private readonly tokenProvider: TokenProvider,
-        private readonly accountService: AccountService,
+        @Inject()
+        private readonly chatRoomService: ChatRoomService,
     ) { }
 
-    async validateClient(client: Socket) {
-        const token = this.extractToken(client);
-        if (!token) throw new WsException('Unauthorized');
+    async canActivate(
+        context: ExecutionContext,
+    ): Promise<boolean> {
+        const client: Socket = context.switchToWs().getClient();
 
-        const payload = await this.tokenProvider.verifyToken<JwtPayload>(token, 'access');
-        const account = await this.accountService.findById({ id: payload.id });
 
-        if (!account || !account.is_active || account.has_been_banned)
-            throw new WsException('Unauthorized');
+        const {
+            account, payload
+        } = await this.chatRoomService.validateClient(client);
 
         client.data.user = account;
         client.data.userId = account.id;
         client.data.payload = payload;
 
-        return {
-            account,
-            payload,
-        };
+        return true;
     }
 
     private extractToken(socket: Socket): string | null {
