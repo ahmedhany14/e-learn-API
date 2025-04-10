@@ -1,11 +1,7 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
-import { firstValueFrom, Observable } from 'rxjs';
-import { Socket } from 'socket.io';
-
 import { SubscribeService } from '../subscribe/subscribe.service';
-import { WsException } from '@nestjs/websockets';
 import { SendMessageDto } from '../send.message.dto';
-import * as console from 'node:console';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class IsYourRoomGuard implements CanActivate {
@@ -16,21 +12,17 @@ export class IsYourRoomGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const wsContext = context.switchToWs();
-        const data$ = wsContext.getData();
-        const data: SendMessageDto = await firstValueFrom(data$);
+        const data: SendMessageDto = wsContext.getData();
 
         const isYourRoom = await this.SubscribeService.findOneRoom({
             id: data.id,
         });
 
-        if (isYourRoom.room_id !== data.room_id) {
-            throw new WsException({
-                message: 'Unauthorized',
-                status: 401,
-            });
-        }
+        if (!isYourRoom) throw new WsException('Room not found');
 
-        console.log('his room');
+        if (isYourRoom.room_id !== data.room_id)
+            throw new WsException('Unauthorized to access this room');
+
         return true;
     }
 }
