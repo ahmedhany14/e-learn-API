@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { SubscribeService } from '../subscribe/subscribe.service';
-import { SendMessageDto } from '../send.message.dto';
+import { SendMessageDto } from '../dtos/send.message.dto';
 import { WsException } from '@nestjs/websockets';
 
 @Injectable()

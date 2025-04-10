@@ -12,7 +12,7 @@ import { Messages } from './entity/messages.entity';
 import { AccountService } from 'src/account/service/account.service';
 import { TokenProvider } from 'src/auth/providers/token.provider';
 import { AbstractRepoService } from '@app/abstract.db';
-import { SendMessageDto } from './send.message.dto';
+import { SendMessageDto } from './dtos/send.message.dto';
 import * as console from 'node:console';
 import { SocketI } from './interfaces/socket.client.interface';
 
@@ -38,6 +38,18 @@ export class ChatRoomService extends AbstractRepoService<Messages> {
 
         console.log(message);
         return await this.save(message);
+    }
+
+    async findRoomMessagesHistory(id: number, page: number) {
+        return await this.paginate(
+            {
+                chat_room: { id },
+            },
+            this.messagesRepository,
+            '',
+            page,
+            20,
+        );
     }
 
     async validateClient(client: SocketI) {

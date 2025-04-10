@@ -17,7 +17,7 @@ import { SubscribeService } from './subscribe/subscribe.service';
 
 // enums, dtos, and interfaces
 import { RoleEnum } from '@app/enums';
-import { SendMessageDto } from './send.message.dto';
+import { SendMessageDto } from './dtos/send.message.dto';
 import { SocketI } from './interfaces/socket.client.interface';
 
 // guards and interceptors
@@ -26,6 +26,7 @@ import { WsAuthGuard } from './guards/ws.auth.guard';
 import { WsRoleGuard } from './guards/ws.role.guard';
 import { IsYourRoomGuard } from './guards/is.your.room.guard';
 import * as console from 'node:console';
+import { GetRoomMessagesHistoryDto } from './dtos/get.room.messages.history.dto';
 
 @UseFilters(new WsExceptionsFilter())
 @WebSocketGateway(3001, {
@@ -70,6 +71,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.server.to(`room:${message.room_id}`).emit('receive:message', {
             message: newMessage,
+        });
+    }
+
+    @SubscribeMessage('get:room:messages:history')
+    async handleGetRoomMessages(@MessageBody() body: GetRoomMessagesHistoryDto) {
+        this.logger.log(`get:room:messages:history`, body);
+
+        const response = await this.chatRoomService.findRoomMessagesHistory(body.id, body.page);
+
+        this.server.emit('receive:room:messages:history', {
+            response,
         });
     }
 
