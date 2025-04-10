@@ -100,7 +100,7 @@ export abstract class AbstractRepoService<T extends AbstractEntity<T>> {
         }
     }
 
-    async paginate<T>(
+    async paginate(
         where: FindOptionsWhere<T>,
         repository: Repository<T>,
         baseUrl = '',
