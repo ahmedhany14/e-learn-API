@@ -1,4 +1,4 @@
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject, Logger, UseFilters, UseGuards } from '@nestjs/common';
 
 import {
     WebSocketGateway,
@@ -7,35 +7,43 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     MessageBody,
+    WsException,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
+
+// services
 import { ChatRoomService } from './chat-room.service';
-import { JwtPayload } from './adapters/ws-jwt.adapter';
 import { SubscribeService } from './subscribe/subscribe.service';
+
+// enums, dtos, and interfaces
 import { RoleEnum } from '@app/enums';
+import { SendMessageDto } from './send.message.dto';
+import { SocketI } from './interfaces/socket.client.interface';
+
+// guards and interceptors
+import { WsExceptionsFilter } from '@app/interceptors';
+import { WsAuthGuard } from './guards/ws.auth.guard';
 import { WsRoleGuard } from './guards/ws.role.guard';
 import { IsYourRoomGuard } from './guards/is.your.room.guard';
-import { SendMessageDto } from './send.message.dto';
-import { firstValueFrom, Observable } from 'rxjs';
 import * as console from 'node:console';
 
-interface SocketI extends Socket {
-    data: {
-        user: JwtPayload;
-    };
-}
-
+@UseFilters(new WsExceptionsFilter())
 @WebSocketGateway(3001, {
+    namespace: '/chat',
     cors: {
         origin: '*',
         methods: ['GET', 'POST'],
         credentials: true,
     },
+    transports: ['websocket', 'polling'],
     allowEIO3: true,
+    pingTimeout: 20000,
+    pingInterval: 25000,
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
     server: Server;
+    private readonly logger: Logger = new Logger(ChatGateway.name);
 
     constructor(
         @Inject()
@@ -53,70 +61,71 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
     }
 
+    @UseGuards(new WsRoleGuard([RoleEnum.INSTRUCTOR]), IsYourRoomGuard)
+    @UseGuards(WsAuthGuard)
+    @SubscribeMessage('send:message')
+    async handleSendMessage(@MessageBody() message: SendMessageDto) {
+        this.logger.log(message);
+        const newMessage = await this.chatRoomService.addMessage(message);
+
+        this.server.to(`room:${message.room_id}`).emit('receive:message', {
+            message: newMessage,
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+
     async handleConnection(client: SocketI) {
         try {
-            const userId = client.data.user.id;
-
-            const subscribedRooms = await this.subscribeService.findAllRoomSubscribers({
-                subscriber: {
-                    id: userId,
-                },
-            });
-
-            if (client.data.user.role === RoleEnum.INSTRUCTOR) {
-                const hisRoom = await this.subscribeService.findOneRoom({
-                    instructor: { id: userId },
-                });
-                if (hisRoom) {
-                    client.join(`room:${hisRoom.room_id}`);
-                    client.emit('instructor:join:rooms', {
-                        id: hisRoom.id,
-                        room_id: hisRoom.room_id,
-                        room_name: hisRoom.name,
-                        room_description: hisRoom.description,
-                    });
-                }
-            }
-            // Join all rooms
-            await Promise.all(
-                subscribedRooms.map((room) => client.join(`room:${room.room.room_id}`)),
-            );
-
-            // Send rooms info back to a client
-            client.emit('join:rooms', {
-                rooms: subscribedRooms.map((room) => ({
-                    id: room.id,
-                    room_id: room.room.room_id,
-                    room_name: room.room.name,
-                    room_description: room.room.description,
-                })),
-            });
-
-            client.emit('join:your:room', {});
-        } catch (error) {
-            client.emit('error', {
-                message: 'Failed to join rooms',
-                error: error.message,
-            });
+            const ret = await this.chatRoomService.validateClient(client);
+            if (!ret) throw new WsException('Unauthorized: Invalid token');
+            await this.handelInstructorChatJoin(client);
+            await this.handleUserChatsJoin(client);
+        } catch (err) {
+            this.logger.error(`Connection rejected for ${client.id}`, err);
             client.disconnect();
+            // Already handled and disconnected inside validateClient
         }
     }
 
     handleDisconnect(client: SocketI) {
-        console.log(`Client disconnected: ${client.id} - User: ${client.data.user.email}`);
+        console.log(`Client disconnected: ${client.id}}`);
     }
 
-    @UseGuards(new WsRoleGuard([RoleEnum.INSTRUCTOR]), IsYourRoomGuard)
-    @SubscribeMessage('send:message')
-    async handleSendMessage(client: SocketI, @MessageBody() message$: Observable<SendMessageDto>) {
-        const message: SendMessageDto = await firstValueFrom(message$);
+    private async handelInstructorChatJoin(client: SocketI) {
+        if (client.data.user.role === RoleEnum.INSTRUCTOR) {
+            const hisRoom = await this.subscribeService.findOneRoom({
+                instructor: { id: client.data.userId },
+            });
+            if (hisRoom) {
+                client.join(`room:${hisRoom.room_id}`);
+                client.emit('instructor:join:rooms', {
+                    id: hisRoom.id,
+                    room_id: hisRoom.room_id,
+                    room_name: hisRoom.name,
+                    room_description: hisRoom.description,
+                });
+            }
+        }
+    }
 
-        /*
-         save messages to db latter
-         */
+    private async handleUserChatsJoin(client: SocketI) {
+        const subscribedRooms = await this.subscribeService.findAllRoomSubscribers({
+            subscriber: {
+                id: client.data.userId,
+            },
+        });
 
-        this.server.to(`room:${message.room_id}`).emit('receive:message', {
-            content: message.content,
+        await Promise.all(subscribedRooms.map((room) => client.join(`room:${room.room.room_id}`)));
+
+        // Send rooms info back to a client
+        client.emit('join:rooms', {
+            rooms: subscribedRooms.map((room) => ({
+                id: room.id,
+                room_id: room.room.room_id,
+                room_name: room.room.name,
+                room_description: room.room.description,
+            })),
         });
     }
 }

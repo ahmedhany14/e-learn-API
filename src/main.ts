@@ -7,8 +7,7 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import helmet from 'helmet';
 import * as process from 'node:process';
-import { WsJwtIoAdapter } from './chat/adapters/ws-jwt.adapter';
-import { ConfigService } from '@app/configurations';
+import { WsChatIoAdapter } from './chat/adapters/ws-jwt.adapter';
 
 
 // const cluster = require('cluster');
@@ -68,7 +67,7 @@ async function bootstrap() {
         credentials: true,
     });
 
-    app.useWebSocketAdapter(new WsJwtIoAdapter(app, app.get(ConfigService)));
+    app.useWebSocketAdapter(new WsChatIoAdapter());
 
     await app.listen(process.env.PORT ?? 3000);
 }

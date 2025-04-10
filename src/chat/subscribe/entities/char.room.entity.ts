@@ -12,6 +12,7 @@ import {
 import { Account } from '../../../account/entity/account.entity';
 import { AbstractEntity } from '@app/abstract.db';
 import { RoomSubscribers } from './room.subscribers.entity';
+import { Messages } from '../../entity/messages.entity';
 
 @Entity()
 export class ChatRoom extends AbstractEntity<ChatRoom> {
@@ -58,4 +59,10 @@ export class ChatRoom extends AbstractEntity<ChatRoom> {
         lazy: true,
     })
     room_subscribers: Promise<RoomSubscribers[]>;
+
+    @OneToMany(() => Messages, (messages) => messages.chat_room, {
+        lazy: true,
+        onDelete: 'CASCADE',
+    })
+    messages: Promise<Messages[]>;
 }

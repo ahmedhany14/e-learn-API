@@ -1,27 +1,14 @@
 import { RoleEnum } from '@app/enums';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { WsException } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { SocketI } from '../interfaces/socket.client.interface';
 
 @Injectable()
 export class WsRoleGuard implements CanActivate {
+    constructor(private readonly allowedRoles: RoleEnum[]) {}
 
-    constructor(private readonly allowedRoles: RoleEnum[]) { }
-
-    canActivate(
-        context: ExecutionContext,
-    ): boolean {
-        const client: Socket = context.switchToWs().getClient();
-
+    canActivate(context: ExecutionContext): boolean {
+        const client: SocketI = context.switchToWs().getClient();
         const user = client.data?.user;
-
-        if (!user || !this.allowedRoles.includes(user.role)) {
-            throw new WsException({
-                message: 'Unauthorized',
-                status: 401,
-            });
-        }
-
-        return true;
+        return !(!user || !this.allowedRoles.includes(user.role));
     }
 }
